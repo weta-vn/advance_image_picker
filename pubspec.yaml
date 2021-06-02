@@ -1,0 +1,117 @@
+name: freemar_image_picker
+description: Flutter plugin in pure Dart code for selecting images from the Android/iOS image library and taking new pictures with the camera in the same view. You can edit images before using, such as rotate / crop / add filter, sticker or text to image.
+version: 0.0.1
+author: weta-vn
+homepage: https://freemar.vn
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl:
+  photo_manager: ^1.2.1
+  image_cropper: ^1.4.0
+  flutter_native_image: ^0.0.6
+  text_editor: ^0.4.0+1
+  camera: ^0.8.1
+  image_editor: ^1.0.0
+  path_provider: 
+  matrix_gesture_detector: ^0.1.0
+  photo_view: ^0.11.1
+  image:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # To add assets to your package, add an assets section, like this:
+  assets:
+    - assets/icon/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # To add custom fonts to your package, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts in packages, see
+  # https://flutter.dev/custom-fonts/#from-packages
+
+  fonts:
+    - family: Billabong
+      fonts:
+        - asset: assets/fonts/Billabong.ttf
+    - family: GrandHotel
+      fonts:
+        - asset: assets/fonts/GrandHotel.otf
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald.ttf
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand.otf
+    - family: BeautifulPeople
+      fonts:
+        - asset: assets/fonts/BeautifulPeople.ttf
+    - family: BeautyMountains
+      fonts:
+        - asset: assets/fonts/BeautyMountains.ttf
+    - family: BiteChocolate
+      fonts:
+        - asset: assets/fonts/BiteChocolate.ttf
+    - family: BlackberryJam
+      fonts:
+        - asset: assets/fonts/BlackberryJam.ttf
+    - family: Tomatoes
+      fonts:
+        - asset: assets/fonts/Tomatoes.ttf
+    - family: BunchBlossoms
+      fonts:
+        - asset: assets/fonts/BunchBlossoms.ttf
+    - family: CinderelaRegular
+      fonts:
+        - asset: assets/fonts/CinderelaRegular.ttf
+    - family: Countryside
+      fonts:
+        - asset: assets/fonts/Countryside.ttf
+    - family: Halimun
+      fonts:
+        - asset: assets/fonts/Halimun.ttf
+    - family: LemonJelly
+      fonts:
+        - asset: assets/fonts/LemonJelly.ttf
+    - family: QuiteMagicalRegular
+      fonts:
+        - asset: assets/fonts/QuiteMagicalRegular.ttf
+    - family: TropicalAsianDemoRegular
+      fonts:
+        - asset: assets/fonts/TropicalAsianDemoRegular.ttf
+    - family: VeganStyle
+      fonts:
+        - asset: assets/fonts/VeganStyle.ttf
