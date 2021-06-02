@@ -16,6 +16,7 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 - Preview selected images
 - Support button label & text translation
 - Easy image editing features, such as rotation, cropping, adding sticker/text/filters
+- Object detector & OCR (implement in future)
 
 ## Apps using this package
 
