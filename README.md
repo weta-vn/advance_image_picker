@@ -1,6 +1,9 @@
 # freemar_image_picker
 
-Flutter plugin for selecting images from the Android and iOS image library, taking new pictures with the camera, and edit them before using such as rotation, cropping, adding sticker/text/filters.
+Flutter plugin for selecting **multiple images** from the Android and iOS image library, **taking new pictures with the camera**, and **edit** them before using such as rotation, cropping, adding sticker/text/filters.
+
+*This is an advanced version of [image_picker](https://pub.dev/packages/image_picker) plugin.*
+
 
 ## Key Features
 
@@ -16,7 +19,7 @@ Flutter plugin for selecting images from the Android and iOS image library, taki
 
 ## Apps using this package
 
-**freemar - shopping app for Vietnamese**
+**freemar.vn - shopping app for Vietnamese**
 
 <a href="https://play.google.com/store/apps/details?id=com.freemar.vn" class="download-btn"><i class="bx bxl-play-store"></i> Google Play</a>
 <a href="https://apps.apple.com/vn/app/freemar/id1530667938?l=vi" class="download-btn"><i class="bx bxl-apple"></i> App Store</a>
@@ -74,21 +77,24 @@ Recommended add `android:requestLegacyExternalStorage="true"` to your `AndroidMa
 
 Add to pubspec
 
-~~~~
+```
 dependencies:
   freemar_image_picker: $latest_version
-~~~~
+```
 
 Import dart code
 
+```
 import 'package:freemar_image_picker/freemar_image_picker.dart';
+```
+
 Setting configs & text translate function
 
 ```
-// Setup image picker configs
+// Setup image picker configs (global settings for app)
 var configs = ImagePickerConfigs();
 configs.appBarTextColor = Colors.black;
-configs.addTextFeatureEnabled = false;
+configs.addTextFeatureEnabled = false; // ON/OFF features
 configs.translateFunc = (name, value) => Intl.message(value, name: name); // Use intl function
 ```
 
