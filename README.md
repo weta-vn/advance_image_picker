@@ -62,11 +62,11 @@ Recommended add `android:requestLegacyExternalStorage="true"` to your `AndroidMa
 
 ```
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="top.kikt.imagescannerexample">
+    package="vn.weta.freemarimagepickerexample">
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="image_scanner_example"
+        android:label="freemarimagepicker_example"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
     </application>
