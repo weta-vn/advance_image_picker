@@ -32,8 +32,8 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 
 ## Demo & Screenshots
 
-<img src="./screenshot/1.png" width="100%">
-<img src="./screenshot/2.png" width="100%">
+<img src="https://raw.githubusercontent.com/weta-vn/freemar_image_picker/master/screenshot/1.png" width="100%"/>
+<img src="https://raw.githubusercontent.com/weta-vn/freemar_image_picker/master/screenshot/2.png" width="100%"/>
 
 ## Installation
 

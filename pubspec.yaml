@@ -1,7 +1,8 @@
 name: freemar_image_picker
 description: Flutter plugin in pure Dart code for selecting images from the Android/iOS image library and taking new pictures with the camera in the same view. You can edit images before using, such as rotate / crop / add filter, sticker or text to image.
-version: 0.0.1
+version: 0.0.3
 homepage: https://freemar.vn
+repository: https://github.com/weta-vn/freemar_image_picker.git
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
