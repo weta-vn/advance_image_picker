@@ -1,3 +1,8 @@
+## [0.0.3+2] - 2021/6/11
+
+* Update packages.
+
+
 ## [0.0.3+1] - 2021/6/11
 
 * Remove addtext feature.
