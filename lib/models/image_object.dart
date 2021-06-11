@@ -5,5 +5,10 @@ class ImageObject {
   int modifiedHeight;
   String assetId;
 
-  ImageObject({this.originalPath, this.modifiedPath, this.assetId = "", this.modifiedWidth, this.modifiedHeight});
+  ImageObject(
+      {this.originalPath,
+      this.modifiedPath,
+      this.assetId = "",
+      this.modifiedWidth,
+      this.modifiedHeight});
 }

@@ -1,5 +1,5 @@
 name: freemar_image_picker
-description: Flutter plugin in pure Dart code for selecting images from the Android/iOS image library and taking new pictures with the camera in the same view. You can edit images before using, such as rotate / crop / add filter, sticker or text to image.
+description: Flutter plugin in pure Dart code for selecting/editing multiple images from the Android/iOS image library and taking new pictures with the camera in the same view.
 version: 0.0.3
 homepage: https://freemar.vn
 repository: https://github.com/weta-vn/freemar_image_picker.git
@@ -11,18 +11,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.16.0
-  photo_manager: ^1.2.1
+  intl: ^0.17.0
+  photo_manager: ^1.2.2
   image_cropper: ^1.4.0
   flutter_native_image: ^0.0.6
-  text_editor: ^0.4.0+1
-  camera: ^0.8.1
+  camera: ^0.8.1+3
   image_editor: ^1.0.0
   path_provider: ^1.6.21
   matrix_gesture_detector: ^0.1.0
   photo_view: ^0.11.1
-  image: ^2.1.19
-  path: ^1.7.0
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -60,59 +58,3 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
-
-  fonts:
-    - family: Billabong
-      fonts:
-        - asset: assets/fonts/Billabong.ttf
-    - family: GrandHotel
-      fonts:
-        - asset: assets/fonts/GrandHotel.otf
-    - family: OpenSans
-      fonts:
-        - asset: assets/fonts/OpenSans.ttf
-    - family: Oswald
-      fonts:
-        - asset: assets/fonts/Oswald.ttf
-    - family: Quicksand
-      fonts:
-        - asset: assets/fonts/Quicksand.otf
-    - family: BeautifulPeople
-      fonts:
-        - asset: assets/fonts/BeautifulPeople.ttf
-    - family: BeautyMountains
-      fonts:
-        - asset: assets/fonts/BeautyMountains.ttf
-    - family: BiteChocolate
-      fonts:
-        - asset: assets/fonts/BiteChocolate.ttf
-    - family: BlackberryJam
-      fonts:
-        - asset: assets/fonts/BlackberryJam.ttf
-    - family: Tomatoes
-      fonts:
-        - asset: assets/fonts/Tomatoes.ttf
-    - family: BunchBlossoms
-      fonts:
-        - asset: assets/fonts/BunchBlossoms.ttf
-    - family: CinderelaRegular
-      fonts:
-        - asset: assets/fonts/CinderelaRegular.ttf
-    - family: Countryside
-      fonts:
-        - asset: assets/fonts/Countryside.ttf
-    - family: Halimun
-      fonts:
-        - asset: assets/fonts/Halimun.ttf
-    - family: LemonJelly
-      fonts:
-        - asset: assets/fonts/LemonJelly.ttf
-    - family: QuiteMagicalRegular
-      fonts:
-        - asset: assets/fonts/QuiteMagicalRegular.ttf
-    - family: TropicalAsianDemoRegular
-      fonts:
-        - asset: assets/fonts/TropicalAsianDemoRegular.ttf
-    - family: VeganStyle
-      fonts:
-        - asset: assets/fonts/VeganStyle.ttf

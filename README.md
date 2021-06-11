@@ -15,7 +15,7 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 - Select photos from device library by browsing photo albums
 - Preview selected images
 - Support button label & text translation
-- Easy image editing features, such as rotation, cropping, adding sticker/text/filters
+- Easy image editing features, such as rotation, cropping, adding sticker/filters
 - Object detector & OCR (implement in future)
 
 ## Apps using this package
@@ -35,6 +35,10 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 <img src="https://raw.githubusercontent.com/weta-vn/freemar_image_picker/master/screenshot/1.png" width="100%"/>
 <img src="https://raw.githubusercontent.com/weta-vn/freemar_image_picker/master/screenshot/2.png" width="100%"/>
 
+ ---
+[**Youtube Demo Link**](https://youtu.be/pl0S72kd0mo)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pl0S72kd0mo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+ ---
 ## Installation
 
 ### iOS
@@ -94,7 +98,7 @@ Setting configs & text translate function
 // Setup image picker configs (global settings for app)
 var configs = ImagePickerConfigs();
 configs.appBarTextColor = Colors.black;
-configs.addTextFeatureEnabled = false; // ON/OFF features
+configs.stickerFeatureEnabled = false; // ON/OFF features
 configs.translateFunc = (name, value) => Intl.message(value, name: name); // Use intl function
 ```
 
@@ -125,7 +129,6 @@ This software uses the following open source packages:
 - camera
 - photo_manager
 - image_cropper
-- text_editor
 - photo_view
 - flutter_native_image
 - image_editor

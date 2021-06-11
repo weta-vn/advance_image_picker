@@ -12,7 +12,6 @@ import 'package:photo_view/photo_view_gallery.dart';
 import '../configs/image_picker_configs.dart';
 import '../models/image_object.dart';
 import '../utils/image_utils.dart';
-import 'image_addtext.dart';
 import 'image_edit.dart';
 import 'image_filter.dart';
 import 'image_sticker.dart';
@@ -236,7 +235,7 @@ class _ImageViewerState extends State<ImageViewer> {
                   color: Colors.black.withOpacity(0.5),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text("${image.modifiedWidth}x${image.modifiedHeight}",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),                    
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ]),
                 ),
               ],
@@ -331,22 +330,6 @@ class _ImageViewerState extends State<ImageViewer> {
               var edittedFile = await Navigator.of(context).push(MaterialPageRoute(
                   fullscreenDialog: true,
                   builder: (context) => ImageSticker(file: image, title: _configs.textImageStickerTitle)));
-              if (edittedFile != null) {
-                setState(() {
-                  this._images[this._currentIndex].modifiedPath = edittedFile.path;
-                  widget.onChanged?.call(this._images);
-                });
-              }
-            },
-          ),
-        if (_configs.addTextFeatureEnabled)
-          GestureDetector(
-            child: Icon(Icons.text_format_rounded, size: 32, color: Colors.white),
-            onTap: () async {
-              var image = await this._imagePreProcessing(_images[_currentIndex].modifiedPath);
-              var edittedFile = await Navigator.of(context).push(MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) => ImageAddText(file: image, title: _configs.textImageAddTextTitle)));
               if (edittedFile != null) {
                 setState(() {
                   this._images[this._currentIndex].modifiedPath = edittedFile.path;

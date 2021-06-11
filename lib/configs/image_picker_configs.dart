@@ -29,7 +29,6 @@ class ImagePickerConfigs {
   bool filterFeatureEnabled = true;
   bool adjustFeatureEnabled = true;
   bool stickerFeatureEnabled = true;
-  bool addTextFeatureEnabled = true;
 
   // UI style settings
   Color backgroundColor = Colors.black;
