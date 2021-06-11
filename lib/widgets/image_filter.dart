@@ -8,8 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 import 'package:intl/intl.dart';
 
@@ -41,7 +39,6 @@ class _ImageFilterState extends State<ImageFilter> {
   Uint8List _imageBytes;
   Uint8List _thumbnailImageBytes;
   bool _loading;
-  String _filename;
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
@@ -52,7 +49,6 @@ class _ImageFilterState extends State<ImageFilter> {
     _loading = true;
     _filters = _getPresetFilters();
     _filter = this._filters[0];
-    _filename = basename(widget.file.path);
 
     Future.delayed(Duration(milliseconds: 500), () async {
       await _loadImageData();
