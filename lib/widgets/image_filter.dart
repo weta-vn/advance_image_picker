@@ -8,8 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 import 'package:intl/intl.dart';
 
@@ -41,7 +39,6 @@ class _ImageFilterState extends State<ImageFilter> {
   Uint8List _imageBytes;
   Uint8List _thumbnailImageBytes;
   bool _loading;
-  String _filename;
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
@@ -52,7 +49,6 @@ class _ImageFilterState extends State<ImageFilter> {
     _loading = true;
     _filters = _getPresetFilters();
     _filter = this._filters[0];
-    _filename = basename(widget.file.path);
 
     Future.delayed(Duration(milliseconds: 500), () async {
       await _loadImageData();
@@ -440,64 +436,5 @@ class Filter extends Object {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption(matrix: this.matrix));
     return await ImageEditor.editImage(image: pixels, imageEditorOption: option);
-  }
-}
-
-class ColorFilterGenerator {
-  static List<double> hueAdjustMatrix({double value}) {
-    value = value * pi;
-
-    if (value == 0)
-      return [
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-      ];
-
-    double cosVal = cos(value);
-    double sinVal = sin(value);
-    double lumR = 0.213;
-    double lumG = 0.715;
-    double lumB = 0.072;
-
-    return List<double>.from(<double>[
-      (lumR + (cosVal * (1 - lumR))) + (sinVal * (-lumR)),
-      (lumG + (cosVal * (-lumG))) + (sinVal * (-lumG)),
-      (lumB + (cosVal * (-lumB))) + (sinVal * (1 - lumB)),
-      0,
-      0,
-      (lumR + (cosVal * (-lumR))) + (sinVal * 0.143),
-      (lumG + (cosVal * (1 - lumG))) + (sinVal * 0.14),
-      (lumB + (cosVal * (-lumB))) + (sinVal * (-0.283)),
-      0,
-      0,
-      (lumR + (cosVal * (-lumR))) + (sinVal * (-(1 - lumR))),
-      (lumG + (cosVal * (-lumG))) + (sinVal * lumG),
-      (lumB + (cosVal * (1 - lumB))) + (sinVal * lumB),
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-    ]).map((i) => i.toDouble()).toList();
   }
 }
