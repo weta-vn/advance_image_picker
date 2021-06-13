@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:quick_image_picker/quick_image_picker.dart';
+import 'package:advance_image_picker/advance_image_picker.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'advance_image_picker Demo'),
     );
   }
 }

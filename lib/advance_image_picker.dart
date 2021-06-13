@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-library quick_image_picker;
+library advance_image_picker;
 
 export 'configs/image_picker_configs.dart';
 export 'models/image_object.dart';

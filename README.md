@@ -1,4 +1,4 @@
-# quick_image_picker
+# advance_image_picker
 
 Flutter plugin for selecting **multiple images** from the Android and iOS image library, **taking new pictures with the camera**, and **edit** them before using such as rotation, cropping, adding sticker/text/filters.
 
@@ -36,8 +36,7 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 <img src="https://raw.githubusercontent.com/weta-vn/freemar_image_picker/master/screenshot/2.png" width="100%"/>
 
  ---
-[**Youtube Demo Link**](https://youtu.be/pl0S72kd0mo)
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pl0S72kd0mo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[*Youtube Demo Link*](https://youtu.be/pl0S72kd0mo)
 
 
 ## Installation
@@ -84,13 +83,13 @@ Add to pubspec
 
 ```
 dependencies:
-  quick_image_picker: $latest_version
+  advance_image_picker: $latest_version
 ```
 
 Import dart code
 
 ```
-import 'package:quick_image_picker/quick_image_picker.dart';
+import 'package:advance_image_picker/advance_image_picker.dart';
 ```
 
 Setting configs & text translate function

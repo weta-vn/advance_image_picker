@@ -1,5 +1,5 @@
 name: example
-description: Example for image picker
+description: Example for advance_image_picker
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
 
   intl:
-  quick_image_picker:
+  advance_image_picker:
     path: ../
 
 
