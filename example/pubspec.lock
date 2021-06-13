@@ -123,13 +123,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  freemar_image_picker:
-    dependency: "direct main"
-    description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.0.3+2"
   image:
     dependency: transitive
     description:
@@ -270,6 +263,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.1"
+  quick_image_picker:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "0.0.3+4"
   quiver:
     dependency: transitive
     description:

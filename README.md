@@ -1,4 +1,4 @@
-# freemar_image_picker
+# quick_image_picker
 
 Flutter plugin for selecting **multiple images** from the Android and iOS image library, **taking new pictures with the camera**, and **edit** them before using such as rotation, cropping, adding sticker/text/filters.
 
@@ -83,13 +83,13 @@ Add to pubspec
 
 ```
 dependencies:
-  freemar_image_picker: $latest_version
+  quick_image_picker: $latest_version
 ```
 
 Import dart code
 
 ```
-import 'package:freemar_image_picker/freemar_image_picker.dart';
+import 'package:quick_image_picker/quick_image_picker.dart';
 ```
 
 Setting configs & text translate function
