@@ -16,11 +16,11 @@ class ImageEdit extends StatefulWidget {
   final String title;
   final int maxWidth;
   final int maxHeight;
-  final ImagePickerConfigs configs;
+  final ImagePickerConfigs? configs;
 
   ImageEdit(
-      {@required this.file,
-      @required this.title,
+      {required this.file,
+      required this.title,
       this.configs,
       this.maxWidth = 1920,
       this.maxHeight = 1080});
@@ -33,14 +33,14 @@ class _ImageEditState extends State<ImageEdit> {
   double _contrast = 0;
   double _brightness = 0;
   double _saturation = 0;
-  Uint8List _imageBytes;
-  Uint8List _orgImageBytes;
+  Uint8List? _imageBytes;
+  Uint8List? _orgImageBytes;
   List<double> _contrastValues = [0];
   List<double> _brightnessValues = [0];
   List<double> _saturationValues = [0];
   bool _isProcessing = false;
   bool _controlExpanded = true;
-  ImagePickerConfigs _configs = ImagePickerConfigs();
+  ImagePickerConfigs? _configs = ImagePickerConfigs();
 
   @override
   void initState() {
@@ -61,7 +61,7 @@ class _ImageEditState extends State<ImageEdit> {
       _orgImageBytes = await widget.file.readAsBytes();
     }
     if (_imageBytes == null) {
-      _imageBytes = Uint8List.fromList(_orgImageBytes);
+      _imageBytes = Uint8List.fromList(_orgImageBytes!);
     }
     return _imageBytes;
   }
@@ -143,7 +143,7 @@ class _ImageEditState extends State<ImageEdit> {
         final targetPath =
             "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
         File file = File(targetPath);
-        await file.writeAsBytes(_imageBytes);
+        await file.writeAsBytes(_imageBytes!);
         Navigator.of(context).pop(file);
       },
     );
@@ -154,7 +154,7 @@ class _ImageEditState extends State<ImageEdit> {
         padding: EdgeInsets.all(12.0),
         color: Colors.black,
         child: Image.memory(
-          _imageBytes,
+          _imageBytes!,
           fit: BoxFit.contain,
           gaplessPlayback: true,
         ));
@@ -209,14 +209,14 @@ class _ImageEditState extends State<ImageEdit> {
     }
   }
 
-  Future<Uint8List> _processImageWithOptions(
+  Future<Uint8List?> _processImageWithOptions(
       double contrast, double brightness, double saturation) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
     return await ImageEditor.editImage(
-        image: _orgImageBytes, imageEditorOption: option);
+        image: _orgImageBytes!, imageEditorOption: option);
   }
 
   _calColorOptionValue(double value) {
@@ -334,13 +334,13 @@ class _ImageEditState extends State<ImageEdit> {
 
 class CustomTrackShape extends RoundedRectSliderTrackShape {
   Rect getPreferredRect({
-    @required RenderBox parentBox,
+    required RenderBox parentBox,
     Offset offset = Offset.zero,
-    @required SliderThemeData sliderTheme,
+    required SliderThemeData sliderTheme,
     bool isEnabled = false,
     bool isDiscrete = false,
   }) {
-    final double trackHeight = sliderTheme.trackHeight;
+    final double trackHeight = sliderTheme.trackHeight!;
     final double trackLeft = offset.dx;
     final double trackTop =
         offset.dy + (parentBox.size.height - trackHeight) / 2;

@@ -1,8 +1,8 @@
 class ImageObject {
-  String originalPath;
-  String modifiedPath;
-  int modifiedWidth;
-  int modifiedHeight;
+  String? originalPath;
+  String? modifiedPath;
+  int? modifiedWidth;
+  int? modifiedHeight;
   String assetId;
 
   ImageObject(

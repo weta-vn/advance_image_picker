@@ -9,7 +9,7 @@ class ImagePickerConfigs {
   ImagePickerConfigs._internal();
 
   // Functions
-  String Function(String, String) translateFunc;
+  String Function(String, String)? translateFunc;
 
   // Image settings
   int albumGridCount = 4;
@@ -38,47 +38,47 @@ class ImagePickerConfigs {
   Color appBarDoneButtonColor = Colors.blue;
 
   // UI label strings (for localization)
-  String get textSelectedImagesTitle => translateFunc(
+  String get textSelectedImagesTitle => translateFunc!(
       "image_picker_select_images_title", "Selected images count");
-  String get textSelectedImagesGuide => translateFunc(
+  String get textSelectedImagesGuide => translateFunc!(
       "image_picker_select_images_guide",
       "You can drag images for sorting list...");
   String get textCameraTitle =>
-      translateFunc("image_picker_camera_title", "Camera");
+      translateFunc!("image_picker_camera_title", "Camera");
   String get textAlbumTitle =>
-      translateFunc("image_picker_album_title", "Album");
+      translateFunc!("image_picker_album_title", "Album");
   String get textPreviewTitle =>
-      translateFunc("image_picker_preview_title", "Preview");
-  String get textConfirm => translateFunc("image_picker_confirm", "Confirm");
-  String get textConfirmExitWithoutSelectingImages => translateFunc(
+      translateFunc!("image_picker_preview_title", "Preview");
+  String get textConfirm => translateFunc!("image_picker_confirm", "Confirm");
+  String get textConfirmExitWithoutSelectingImages => translateFunc!(
       "image_picker_exit_without_selecting",
       "Do you want to exit without selecting images?");
-  String get textConfirmDelete => translateFunc(
+  String get textConfirmDelete => translateFunc!(
       "image_picker_confirm_delete", "Do you want to delete this image?");
-  String get textConfirmResetChanges => translateFunc(
+  String get textConfirmResetChanges => translateFunc!(
       "image_picker_confirm_reset_changes",
       "Do you want to clear all changes for this image?");
-  String get textYes => translateFunc("yes", "Yes");
-  String get textNo => translateFunc("no", "No");
-  String get textSave => translateFunc("save", "Save");
-  String get textClear => translateFunc("clear", "Clear");
+  String get textYes => translateFunc!("yes", "Yes");
+  String get textNo => translateFunc!("no", "No");
+  String get textSave => translateFunc!("save", "Save");
+  String get textClear => translateFunc!("clear", "Clear");
   String get textEditText =>
-      translateFunc("image_picker_edit_text", "Edit text");
+      translateFunc!("image_picker_edit_text", "Edit text");
   String get textNoImages =>
-      translateFunc("image_picker_no_images", "No images ...");
+      translateFunc!("image_picker_no_images", "No images ...");
   String get textImageCropTitle =>
-      translateFunc("image_picker_image_crop_title", "Image crop");
+      translateFunc!("image_picker_image_crop_title", "Image crop");
   String get textImageFilterTitle =>
-      translateFunc("image_picker_image_filter_title", "Image filter");
+      translateFunc!("image_picker_image_filter_title", "Image filter");
   String get textImageEditTitle =>
-      translateFunc("image_picker_image_edit_title", "Image edit");
+      translateFunc!("image_picker_image_edit_title", "Image edit");
   String get textImageStickerTitle =>
-      translateFunc("image_picker_image_sticker_title", "Image sticker");
+      translateFunc!("image_picker_image_sticker_title", "Image sticker");
   String get textImageAddTextTitle =>
-      translateFunc("image_picker_image_addtext_title", "Image add text");
+      translateFunc!("image_picker_image_addtext_title", "Image add text");
   String get textSelectButtonTitle =>
-      translateFunc("image_picker_select_button_title", "Select");
-  String get textImageStickerGuide => translateFunc(
+      translateFunc!("image_picker_select_button_title", "Select");
+  String get textImageStickerGuide => translateFunc!(
       "image_picker_image_sticker_guide",
       "You can click on below icons to add into image, double click to remove it from image");
 

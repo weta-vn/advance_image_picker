@@ -19,12 +19,12 @@ class ImageFilter extends StatefulWidget {
   final File file;
   final int maxWidth;
   final int maxHeight;
-  final ImagePickerConfigs configs;
+  final ImagePickerConfigs? configs;
 
   const ImageFilter(
-      {Key key,
-      @required this.title,
-      @required this.file,
+      {Key? key,
+      required this.title,
+      required this.file,
       this.configs,
       this.maxWidth = 1280,
       this.maxHeight = 720})
@@ -35,17 +35,17 @@ class ImageFilter extends StatefulWidget {
 }
 
 class _ImageFilterState extends State<ImageFilter> {
-  Map<String, List<int>> _cachedFilters = {};
-  ListQueue<MapEntry<String, Future<List<int>> Function()>>
+  Map<String, List<int>?> _cachedFilters = {};
+  ListQueue<MapEntry<String, Future<List<int>?> Function()>>
       _queuedApplyFilterFuncList =
       ListQueue<MapEntry<String, Future<List<int>> Function()>>();
   int _runningCount = 0;
-  Filter _filter;
-  List<Filter> _filters;
-  Uint8List _imageBytes;
-  Uint8List _thumbnailImageBytes;
-  bool _loading;
-  ImagePickerConfigs _configs = ImagePickerConfigs();
+  late Filter _filter;
+  late List<Filter> _filters;
+  Uint8List? _imageBytes;
+  Uint8List? _thumbnailImageBytes;
+  late bool _loading;
+  ImagePickerConfigs? _configs = ImagePickerConfigs();
 
   @override
   void initState() {
@@ -82,7 +82,7 @@ class _ImageFilterState extends State<ImageFilter> {
     });
   }
 
-  Future<List<int>> _getFilteredData(String key) async {
+  Future<List<int>?> _getFilteredData(String key) async {
     if (_cachedFilters.containsKey(key))
       return _cachedFilters[key];
     else {
@@ -142,7 +142,7 @@ class _ImageFilterState extends State<ImageFilter> {
                       width: double.infinity,
                       height: double.infinity,
                       padding: EdgeInsets.all(8.0),
-                      child: _buildFilteredWidget(_filter, _imageBytes),
+                      child: _buildFilteredWidget(_filter, _imageBytes!),
                     ),
                   ),
                   Container(
@@ -162,7 +162,7 @@ class _ImageFilterState extends State<ImageFilter> {
                                   width: 90,
                                   height: 75,
                                   child: _buildFilteredWidget(
-                                      _filters[index], _thumbnailImageBytes,
+                                      _filters[index], _thumbnailImageBytes!,
                                       isThumbnail: true),
                                 ),
                                 Padding(
@@ -193,7 +193,8 @@ class _ImageFilterState extends State<ImageFilter> {
     File imageFile = File(targetPath);
 
     // Run selected filter on output image
-    var outputBytes = await this._filter.apply(_imageBytes);
+    var outputBytes =
+        await (this._filter.apply(_imageBytes!) as FutureOr<Uint8List>);
 
     await imageFile.writeAsBytes(outputBytes);
     return imageFile;
@@ -201,12 +202,12 @@ class _ImageFilterState extends State<ImageFilter> {
 
   Widget _buildFilteredWidget(Filter filter, Uint8List imgBytes,
       {bool isThumbnail = false}) {
-    var key = (filter?.name ?? "_") + (isThumbnail ? "thumbnail" : "");
+    var key = filter.name + (isThumbnail ? "thumbnail" : "");
     var data =
         this._cachedFilters.containsKey(key) ? this._cachedFilters[key] : null;
     var isSelected = (filter.name == this._filter.name);
 
-    var createWidget = (Uint8List bytes) {
+    var createWidget = (Uint8List? bytes) {
       if (isThumbnail) {
         return Container(
           decoration: BoxDecoration(
@@ -216,11 +217,11 @@ class _ImageFilterState extends State<ImageFilter> {
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.memory(bytes, fit: BoxFit.cover)),
+              child: Image.memory(bytes!, fit: BoxFit.cover)),
         );
       } else
         return Image.memory(
-          bytes,
+          bytes!,
           fit: BoxFit.contain,
           gaplessPlayback: true,
         );
@@ -232,24 +233,24 @@ class _ImageFilterState extends State<ImageFilter> {
       };
       this
           ._queuedApplyFilterFuncList
-          .add(MapEntry<String, Future<List<int>> Function()>(key, calcFunc));
+          .add(MapEntry<String, Future<List<int>?> Function()>(key, calcFunc));
       _runApplyFilterProcess();
 
-      return FutureBuilder<List<int>>(
+      return FutureBuilder<List<int>?>(
         future: _getFilteredData(key),
-        builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<int>?> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               if (snapshot.hasError)
                 return Center(child: Text('Error: ${snapshot.error}'));
-              return createWidget(snapshot.data);
+              return createWidget(snapshot.data as Uint8List?);
             default:
               return CupertinoActivityIndicator();
           }
         },
       );
     } else {
-      return createWidget(data);
+      return createWidget(data as Uint8List?);
     }
   }
 
@@ -682,71 +683,12 @@ class _ImageFilterState extends State<ImageFilter> {
 class Filter extends Object {
   final String name;
   final List<double> matrix;
-  Filter({this.name, this.matrix = defaultColorMatrix}) : assert(name != null);
+  Filter({required this.name, this.matrix = defaultColorMatrix});
 
-  Future<Uint8List> apply(Uint8List pixels) async {
+  Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption(matrix: this.matrix));
     return await ImageEditor.editImage(
         image: pixels, imageEditorOption: option);
-  }
-}
-
-class ColorFilterGenerator {
-  static List<double> hueAdjustMatrix({double value}) {
-    value = value * pi;
-
-    if (value == 0)
-      return [
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-      ];
-
-    double cosVal = cos(value);
-    double sinVal = sin(value);
-    double lumR = 0.213;
-    double lumG = 0.715;
-    double lumB = 0.072;
-
-    return List<double>.from(<double>[
-      (lumR + (cosVal * (1 - lumR))) + (sinVal * (-lumR)),
-      (lumG + (cosVal * (-lumG))) + (sinVal * (-lumG)),
-      (lumB + (cosVal * (-lumB))) + (sinVal * (1 - lumB)),
-      0,
-      0,
-      (lumR + (cosVal * (-lumR))) + (sinVal * 0.143),
-      (lumG + (cosVal * (1 - lumG))) + (sinVal * 0.14),
-      (lumB + (cosVal * (-lumB))) + (sinVal * (-0.283)),
-      0,
-      0,
-      (lumR + (cosVal * (-lumR))) + (sinVal * (-(1 - lumR))),
-      (lumG + (cosVal * (-lumG))) + (sinVal * lumG),
-      (lumB + (cosVal * (1 - lumB))) + (sinVal * lumB),
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-    ]).map((i) => i.toDouble()).toList();
   }
 }

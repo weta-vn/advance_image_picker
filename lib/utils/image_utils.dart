@@ -21,12 +21,12 @@ class ImageUtils {
     var outputWidth = properties.width;
     var outputHeight = properties.height;
 
-    if (properties.width > maxWidth || properties.height > maxHeight) {
-      var ratio = properties.width / properties.height;
-      outputWidth = min(properties.width, maxWidth);
+    if (properties.width! > maxWidth || properties.height! > maxHeight) {
+      var ratio = properties.width! / properties.height!;
+      outputWidth = min(properties.width!, maxWidth);
       outputHeight = outputWidth ~/ ratio;
       if (outputHeight > maxHeight) {
-        outputHeight = min(properties.height, maxHeight);
+        outputHeight = min(properties.height!, maxHeight);
         outputWidth = (outputHeight * ratio).toInt();
       }
 
@@ -43,8 +43,8 @@ class ImageUtils {
   static Future<File> cropImage(String path,
       {int originX = 0,
       int originY = 0,
-      double widthPercent,
-      double heightPercent}) async {
+      required double widthPercent,
+      required double heightPercent}) async {
     ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
@@ -52,8 +52,8 @@ class ImageUtils {
         path,
         originX,
         originY,
-        (widthPercent * properties.width).toInt(),
-        (heightPercent * properties.height).toInt());
+        (widthPercent * properties.width!).toInt(),
+        (heightPercent * properties.height!).toInt());
   }
 
   static Future<File> getTempFile(String filename) async {
@@ -68,8 +68,8 @@ class ImageUtils {
   static Future<ImageObject> getImageInfo(ImageObject img) async {
     // Get image width/height
     if (img.modifiedWidth == null || img.modifiedHeight == null) {
-      var bytes = await File(img.modifiedPath).readAsBytes();
-      var decodedImg = decodeImage(bytes);
+      var bytes = await File(img.modifiedPath!).readAsBytes();
+      var decodedImg = decodeImage(bytes)!;
       img.modifiedWidth = decodedImg.width;
       img.modifiedHeight = decodedImg.height;
     }

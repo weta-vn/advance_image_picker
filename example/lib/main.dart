@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   var image = _imgObjs[index];
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Image.file(File(image.modifiedPath),
+                    child: Image.file(File(image.modifiedPath ?? ""),
                         height: 80, fit: BoxFit.cover),
                   );
                 })

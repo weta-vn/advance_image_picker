@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -17,11 +18,11 @@ class ImageSticker extends StatefulWidget {
   final String title;
   final int maxWidth;
   final int maxHeight;
-  final ImagePickerConfigs configs;
+  final ImagePickerConfigs? configs;
 
   ImageSticker(
-      {@required this.file,
-      @required this.title,
+      {required this.file,
+      required this.title,
       this.maxWidth = 1920,
       this.configs,
       this.maxHeight = 1080});
@@ -31,10 +32,10 @@ class ImageSticker extends StatefulWidget {
 }
 
 class _ImageStickerState extends State<ImageSticker> {
-  GlobalKey _boundaryKey;
-  Uint8List _imageBytes;
+  GlobalKey? _boundaryKey;
+  Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
-  ImagePickerConfigs _configs = ImagePickerConfigs();
+  ImagePickerConfigs? _configs = ImagePickerConfigs();
 
   @override
   void initState() {
@@ -75,8 +76,8 @@ class _ImageStickerState extends State<ImageSticker> {
   _buildHelpButton(BuildContext context) {
     return IconButton(
         icon: Icon(Icons.help_outline),
-        onPressed: () {
-          return showDialog<void>(
+        onPressed: () async {
+          showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
@@ -84,7 +85,7 @@ class _ImageStickerState extends State<ImageSticker> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_configs.textImageStickerGuide),
+                      child: Text(_configs!.textImageStickerGuide),
                     ),
                     Positioned(
                       top: -15,
@@ -109,7 +110,7 @@ class _ImageStickerState extends State<ImageSticker> {
       icon: Icon(Icons.done),
       onPressed: () async {
         // Save current image editing
-        Uint8List image = await _exportWidgetToImage(_boundaryKey);
+        Uint8List image = await _exportWidgetToImage(_boundaryKey!);
 
         // Output to file
         final dir = await PathProvider.getTemporaryDirectory();
@@ -136,7 +137,7 @@ class _ImageStickerState extends State<ImageSticker> {
             decoration: BoxDecoration(
                 color: Colors.black,
                 image: DecorationImage(
-                    fit: BoxFit.contain, image: MemoryImage(_imageBytes))),
+                    fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
           ),
         ),
         List<int>.generate(33, (index) => index + 1)
@@ -167,9 +168,11 @@ class _ImageStickerState extends State<ImageSticker> {
   }
 
   _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary = key.currentContext.findRenderObject();
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
-    var byteData = await image.toByteData(format: ImageByteFormat.png);
+    var byteData = await (image.toByteData(format: ImageByteFormat.png)
+        as FutureOr<ByteData>);
     var pngBytes = byteData.buffer.asUint8List();
     return pngBytes;
   }
@@ -177,7 +180,7 @@ class _ImageStickerState extends State<ImageSticker> {
 
 class StickerImageView extends StatefulWidget {
   StickerImageView(this.source, this.stickerList,
-      {Key key,
+      {Key? key,
       this.stickerSize = 40.0,
       this.stickerMaxScale = 2.0,
       this.stickerMinScale = 0.5,
@@ -193,7 +196,7 @@ class StickerImageView extends StatefulWidget {
   final Widget source;
   final List<Image> stickerList;
 
-  final GlobalKey boundaryKey;
+  final GlobalKey? boundaryKey;
 
   final double stickerSize;
   final double stickerMaxScale;
@@ -205,7 +208,7 @@ class StickerImageView extends StatefulWidget {
   final int panelStickercrossAxisCount;
   final double panelStickerAspectRatio;
 
-  final Function onTransformed;
+  final Function? onTransformed;
 
   final _StickerImageViewState _flutterSimpleStickerViewState =
       _StickerImageViewState();
@@ -215,7 +218,7 @@ class StickerImageView extends StatefulWidget {
 }
 
 class _StickerImageViewState extends State<StickerImageView> {
-  Size _viewport;
+  Size? _viewport;
   List<StickerView> _attachedList = [];
 
   void attachSticker(Image image) {
@@ -232,10 +235,10 @@ class _StickerImageViewState extends State<StickerImageView> {
           setState(() {
             this._attachedList.removeWhere((s) => s.key == sticker.key);
           });
-          if (widget.onTransformed != null) widget.onTransformed();
+          if (widget.onTransformed != null) widget.onTransformed!();
         },
       ));
-      if (widget.onTransformed != null) widget.onTransformed();
+      if (widget.onTransformed != null) widget.onTransformed!();
     });
   }
 
@@ -297,7 +300,7 @@ class _StickerImageViewState extends State<StickerImageView> {
 class StickerView extends StatefulWidget {
   StickerView(
     this.image, {
-    Key key,
+    Key? key,
     this.width,
     this.height,
     this.minScale = 0.5,
@@ -308,16 +311,16 @@ class StickerView extends StatefulWidget {
   }) : super(key: key);
 
   final Image image;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   final double minScale;
   final double maxScale;
 
-  final Function onTapRemove;
-  final Function onTransformed;
+  final Function? onTapRemove;
+  final Function? onTransformed;
 
-  Matrix4 matrix;
+  Matrix4? matrix;
 
   @override
   _StickerViewState createState() => _StickerViewState();
@@ -330,7 +333,7 @@ class _StickerViewState extends State<StickerView> {
       onDoubleTap: () {
         setState(() {
           if (this.widget.onTapRemove != null) {
-            this.widget.onTapRemove(this.widget);
+            this.widget.onTapRemove!(this.widget);
           }
         });
       },
@@ -342,7 +345,7 @@ class _StickerViewState extends State<StickerView> {
           });
         },
         child: Transform(
-          transform: widget.matrix,
+          transform: widget.matrix!,
           child: Container(
               width: widget.width, height: widget.height, child: widget.image),
         ),
