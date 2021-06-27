@@ -13,20 +13,32 @@ import '../configs/image_picker_configs.dart';
 import '../models/image_object.dart';
 import '../utils/image_utils.dart';
 import 'image_viewer.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Picker mode definition: Camera or Album (Photo gallery of device)
 class PickerMode {
   static const int Camera = 0;
   static const int Album = 1;
 }
 
+/// Default height of botton control panel
 const int kBottomControlPanelHeight = 265;
 
+/// Image picker for selecting **multiple images** from the Android and iOS image library, **taking new pictures with the camera**, and **edit** them before using such as rotation, cropping, adding sticker/filters.
 class ImagePicker extends StatefulWidget {
+  /// Max selecting count
   final int maxCount;
+
+  /// Default for capturing new image in fullscreen mode or preview mode
   final bool isFullscreenImage;
+
+  /// Custom configuration, if not provided, plugin will use default configuration
   final ImagePickerConfigs? configs;
+
+  /// Default mode for selecting image: capture new image or select image from album
   final bool isCaptureFirst;
 
+  /// Constructor
   const ImagePicker(
       {this.maxCount = 10,
       this.isFullscreenImage = false,
@@ -38,40 +50,86 @@ class ImagePicker extends StatefulWidget {
 }
 
 class _ImagePickerState extends State<ImagePicker>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
-  // Camera
+    with
+        WidgetsBindingObserver,
+        TickerProviderStateMixin,
+        PortraitStatefulModeMixin<ImagePicker> {
+  /// List of camera detected in device
   List<CameraDescription> _cameras = [];
+
+  /// Default mode for selecting images
   int? _mode = PickerMode.Camera;
+
+  /// Camera controller
   CameraController? _controller;
+
+  /// Scroll controller for selecting images screen
   final _scrollController = ScrollController();
+
+  /// Future object for initilizing camera controller
   Future<void>? _initializeControllerFuture;
+
+  /// Selecting images
   List<ImageObject> _selectedImages = [];
+
+  /// Flag indicating state of camera, which capturing or not
   bool _isCapturing = false;
+
+  /// Flag indicating state of plugin, which creating output or not
   bool _isOutputCreating = false;
+
+  /// Current camera preview mode
   bool _isFullscreenImage = false;
+
+  /// Flag indicating state of image selecting
   bool _isImageSelectedDone = false;
+
+  /// Image configuration
   ImagePickerConfigs? _configs = ImagePickerConfigs();
 
-  // Photo manager
+  /// Photo album list
   List<AssetPathEntity> _albums = [];
+
+  /// Currently viewing album
   AssetPathEntity? _currentAlbum;
+
+  /// Album thumbnail cache
   List<Uint8List?> _albumThumbnails = [];
+
+  /// Key for current album object
   GlobalKey<_MediaAlbumWidgetState> _currentAlbumKey = GlobalKey();
 
-  // Capture
+  /// Min available zoom ratio
   double _minAvailableZoom = 1.0;
+
+  /// Max available zoom ratio
   double _maxAvailableZoom = 1.0;
+
+  /// Current scale ratio
   double _currentScale = 1.0;
+
+  /// Base scale ratio
   double _baseScale = 1.0;
-  // Counting pointers (number of user fingers on screen)
+
+  /// Counting pointers (number of user fingers on screen)
   int _pointers = 0;
+
+  /// Min available exposure offset
   double _minAvailableExposureOffset = 0.0;
+
+  /// Max available exposure offset
   double _maxAvailableExposureOffset = 0.0;
+
+  /// Current exposure offset
   double _currentExposureOffset = 0.0;
 
+  /// Exposure mode control controller
   late AnimationController _exposureModeControlRowAnimationController;
+
+  /// Exposure mode control
   late Animation<double> _exposureModeControlRowAnimation;
 
+  /// Global key for this screen
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -79,9 +137,11 @@ class _ImagePickerState extends State<ImagePicker>
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
 
+    // Setting preview screen mode from configuration
     if (widget.configs != null) _configs = widget.configs;
     _isFullscreenImage = widget.isFullscreenImage;
 
+    // Setting animation controller
     _exposureModeControlRowAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -91,8 +151,8 @@ class _ImagePickerState extends State<ImagePicker>
       curve: Curves.easeInCubic,
     );
 
+    // Init camera or album
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      // Init camera
       if (widget.isCaptureFirst)
         await _initPhotoCapture();
       else
@@ -112,6 +172,7 @@ class _ImagePickerState extends State<ImagePicker>
     super.dispose();
   }
 
+  /// Called when the system puts the app in the background or returns the app to the foreground.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = _controller;
@@ -121,6 +182,7 @@ class _ImagePickerState extends State<ImagePicker>
       return;
     }
 
+    // Process when app state changed
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
@@ -128,12 +190,18 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Initialize the camera for photo capturing
   Future<void> _initPhotoCapture() async {
+    // Listup all cameras in current device
     _cameras = await availableCameras();
+
+    // Select new camera for capturing
     _onNewCameraSelected(_cameras.first);
   }
 
+  /// Select new camera for capturing
   void _onNewCameraSelected(CameraDescription cameraDescription) async {
+    // Dispose old then create new camera controller
     if (_controller != null) {
       await _controller!.dispose();
     }
@@ -153,9 +221,11 @@ class _ImagePickerState extends State<ImagePicker>
       }
     });
 
+    // Create future object for initilizing new camera controller
     try {
       _initializeControllerFuture =
           cameraController.initialize().then((value) async {
+        // After initialized, setting zoom & exposure values
         Future.wait([
           cameraController
               .getMinExposureOffset()
@@ -171,6 +241,7 @@ class _ImagePickerState extends State<ImagePicker>
               .then((value) => _minAvailableZoom = value),
         ]);
 
+        // Refresh screen for applying new updated
         if (mounted) {
           setState(() {});
         }
@@ -180,11 +251,12 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Init photo gallery for image selecting
   Future<void> _initPhotoGallery() async {
-    // Init photo manager
+    // Request permission for image selecting
     var result = await PhotoManager.requestPermission();
     if (result) {
-      // Get albums
+      // Get albums then set first album as current album
       _albums = await PhotoManager.getAssetPathList(
           type: RequestType.image, onlyAll: false);
       if (_albums.length > 0) {
@@ -196,8 +268,10 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Run pre-processing for input image in [path] and [croppingParams]
   Future<File> _imagePreProcessing(String path, {Map? croppingParams}) async {
     if (_configs!.imagePreProcessingEnabled) {
+      // Run compress & resize image
       var file = await ImageUtils.compressResizeImage(path,
           maxWidth: _configs!.maxWidth,
           maxHeight: _configs!.maxHeight,
@@ -214,6 +288,7 @@ class _ImagePickerState extends State<ImagePicker>
     return File(path);
   }
 
+  /// Run post-processing for output image
   Future<File> _imagePostProcessing(String? path) async {
     if (!_configs!.imagePreProcessingEnabled)
       return await ImageUtils.compressResizeImage(path!,
@@ -223,6 +298,7 @@ class _ImagePickerState extends State<ImagePicker>
     return File(path!);
   }
 
+  /// Show confirmation dialog when exit without saving selected images
   Future<bool> _onWillPop() async {
     if (!_configs!.showNonSelectedAlert ||
         _isImageSelectedDone ||
@@ -250,6 +326,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -264,6 +342,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Build app bar title
   _buildAppBarTitle(BuildContext context) {
     return GestureDetector(
         onTap: (_mode == PickerMode.Album)
@@ -297,6 +376,7 @@ class _ImagePickerState extends State<ImagePicker>
             isCameraMode: (_mode == PickerMode.Camera)));
   }
 
+  /// Build done button
   _buildDoneButton(BuildContext context) {
     return Padding(
         padding: EdgeInsets.all(8.0),
@@ -343,6 +423,7 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
+  /// Build body view
   _buildBodyView(BuildContext context) {
     final size = MediaQuery.of(context).size;
     var bottomHeight = (widget.maxCount == 1)
@@ -378,6 +459,7 @@ class _ImagePickerState extends State<ImagePicker>
     ]);
   }
 
+  /// Build zoom ratio button
   _buildZoomRatioButton(BuildContext context) {
     return FlatButton(
         onPressed: null,
@@ -393,6 +475,7 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
+  /// Build exposure adjusting button
   _buildExposureButton(BuildContext context) {
     return FlatButton(
       shape: CircleBorder(),
@@ -403,6 +486,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Exposure change mode button event
   void _onExposureModeButtonPressed() {
     if (_exposureModeControlRowAnimationController.value == 1) {
       _exposureModeControlRowAnimationController.reverse();
@@ -411,6 +495,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Build image full option
   _buildImageFullOption(BuildContext context) {
     return FlatButton(
         onPressed: () {
@@ -428,6 +513,7 @@ class _ImagePickerState extends State<ImagePicker>
             size: 48));
   }
 
+  /// Build bottom panel
   _buildBottomPanel(BuildContext context) {
     return Container(
       color: ((_mode == PickerMode.Camera) && _isFullscreenImage)
@@ -454,6 +540,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Build album select button
   _buildAlbumSelectButton(BuildContext context,
       {bool isPop = false, bool isCameraMode = false}) {
     if (isCameraMode)
@@ -488,6 +575,7 @@ class _ImagePickerState extends State<ImagePicker>
         : container;
   }
 
+  /// Build camera preview widget
   _buildCameraPreview(BuildContext context) {
     final size = MediaQuery.of(context).size;
     if (_controller?.value == null)
@@ -501,7 +589,7 @@ class _ImagePickerState extends State<ImagePicker>
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return (_controller?.value?.isInitialized ?? false)
+            return (_controller?.value.isInitialized ?? false)
                 ? Container(
                     width: size.width,
                     height: size.height,
@@ -527,6 +615,7 @@ class _ImagePickerState extends State<ImagePicker>
         });
   }
 
+  /// Tap event on camera preview
   void _onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
     if (_controller == null) {
       return;
@@ -542,10 +631,12 @@ class _ImagePickerState extends State<ImagePicker>
     cameraController.setFocusPoint(offset);
   }
 
+  /// Handle scale start event
   void _handleScaleStart(ScaleStartDetails details) {
     _baseScale = _currentScale;
   }
 
+  /// Handle scale updated event
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
     if (_controller == null || _pointers != 2) {
@@ -562,6 +653,7 @@ class _ImagePickerState extends State<ImagePicker>
     });
   }
 
+  /// Build album preview widget
   _buildAlbumPreview(BuildContext context) {
     var bottomHeight = (widget.maxCount == 1)
         ? (kBottomControlPanelHeight - 40)
@@ -574,7 +666,7 @@ class _ImagePickerState extends State<ImagePicker>
               key: _currentAlbumKey,
               gridCount: _configs!.albumGridCount,
               maxCount: widget.maxCount,
-              album: _currentAlbum,
+              album: _currentAlbum!,
               selectedImages: _selectedImages,
               preProcessing: this._imagePreProcessing,
               onImageSelected: (image) async {
@@ -598,6 +690,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Build album thumbnail preview
   _buildAlbumThumbnails() async {
     if (_albums.isNotEmpty && _albumThumbnails.isEmpty) {
       List<Uint8List?> ret = [];
@@ -614,6 +707,7 @@ class _ImagePickerState extends State<ImagePicker>
     return _albumThumbnails;
   }
 
+  /// Build album list screen
   _buildAlbumList(List<AssetPathEntity> albums, BuildContext context,
       Function(AssetPathEntity newValue) callback) {
     return FutureBuilder(
@@ -649,6 +743,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Reorder selected image list event
   _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex >= this._selectedImages.length ||
         newIndex > this._selectedImages.length ||
@@ -665,6 +760,7 @@ class _ImagePickerState extends State<ImagePicker>
     });
   }
 
+  /// Build reorderable selected image list
   _buildReorderableSelectedImageList(BuildContext context) {
     var makeThumbnailImage = (String? path) {
       return ClipRRect(
@@ -802,6 +898,7 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
+  /// Build camera controls such as change flash mode, switch cameras, capture button, ...
   _buildCameraControls(BuildContext context) {
     var isMaxCount = this._selectedImages.length >= widget.maxCount;
 
@@ -930,6 +1027,7 @@ class _ImagePickerState extends State<ImagePicker>
         : const SizedBox();
   }
 
+  /// Build picker mode list
   _buildPickerModeList(BuildContext context) {
     return CupertinoSlidingSegmentedControl(
         backgroundColor: Colors.transparent,
@@ -963,6 +1061,7 @@ class _ImagePickerState extends State<ImagePicker>
         });
   }
 
+  /// Build exposure mode control widget
   Widget _exposureModeControlRowWidget() {
     if (_controller?.value == null) return const SizedBox();
 
@@ -1046,12 +1145,14 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
+  /// Set exposure mode button
   void _onSetExposureModeButtonPressed(ExposureMode mode) {
     _setExposureMode(mode).then((_) {
       if (mounted) setState(() {});
     });
   }
 
+  /// Set exposure mode button
   Future<void> _setExposureMode(ExposureMode mode) async {
     if (_controller == null) {
       return;
@@ -1064,6 +1165,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Set exposure offset
   Future<void> _setExposureOffset(double offset) async {
     if (_controller == null) {
       return;
@@ -1085,23 +1187,43 @@ class _ImagePickerState extends State<ImagePicker>
   }
 }
 
+/// Photo album widget
 class MediaAlbumWidget extends StatefulWidget {
+  /// Grid count
   final int gridCount;
+
+  /// Max selecting count
   final int? maxCount;
+
+  /// Max image width
   final int maxWidth;
+
+  /// Max image height
   final int maxHeight;
+
+  /// Album thumbnail width
   final int albumThumbWidth;
+
+  /// Album thumbnail height
   final int albumThumbHeight;
-  final AssetPathEntity? album;
+
+  /// Album object
+  AssetPathEntity album;
+
+  /// Selected image objects
   final List<ImageObject>? selectedImages;
+
+  /// Pre-processing function for image object
   final Function(String)? preProcessing;
+
+  /// Image selected event
   final Function(ImageObject)? onImageSelected;
 
-  const MediaAlbumWidget(
+  MediaAlbumWidget(
       {Key? key,
       this.gridCount = 4,
       this.maxCount,
-      this.album,
+      required this.album,
       this.maxWidth = 1280,
       this.maxHeight = 720,
       this.albumThumbWidth = 200,
@@ -1116,11 +1238,20 @@ class MediaAlbumWidget extends StatefulWidget {
 }
 
 class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
+  /// Current selected images
   List<ImageObject> _selectedImages = [];
+
+  /// Asset lists for this album
   List<AssetEntity> _assets = [];
+
+  /// Thumbnail cache
   Map<String, Uint8List?> _thumbnailCache = {};
+
+  /// Loading asset
   String _loadingAsset = "";
-  AssetPathEntity? _album;
+
+  /// Album object
+  late AssetPathEntity _album;
 
   @override
   initState() {
@@ -1137,6 +1268,7 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
     super.dispose();
   }
 
+  /// Update private state by function call from external function
   updateStateFromExternal(
       {AssetPathEntity? album, List<ImageObject>? selectedImages}) {
     if (selectedImages != null)
@@ -1149,6 +1281,7 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
     }
   }
 
+  /// Get thumbnail bytes for an asset
   Future<Uint8List?> _getAssetThumbnail(AssetEntity asset) async {
     if (_thumbnailCache.containsKey(asset.id))
       return _thumbnailCache[asset.id];
@@ -1161,9 +1294,10 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
     }
   }
 
-  _fetchMedia(AssetPathEntity? currentAlbum) async {
+  /// Fetch media/assets for [currentAlbum]
+  _fetchMedia(AssetPathEntity currentAlbum) async {
     if (_assets.isEmpty) {
-      var ret = await currentAlbum!.getAssetListRange(start: 0, end: 5000);
+      var ret = await currentAlbum.getAssetListRange(start: 0, end: 5000);
 
       List<AssetEntity> assets = [];
       for (var asset in ret) {

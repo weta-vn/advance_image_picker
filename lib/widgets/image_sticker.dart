@@ -12,26 +12,32 @@ import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
 import '../utils/image_utils.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image sticker width allow adding sticker icon into image
 class ImageSticker extends StatefulWidget {
+  /// Image object
   final File file;
+
+  /// Title for widget
   final String title;
+
+  /// Max output width
   final int maxWidth;
+
+  /// Max output height
   final int maxHeight;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageSticker(
-      {required this.file,
-      required this.title,
-      this.maxWidth = 1920,
-      this.configs,
-      this.maxHeight = 1080});
+  ImageSticker({required this.file, required this.title, this.maxWidth = 1920, this.configs, this.maxHeight = 1080});
 
   @override
   _ImageStickerState createState() => _ImageStickerState();
 }
 
-class _ImageStickerState extends State<ImageSticker> {
+class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
@@ -58,6 +64,8 @@ class _ImageStickerState extends State<ImageSticker> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     _boundaryKey = GlobalKey();
 
     return Scaffold(
@@ -114,14 +122,12 @@ class _ImageStickerState extends State<ImageSticker> {
 
         // Output to file
         final dir = await PathProvider.getTemporaryDirectory();
-        final targetPath =
-            "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+        final targetPath = "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
         File file = File(targetPath);
         await file.writeAsBytes(image);
 
         // Compress & resize result image
-        file = await ImageUtils.compressResizeImage(targetPath,
-            maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
+        file = await ImageUtils.compressResizeImage(targetPath, maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
         Navigator.of(context).pop(file);
       },
     );
@@ -135,9 +141,7 @@ class _ImageStickerState extends State<ImageSticker> {
           transformationController: _controller,
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.black,
-                image: DecorationImage(
-                    fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
+                color: Colors.black, image: DecorationImage(fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
           ),
         ),
         List<int>.generate(33, (index) => index + 1)
@@ -168,11 +172,9 @@ class _ImageStickerState extends State<ImageSticker> {
   }
 
   _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
-    var byteData = await (image.toByteData(format: ImageByteFormat.png)
-        as FutureOr<ByteData>);
+    var byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
     var pngBytes = byteData.buffer.asUint8List();
     return pngBytes;
   }
@@ -210,8 +212,7 @@ class StickerImageView extends StatefulWidget {
 
   final Function? onTransformed;
 
-  final _StickerImageViewState _flutterSimpleStickerViewState =
-      _StickerImageViewState();
+  final _StickerImageViewState _flutterSimpleStickerViewState = _StickerImageViewState();
 
   @override
   _StickerImageViewState createState() => _flutterSimpleStickerViewState;
@@ -254,8 +255,7 @@ class _StickerImageViewState extends State<StickerImageView> {
               children: <Widget>[
                 LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
-                    _viewport = _viewport ??
-                        Size(constraints.maxWidth, constraints.maxHeight);
+                    _viewport = _viewport ?? Size(constraints.maxWidth, constraints.maxHeight);
                     return widget.source;
                   },
                 ),
@@ -346,8 +346,7 @@ class _StickerViewState extends State<StickerView> {
         },
         child: Transform(
           transform: widget.matrix!,
-          child: Container(
-              width: widget.width, height: widget.height, child: widget.image),
+          child: Container(width: widget.width, height: widget.height, child: widget.image),
         ),
       ),
     );

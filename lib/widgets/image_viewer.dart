@@ -15,14 +15,26 @@ import '../utils/image_utils.dart';
 import 'image_edit.dart';
 import 'image_filter.dart';
 import 'image_sticker.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image viewer for selected images
 class ImageViewer extends StatefulWidget {
+  /// Initial index in image list
   final int initialIndex;
+
+  /// Page controller
   final PageController pageController;
+
+  /// Title
   final String? title;
+
+  /// Selected images
   final List<ImageObject>? images;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
+  /// Changed event
   final Function(dynamic)? onChanged;
 
   ImageViewer(
@@ -37,11 +49,21 @@ class ImageViewer extends StatefulWidget {
   _ImageViewerState createState() => _ImageViewerState();
 }
 
-class _ImageViewerState extends State<ImageViewer> {
+class _ImageViewerState extends State<ImageViewer>
+    with PortraitStatefulModeMixin<ImageViewer> {
+  /// Current index of image in list
   int? _currentIndex;
+
+  /// Selected images
   List<ImageObject> _images = [];
+
+  /// Configuration
   ImagePickerConfigs? _configs = ImagePickerConfigs();
+
+  /// Text controller
   TextEditingController _textFieldController = TextEditingController();
+
+  /// Flag indicate processing or not
   bool _isProcessing = false;
 
   @override
@@ -59,6 +81,7 @@ class _ImageViewerState extends State<ImageViewer> {
     super.dispose();
   }
 
+  /// Pre-processing function
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs!.imagePreProcessingBeforeEditingEnabled)
       return await ImageUtils.compressResizeImage(path!,
@@ -68,6 +91,7 @@ class _ImageViewerState extends State<ImageViewer> {
     return File(path!);
   }
 
+  /// On changed event
   void onPageChanged(int? index) {
     setState(() {
       _currentIndex = index;
@@ -76,6 +100,8 @@ class _ImageViewerState extends State<ImageViewer> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     var hasImages = (this._images.length > 0);
     return Scaffold(
         backgroundColor: Colors.black,
@@ -144,6 +170,7 @@ class _ImageViewerState extends State<ImageViewer> {
         ));
   }
 
+  /// Image viewer as gallery for selected image
   _buildPhotoViewGallery(BuildContext context) {
     return Expanded(
       child: Stack(
@@ -171,6 +198,7 @@ class _ImageViewerState extends State<ImageViewer> {
     );
   }
 
+  /// Build an image viewer
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final item = _images[index];
     return PhotoViewGalleryPageOptions(
@@ -180,6 +208,7 @@ class _ImageViewerState extends State<ImageViewer> {
         maxScale: PhotoViewComputedScale.covered * 1.1);
   }
 
+  /// Reorder selected image list
   _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex < 0 || newIndex < 0) return false;
 
@@ -194,6 +223,7 @@ class _ImageViewerState extends State<ImageViewer> {
     });
   }
 
+  /// Build reorderable selected image list
   _buildReorderableSelectedImageList(BuildContext context) {
     var makeThumbnail = (String? path) {
       return ClipRRect(
@@ -246,6 +276,7 @@ class _ImageViewerState extends State<ImageViewer> {
         ));
   }
 
+  /// Image viewer for current image
   _buildCurrentImageInfoView(BuildContext context) {
     var image = this._images[this._currentIndex!];
 
@@ -278,6 +309,7 @@ class _ImageViewerState extends State<ImageViewer> {
         });
   }
 
+  /// Build editor controls
   _buildEditorControls(BuildContext context) {
     var imageChanged = (_images[_currentIndex!].modifiedPath !=
         _images[_currentIndex!].originalPath);

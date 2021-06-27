@@ -13,12 +13,23 @@ import 'package:intl/intl.dart';
 
 import '../configs/image_picker_configs.dart';
 import '../utils/image_utils.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image filter widget
 class ImageFilter extends StatefulWidget {
+  /// Title of widget
   final String title;
+
+  /// Input file object
   final File file;
+
+  /// Image max width
   final int maxWidth;
+
+  /// Image max height
   final int maxHeight;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
   const ImageFilter(
@@ -34,7 +45,8 @@ class ImageFilter extends StatefulWidget {
   State<StatefulWidget> createState() => new _ImageFilterState();
 }
 
-class _ImageFilterState extends State<ImageFilter> {
+class _ImageFilterState extends State<ImageFilter>
+    with PortraitStatefulModeMixin<ImageFilter> {
   Map<String, List<int>?> _cachedFilters = {};
   ListQueue<MapEntry<String, Future<List<int>?> Function()>>
       _queuedApplyFilterFuncList =
@@ -111,6 +123,8 @@ class _ImageFilterState extends State<ImageFilter> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
