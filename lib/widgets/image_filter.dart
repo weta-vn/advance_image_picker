@@ -13,12 +13,23 @@ import 'package:intl/intl.dart';
 
 import '../configs/image_picker_configs.dart';
 import '../utils/image_utils.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image filter widget
 class ImageFilter extends StatefulWidget {
+  /// Title of widget
   final String title;
+
+  /// Input file object
   final File file;
+
+  /// Image max width
   final int maxWidth;
+
+  /// Image max height
   final int maxHeight;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
   const ImageFilter(
@@ -34,23 +45,24 @@ class ImageFilter extends StatefulWidget {
   State<StatefulWidget> createState() => new _ImageFilterState();
 }
 
-class _ImageFilterState extends State<ImageFilter> {
+class _ImageFilterState extends State<ImageFilter>
+    with PortraitStatefulModeMixin<ImageFilter> {
   Map<String, List<int>?> _cachedFilters = {};
   ListQueue<MapEntry<String, Future<List<int>?> Function()>>
       _queuedApplyFilterFuncList =
-      ListQueue<MapEntry<String, Future<List<int>> Function()>>();
+      ListQueue<MapEntry<String, Future<List<int>?> Function()>>();
   int _runningCount = 0;
   late Filter _filter;
   late List<Filter> _filters;
   Uint8List? _imageBytes;
   Uint8List? _thumbnailImageBytes;
   late bool _loading;
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
 
     _loading = true;
     _filters = _getPresetFilters();
@@ -111,6 +123,8 @@ class _ImageFilterState extends State<ImageFilter> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -193,10 +207,8 @@ class _ImageFilterState extends State<ImageFilter> {
     File imageFile = File(targetPath);
 
     // Run selected filter on output image
-    var outputBytes =
-        await (this._filter.apply(_imageBytes!) as FutureOr<Uint8List>);
-
-    await imageFile.writeAsBytes(outputBytes);
+    var outputBytes = await this._filter.apply(_imageBytes!);
+    await imageFile.writeAsBytes(outputBytes!);
     return imageFile;
   }
 

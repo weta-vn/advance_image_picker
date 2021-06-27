@@ -1,0 +1,60 @@
+PODS:
+  - camera (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_native_image (0.0.1):
+    - Flutter
+  - image_cropper (0.0.4):
+    - Flutter
+    - TOCropViewController (~> 2.6.0)
+  - image_editor (0.0.1):
+    - Flutter
+  - path_provider (0.0.1):
+    - Flutter
+  - photo_manager (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - TOCropViewController (2.6.0)
+
+DEPENDENCIES:
+  - camera (from `.symlinks/plugins/camera/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_native_image (from `.symlinks/plugins/flutter_native_image/ios`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
+  - image_editor (from `.symlinks/plugins/image_editor/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
+
+SPEC REPOS:
+  trunk:
+    - TOCropViewController
+
+EXTERNAL SOURCES:
+  camera:
+    :path: ".symlinks/plugins/camera/ios"
+  Flutter:
+    :path: Flutter
+  flutter_native_image:
+    :path: ".symlinks/plugins/flutter_native_image/ios"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
+  image_editor:
+    :path: ".symlinks/plugins/image_editor/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  photo_manager:
+    :path: ".symlinks/plugins/photo_manager/ios"
+
+SPEC CHECKSUMS:
+  camera: 3164201dc344383e62282964016528c4f5a9ad50
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
+  image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
+  image_editor: c1d038630eedea60d2dee9c14f36aa66c7f9cfab
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  photo_manager: 61cdd6835af271b9ad1bb533fccf71d5db02fff3
+  TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.10.1

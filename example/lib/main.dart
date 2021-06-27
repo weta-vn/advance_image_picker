@@ -5,6 +5,10 @@ import 'package:advance_image_picker/advance_image_picker.dart';
 import 'package:intl/intl.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return ErrorWidget(details.exception);
+  };
   runApp(MyApp());
 }
 
@@ -14,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup image picker configs
     var configs = ImagePickerConfigs();
-    configs.appBarTextColor = Colors.black;
+    configs.appBarTextColor = Colors.white;
     configs.translateFunc = (name, value) => Intl.message(value, name: name);
 
     return MaterialApp(
@@ -74,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   var image = _imgObjs[index];
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Image.file(File(image.modifiedPath ?? ""),
+                    child: Image.file(File(image.modifiedPath),
                         height: 80, fit: BoxFit.cover),
                   );
                 })
@@ -84,14 +88,14 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          List<ImageObject> objects = await Navigator.of(context)
+          List<ImageObject>? objects = await Navigator.of(context)
               .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
             return ImagePicker(maxCount: 5);
           }));
 
-          if (objects.length > 0) {
+          if ((objects?.length ?? 0) > 0) {
             setState(() {
-              _imgObjs = objects;
+              _imgObjs = objects!;
             });
           }
         },

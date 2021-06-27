@@ -12,12 +12,23 @@ import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
 import '../utils/image_utils.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image sticker width allow adding sticker icon into image
 class ImageSticker extends StatefulWidget {
+  /// Image object
   final File file;
+
+  /// Title for widget
   final String title;
+
+  /// Max output width
   final int maxWidth;
+
+  /// Max output height
   final int maxHeight;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
   ImageSticker(
@@ -31,16 +42,17 @@ class ImageSticker extends StatefulWidget {
   _ImageStickerState createState() => _ImageStickerState();
 }
 
-class _ImageStickerState extends State<ImageSticker> {
+class _ImageStickerState extends State<ImageSticker>
+    with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
   }
 
   @override
@@ -58,6 +70,8 @@ class _ImageStickerState extends State<ImageSticker> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     _boundaryKey = GlobalKey();
 
     return Scaffold(
@@ -85,7 +99,7 @@ class _ImageStickerState extends State<ImageSticker> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_configs!.textImageStickerGuide),
+                      child: Text(_configs.textImageStickerGuide),
                     ),
                     Positioned(
                       top: -15,
@@ -171,9 +185,8 @@ class _ImageStickerState extends State<ImageSticker> {
     RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
-    var byteData = await (image.toByteData(format: ImageByteFormat.png)
-        as FutureOr<ByteData>);
-    var pngBytes = byteData.buffer.asUint8List();
+    var byteData = await image.toByteData(format: ImageByteFormat.png);
+    var pngBytes = byteData?.buffer.asUint8List();
     return pngBytes;
   }
 }

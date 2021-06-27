@@ -10,12 +10,23 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
+import 'portrait_mode_mixin.dart';
 
+/// Image editing widget, such as cropping, rotating, scaling, ...
 class ImageEdit extends StatefulWidget {
+  /// Input file object
   final File file;
+
+  /// Title for image edit widget
   final String title;
+
+  /// Max width
   final int maxWidth;
+
+  /// Max height
   final int maxHeight;
+
+  /// Configuration
   final ImagePickerConfigs? configs;
 
   ImageEdit(
@@ -29,7 +40,8 @@ class ImageEdit extends StatefulWidget {
   _ImageEditState createState() => _ImageEditState();
 }
 
-class _ImageEditState extends State<ImageEdit> {
+class _ImageEditState extends State<ImageEdit>
+    with PortraitStatefulModeMixin<ImageEdit> {
   double _contrast = 0;
   double _brightness = 0;
   double _saturation = 0;
@@ -40,12 +52,12 @@ class _ImageEditState extends State<ImageEdit> {
   List<double> _saturationValues = [0];
   bool _isProcessing = false;
   bool _controlExpanded = true;
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
   }
 
   @override
@@ -68,6 +80,8 @@ class _ImageEditState extends State<ImageEdit> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
