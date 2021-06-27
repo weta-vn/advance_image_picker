@@ -58,7 +58,7 @@ class _ImageViewerState extends State<ImageViewer>
   List<ImageObject> _images = [];
 
   /// Configuration
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   /// Text controller
   TextEditingController _textFieldController = TextEditingController();
@@ -70,7 +70,7 @@ class _ImageViewerState extends State<ImageViewer>
   void initState() {
     super.initState();
     _images = []..addAll(widget.images!);
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
 
     _currentIndex = widget.initialIndex;
     onPageChanged(_currentIndex);
@@ -83,11 +83,11 @@ class _ImageViewerState extends State<ImageViewer>
 
   /// Pre-processing function
   Future<File> _imagePreProcessing(String? path) async {
-    if (_configs!.imagePreProcessingBeforeEditingEnabled)
+    if (_configs.imagePreProcessingBeforeEditingEnabled)
       return await ImageUtils.compressResizeImage(path!,
-          maxWidth: _configs!.maxWidth,
-          maxHeight: _configs!.maxHeight,
-          quality: _configs!.compressQuality);
+          maxWidth: _configs.maxWidth,
+          maxHeight: _configs.maxHeight,
+          quality: _configs.compressQuality);
     return File(path!);
   }
 
@@ -115,7 +115,7 @@ class _ImageViewerState extends State<ImageViewer>
                   child: Icon(Icons.delete,
                       size: 32,
                       color:
-                          hasImages ? _configs!.appBarTextColor : Colors.grey),
+                          hasImages ? _configs.appBarTextColor : Colors.grey),
                 ),
                 onTap: hasImages
                     ? () async {
@@ -124,17 +124,17 @@ class _ImageViewerState extends State<ImageViewer>
                           builder: (BuildContext context) {
                             // return object of type Dialog
                             return AlertDialog(
-                              title: new Text(_configs!.textConfirm),
-                              content: new Text(_configs!.textConfirmDelete),
+                              title: new Text(_configs.textConfirm),
+                              content: new Text(_configs.textConfirmDelete),
                               actions: <Widget>[
                                 TextButton(
-                                  child: new Text(_configs!.textNo),
+                                  child: new Text(_configs.textNo),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                 ),
                                 TextButton(
-                                  child: new Text(_configs!.textYes),
+                                  child: new Text(_configs.textYes),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     setState(() {
@@ -165,7 +165,7 @@ class _ImageViewerState extends State<ImageViewer>
                   _buildEditorControls(context),
                 ])
               : Center(
-                  child: Text(_configs!.textNoImages,
+                  child: Text(_configs.textNoImages,
                       style: TextStyle(color: Colors.grey))),
         ));
   }
@@ -202,7 +202,7 @@ class _ImageViewerState extends State<ImageViewer>
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final item = _images[index];
     return PhotoViewGalleryPageOptions(
-        imageProvider: FileImage(File(item.modifiedPath!)),
+        imageProvider: FileImage(File(item.modifiedPath)),
         initialScale: PhotoViewComputedScale.contained,
         minScale: PhotoViewComputedScale.contained * 0.5,
         maxScale: PhotoViewComputedScale.covered * 1.1);
@@ -230,13 +230,13 @@ class _ImageViewerState extends State<ImageViewer>
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
               fit: BoxFit.cover,
-              width: _configs!.thumbWidth.toDouble(),
-              height: _configs!.thumbHeight.toDouble()));
+              width: _configs.thumbWidth.toDouble(),
+              height: _configs.thumbHeight.toDouble()));
     };
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-        height: (_configs!.thumbHeight + 8).toDouble(),
+        height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
           data: ThemeData(
               canvasColor: Colors.transparent, shadowColor: Colors.red),
@@ -318,7 +318,7 @@ class _ImageViewerState extends State<ImageViewer>
       height: 80,
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        if (_configs!.cropFeatureEnabled)
+        if (_configs.cropFeatureEnabled)
           GestureDetector(
             child: Icon(Icons.crop_rotate, size: 32, color: Colors.white),
             onTap: () async {
@@ -326,9 +326,9 @@ class _ImageViewerState extends State<ImageViewer>
                   ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
               File? croppedFile = await ImageCropper.cropImage(
                   sourcePath: image.path,
-                  compressQuality: _configs!.compressQuality,
-                  maxWidth: _configs!.maxWidth,
-                  maxHeight: _configs!.maxHeight,
+                  compressQuality: _configs.compressQuality,
+                  maxWidth: _configs.maxWidth,
+                  maxHeight: _configs.maxHeight,
                   aspectRatioPresets: [
                     CropAspectRatioPreset.square,
                     CropAspectRatioPreset.ratio3x2,
@@ -337,7 +337,7 @@ class _ImageViewerState extends State<ImageViewer>
                     CropAspectRatioPreset.ratio16x9
                   ],
                   androidUiSettings: AndroidUiSettings(
-                      toolbarTitle: _configs!.textImageCropTitle,
+                      toolbarTitle: _configs.textImageCropTitle,
                       toolbarColor: Colors.blue,
                       toolbarWidgetColor: Colors.white,
                       initAspectRatio: CropAspectRatioPreset.original,
@@ -354,7 +354,7 @@ class _ImageViewerState extends State<ImageViewer>
               }
             },
           ),
-        if (_configs!.filterFeatureEnabled)
+        if (_configs.filterFeatureEnabled)
           GestureDetector(
             child: Icon(Icons.auto_awesome, size: 32, color: Colors.white),
             onTap: () async {
@@ -365,7 +365,7 @@ class _ImageViewerState extends State<ImageViewer>
                 MaterialPageRoute(
                   fullscreenDialog: true,
                   builder: (context) => new ImageFilter(
-                      title: _configs!.textImageFilterTitle, file: image),
+                      title: _configs.textImageFilterTitle, file: image),
                 ),
               );
               if (filteredFile != null) {
@@ -377,7 +377,7 @@ class _ImageViewerState extends State<ImageViewer>
               }
             },
           ),
-        if (_configs!.adjustFeatureEnabled)
+        if (_configs.adjustFeatureEnabled)
           GestureDetector(
             child: Icon(Icons.wb_sunny_outlined, size: 32, color: Colors.white),
             onTap: () async {
@@ -387,7 +387,7 @@ class _ImageViewerState extends State<ImageViewer>
                   MaterialPageRoute(
                       fullscreenDialog: true,
                       builder: (context) => ImageEdit(
-                          file: image, title: _configs!.textImageEditTitle)));
+                          file: image, title: _configs.textImageEditTitle)));
               if (edittedFile != null) {
                 setState(() {
                   this._images[this._currentIndex!].modifiedPath =
@@ -397,7 +397,7 @@ class _ImageViewerState extends State<ImageViewer>
               }
             },
           ),
-        if (_configs!.stickerFeatureEnabled)
+        if (_configs.stickerFeatureEnabled)
           GestureDetector(
             child: Icon(Icons.insert_emoticon_rounded,
                 size: 32, color: Colors.white),
@@ -408,8 +408,7 @@ class _ImageViewerState extends State<ImageViewer>
                   MaterialPageRoute(
                       fullscreenDialog: true,
                       builder: (context) => ImageSticker(
-                          file: image,
-                          title: _configs!.textImageStickerTitle)));
+                          file: image, title: _configs.textImageStickerTitle)));
               if (edittedFile != null) {
                 setState(() {
                   this._images[this._currentIndex!].modifiedPath =
@@ -429,17 +428,17 @@ class _ImageViewerState extends State<ImageViewer>
                     builder: (BuildContext context) {
                       // return object of type Dialog
                       return AlertDialog(
-                        title: new Text(_configs!.textConfirm),
-                        content: new Text(_configs!.textConfirmResetChanges),
+                        title: new Text(_configs.textConfirm),
+                        content: new Text(_configs.textConfirmResetChanges),
                         actions: <Widget>[
                           TextButton(
-                            child: new Text(_configs!.textNo),
+                            child: new Text(_configs.textNo),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                           ),
                           TextButton(
-                            child: new Text(_configs!.textYes),
+                            child: new Text(_configs.textYes),
                             onPressed: () {
                               Navigator.of(context).pop();
                               setState(() {

@@ -50,19 +50,19 @@ class _ImageFilterState extends State<ImageFilter>
   Map<String, List<int>?> _cachedFilters = {};
   ListQueue<MapEntry<String, Future<List<int>?> Function()>>
       _queuedApplyFilterFuncList =
-      ListQueue<MapEntry<String, Future<List<int>> Function()>>();
+      ListQueue<MapEntry<String, Future<List<int>?> Function()>>();
   int _runningCount = 0;
   late Filter _filter;
   late List<Filter> _filters;
   Uint8List? _imageBytes;
   Uint8List? _thumbnailImageBytes;
   late bool _loading;
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
 
     _loading = true;
     _filters = _getPresetFilters();
@@ -207,10 +207,8 @@ class _ImageFilterState extends State<ImageFilter>
     File imageFile = File(targetPath);
 
     // Run selected filter on output image
-    var outputBytes =
-        await (this._filter.apply(_imageBytes!) as FutureOr<Uint8List>);
-
-    await imageFile.writeAsBytes(outputBytes);
+    var outputBytes = await this._filter.apply(_imageBytes!);
+    await imageFile.writeAsBytes(outputBytes!);
     return imageFile;
   }
 

@@ -82,7 +82,7 @@ class ImageUtils {
   static Future<ImageObject> getImageInfo(ImageObject img) async {
     // Get image width/height
     if (img.modifiedWidth == null || img.modifiedHeight == null) {
-      var bytes = await File(img.modifiedPath!).readAsBytes();
+      var bytes = await File(img.modifiedPath).readAsBytes();
       var decodedImg = decodeImage(bytes)!;
       img.modifiedWidth = decodedImg.width;
       img.modifiedHeight = decodedImg.height;

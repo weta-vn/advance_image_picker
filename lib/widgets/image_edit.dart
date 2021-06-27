@@ -52,12 +52,12 @@ class _ImageEditState extends State<ImageEdit>
   List<double> _saturationValues = [0];
   bool _isProcessing = false;
   bool _controlExpanded = true;
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
   }
 
   @override

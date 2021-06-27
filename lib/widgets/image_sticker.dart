@@ -31,22 +31,28 @@ class ImageSticker extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageSticker({required this.file, required this.title, this.maxWidth = 1920, this.configs, this.maxHeight = 1080});
+  ImageSticker(
+      {required this.file,
+      required this.title,
+      this.maxWidth = 1920,
+      this.configs,
+      this.maxHeight = 1080});
 
   @override
   _ImageStickerState createState() => _ImageStickerState();
 }
 
-class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMixin<ImageSticker> {
+class _ImageStickerState extends State<ImageSticker>
+    with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
   }
 
   @override
@@ -93,7 +99,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(_configs!.textImageStickerGuide),
+                      child: Text(_configs.textImageStickerGuide),
                     ),
                     Positioned(
                       top: -15,
@@ -122,12 +128,14 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
 
         // Output to file
         final dir = await PathProvider.getTemporaryDirectory();
-        final targetPath = "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+        final targetPath =
+            "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
         File file = File(targetPath);
         await file.writeAsBytes(image);
 
         // Compress & resize result image
-        file = await ImageUtils.compressResizeImage(targetPath, maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
+        file = await ImageUtils.compressResizeImage(targetPath,
+            maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
         Navigator.of(context).pop(file);
       },
     );
@@ -141,7 +149,9 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
           transformationController: _controller,
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.black, image: DecorationImage(fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
+                color: Colors.black,
+                image: DecorationImage(
+                    fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
           ),
         ),
         List<int>.generate(33, (index) => index + 1)
@@ -172,10 +182,11 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
   }
 
   _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
-    var byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
-    var pngBytes = byteData.buffer.asUint8List();
+    var byteData = await image.toByteData(format: ImageByteFormat.png);
+    var pngBytes = byteData?.buffer.asUint8List();
     return pngBytes;
   }
 }
@@ -212,7 +223,8 @@ class StickerImageView extends StatefulWidget {
 
   final Function? onTransformed;
 
-  final _StickerImageViewState _flutterSimpleStickerViewState = _StickerImageViewState();
+  final _StickerImageViewState _flutterSimpleStickerViewState =
+      _StickerImageViewState();
 
   @override
   _StickerImageViewState createState() => _flutterSimpleStickerViewState;
@@ -255,7 +267,8 @@ class _StickerImageViewState extends State<StickerImageView> {
               children: <Widget>[
                 LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
-                    _viewport = _viewport ?? Size(constraints.maxWidth, constraints.maxHeight);
+                    _viewport = _viewport ??
+                        Size(constraints.maxWidth, constraints.maxHeight);
                     return widget.source;
                   },
                 ),
@@ -346,7 +359,8 @@ class _StickerViewState extends State<StickerView> {
         },
         child: Transform(
           transform: widget.matrix!,
-          child: Container(width: widget.width, height: widget.height, child: widget.image),
+          child: Container(
+              width: widget.width, height: widget.height, child: widget.image),
         ),
       ),
     );

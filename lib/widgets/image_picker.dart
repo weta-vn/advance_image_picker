@@ -58,7 +58,7 @@ class _ImagePickerState extends State<ImagePicker>
   List<CameraDescription> _cameras = [];
 
   /// Default mode for selecting images
-  int? _mode = PickerMode.Camera;
+  int _mode = PickerMode.Camera;
 
   /// Camera controller
   CameraController? _controller;
@@ -85,7 +85,7 @@ class _ImagePickerState extends State<ImagePicker>
   bool _isImageSelectedDone = false;
 
   /// Image configuration
-  ImagePickerConfigs? _configs = ImagePickerConfigs();
+  ImagePickerConfigs _configs = ImagePickerConfigs();
 
   /// Photo album list
   List<AssetPathEntity> _albums = [];
@@ -138,7 +138,7 @@ class _ImagePickerState extends State<ImagePicker>
     WidgetsBinding.instance?.addObserver(this);
 
     // Setting preview screen mode from configuration
-    if (widget.configs != null) _configs = widget.configs;
+    if (widget.configs != null) _configs = widget.configs!;
     _isFullscreenImage = widget.isFullscreenImage;
 
     // Setting animation controller
@@ -164,7 +164,7 @@ class _ImagePickerState extends State<ImagePicker>
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
-    _controller!.dispose();
+    _controller?.dispose();
     _controller = null;
     _cameras.clear();
     _albums.clear();
@@ -207,7 +207,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
     final CameraController cameraController = CameraController(
       cameraDescription,
-      _configs!.resolutionPreset,
+      _configs.resolutionPreset,
       enableAudio: false,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
@@ -270,12 +270,12 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Run pre-processing for input image in [path] and [croppingParams]
   Future<File> _imagePreProcessing(String path, {Map? croppingParams}) async {
-    if (_configs!.imagePreProcessingEnabled) {
+    if (_configs.imagePreProcessingEnabled) {
       // Run compress & resize image
       var file = await ImageUtils.compressResizeImage(path,
-          maxWidth: _configs!.maxWidth,
-          maxHeight: _configs!.maxHeight,
-          quality: _configs!.compressQuality);
+          maxWidth: _configs.maxWidth,
+          maxHeight: _configs.maxHeight,
+          quality: _configs.compressQuality);
       if (croppingParams != null) {
         file = (await ImageUtils.cropImage(file.path,
             originX: croppingParams["originX"],
@@ -289,38 +289,38 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Run post-processing for output image
-  Future<File> _imagePostProcessing(String? path) async {
-    if (!_configs!.imagePreProcessingEnabled)
-      return await ImageUtils.compressResizeImage(path!,
-          maxWidth: _configs!.maxWidth,
-          maxHeight: _configs!.maxHeight,
-          quality: _configs!.compressQuality);
-    return File(path!);
+  Future<File> _imagePostProcessing(String path) async {
+    if (!_configs.imagePreProcessingEnabled)
+      return await ImageUtils.compressResizeImage(path,
+          maxWidth: _configs.maxWidth,
+          maxHeight: _configs.maxHeight,
+          quality: _configs.compressQuality);
+    return File(path);
   }
 
   /// Show confirmation dialog when exit without saving selected images
   Future<bool> _onWillPop() async {
-    if (!_configs!.showNonSelectedAlert ||
+    if (!_configs.showNonSelectedAlert ||
         _isImageSelectedDone ||
         this._selectedImages.length == 0) return true;
 
-    return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text(_configs!.textConfirm),
-            content: new Text(_configs!.textConfirmExitWithoutSelectingImages),
-            actions: <Widget>[
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text(_configs!.textNo),
-              ),
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text(_configs!.textYes),
-              ),
-            ],
-          ),
-        ) as FutureOr<bool>? ??
+    return (await showDialog<bool>(
+            context: context,
+            builder: (context) => new AlertDialog(
+                  title: new Text(_configs.textConfirm),
+                  content:
+                      new Text(_configs.textConfirmExitWithoutSelectingImages),
+                  actions: <Widget>[
+                    new FlatButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: new Text(_configs.textNo),
+                    ),
+                    new FlatButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: new Text(_configs.textYes),
+                    ),
+                  ],
+                ))) ??
         false;
   }
 
@@ -332,7 +332,7 @@ class _ImagePickerState extends State<ImagePicker>
       onWillPop: _onWillPop,
       child: Scaffold(
           key: _scaffoldKey,
-          backgroundColor: _configs!.backgroundColor,
+          backgroundColor: _configs.backgroundColor,
           appBar: AppBar(
             title: _buildAppBarTitle(context),
             centerTitle: false,
@@ -401,16 +401,16 @@ class _ImagePickerState extends State<ImagePicker>
             elevation: MaterialStateProperty.all(5),
             backgroundColor: MaterialStateProperty.all(
                 this._selectedImages.length > 0
-                    ? _configs!.appBarDoneButtonColor
+                    ? _configs.appBarDoneButtonColor
                     : Colors.grey),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0))),
           ),
           child: Row(children: [
-            Text(_configs!.textSelectButtonTitle,
+            Text(_configs.textSelectButtonTitle,
                 style: TextStyle(
                     color: this._selectedImages.length > 0
-                        ? ((_configs!.appBarDoneButtonColor == Colors.white)
+                        ? ((_configs.appBarDoneButtonColor == Colors.white)
                             ? Colors.black
                             : Colors.white)
                         : Colors.black)),
@@ -517,8 +517,8 @@ class _ImagePickerState extends State<ImagePicker>
   _buildBottomPanel(BuildContext context) {
     return Container(
       color: ((_mode == PickerMode.Camera) && _isFullscreenImage)
-          ? _configs!.bottomPanelColorInFullscreen
-          : _configs!.bottomPanelColor,
+          ? _configs.bottomPanelColorInFullscreen
+          : _configs.bottomPanelColor,
       padding: const EdgeInsets.all(8.0),
       child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -526,9 +526,9 @@ class _ImagePickerState extends State<ImagePicker>
           children: [
             if (widget.maxCount > 1) ...[
               Text(
-                  "${_configs!.textSelectedImagesTitle}: ${this._selectedImages.length.toString()} / ${widget.maxCount.toString()}",
+                  "${_configs.textSelectedImagesTitle}: ${this._selectedImages.length.toString()} / ${widget.maxCount.toString()}",
                   style: TextStyle(color: Colors.white, fontSize: 14)),
-              Text(_configs!.textSelectedImagesGuide,
+              Text(_configs.textSelectedImagesGuide,
                   style: TextStyle(color: Colors.grey, fontSize: 14))
             ],
             _buildReorderableSelectedImageList(context),
@@ -544,8 +544,8 @@ class _ImagePickerState extends State<ImagePicker>
   _buildAlbumSelectButton(BuildContext context,
       {bool isPop = false, bool isCameraMode = false}) {
     if (isCameraMode)
-      return Text(_configs!.textCameraTitle,
-          style: TextStyle(color: _configs!.appBarTextColor, fontSize: 16));
+      return Text(_configs.textCameraTitle,
+          style: TextStyle(color: _configs.appBarTextColor, fontSize: 16));
 
     var container = Container(
         decoration: BoxDecoration(
@@ -557,7 +557,7 @@ class _ImagePickerState extends State<ImagePicker>
           children: [
             Text(_currentAlbum?.name ?? "",
                 style:
-                    TextStyle(color: _configs!.appBarTextColor, fontSize: 16)),
+                    TextStyle(color: _configs.appBarTextColor, fontSize: 16)),
             Icon(
                 isPop
                     ? Icons.arrow_upward_outlined
@@ -664,7 +664,7 @@ class _ImagePickerState extends State<ImagePicker>
       child: _currentAlbum != null
           ? MediaAlbumWidget(
               key: _currentAlbumKey,
-              gridCount: _configs!.albumGridCount,
+              gridCount: _configs.albumGridCount,
               maxCount: widget.maxCount,
               album: _currentAlbum!,
               selectedImages: _selectedImages,
@@ -677,7 +677,7 @@ class _ImagePickerState extends State<ImagePicker>
                     _selectedImages.removeAt(idx);
                   else {
                     _scrollController.animateTo(
-                      ((_selectedImages.length - 1) * _configs!.thumbWidth)
+                      ((_selectedImages.length - 1) * _configs.thumbWidth)
                           .toDouble(),
                       duration: Duration(seconds: 1),
                       curve: Curves.fastOutSlowIn,
@@ -698,7 +698,7 @@ class _ImagePickerState extends State<ImagePicker>
         var f = await (await a.getAssetListRange(start: 0, end: 1))
             .first
             .thumbDataWithSize(
-                _configs!.albumThumbWidth, _configs!.albumThumbHeight);
+                _configs.albumThumbWidth, _configs.albumThumbHeight);
         ret.add(f);
       }
       _albumThumbnails = ret;
@@ -767,12 +767,12 @@ class _ImagePickerState extends State<ImagePicker>
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
               fit: BoxFit.cover,
-              width: _configs!.thumbWidth.toDouble(),
-              height: _configs!.thumbHeight.toDouble()));
+              width: _configs.thumbWidth.toDouble(),
+              height: _configs.thumbHeight.toDouble()));
     };
 
     var makeThumbnailWidget = (String? path, int index) {
-      if (!_configs!.showDeleteButtonOnSelectedList)
+      if (!_configs.showDeleteButtonOnSelectedList)
         return makeThumbnailImage(path);
 
       return Stack(fit: StackFit.passthrough, children: [
@@ -802,17 +802,17 @@ class _ImagePickerState extends State<ImagePicker>
                   builder: (BuildContext context) {
                     // return object of type Dialog
                     return AlertDialog(
-                      title: new Text(_configs!.textConfirm),
-                      content: new Text(_configs!.textConfirmDelete),
+                      title: new Text(_configs.textConfirm),
+                      content: new Text(_configs.textConfirmDelete),
                       actions: <Widget>[
                         TextButton(
-                          child: new Text(_configs!.textNo),
+                          child: new Text(_configs.textNo),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                         ),
                         TextButton(
-                          child: new Text(_configs!.textYes),
+                          child: new Text(_configs.textYes),
                           onPressed: () {
                             Navigator.of(context).pop();
                             setState(() {
@@ -831,7 +831,7 @@ class _ImagePickerState extends State<ImagePicker>
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-        height: (_configs!.thumbHeight + 8).toDouble(),
+        height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
           data: ThemeData(
               canvasColor: Colors.transparent, shadowColor: Colors.red),
@@ -854,11 +854,11 @@ class _ImagePickerState extends State<ImagePicker>
                           onTap: () {
                             Navigator.of(context).push(PageRouteBuilder(
                                 pageBuilder: (context, animation, __) {
-                              _configs?.imagePreProcessingBeforeEditingEnabled =
-                                  !_configs!.imagePreProcessingEnabled;
+                              _configs.imagePreProcessingBeforeEditingEnabled =
+                                  !_configs.imagePreProcessingEnabled;
 
                               return ImageViewer(
-                                  title: _configs!.textPreviewTitle,
+                                  title: _configs.textPreviewTitle,
                                   images: this._selectedImages,
                                   initialIndex: i,
                                   configs: _configs,
@@ -881,8 +881,8 @@ class _ImagePickerState extends State<ImagePicker>
                   else
                     Container(
                         key: ValueKey(i.toString()),
-                        width: _configs!.thumbWidth.toDouble(),
-                        height: _configs!.thumbHeight.toDouble(),
+                        width: _configs.thumbWidth.toDouble(),
+                        height: _configs.thumbHeight.toDouble(),
                         margin: EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
                           color: Colors.grey,
@@ -903,7 +903,7 @@ class _ImagePickerState extends State<ImagePicker>
     var isMaxCount = this._selectedImages.length >= widget.maxCount;
 
     var flashMode = () {
-      var value = _controller?.value?.flashMode ?? FlashMode.auto;
+      var value = _controller?.value.flashMode ?? FlashMode.auto;
       if (value == FlashMode.always)
         return [FlashMode.auto, Icons.flash_on];
       else if (value == FlashMode.auto)
@@ -950,13 +950,12 @@ class _ImagePickerState extends State<ImagePicker>
                         size: (64 + (_isCapturing ? (-10) : 0)).toDouble(),
                         color: !isMaxCount ? Colors.white : Colors.grey),
                     onTap: (!isMaxCount &&
-                            !(_controller?.value?.isTakingPicture ?? true))
+                            !(_controller?.value.isTakingPicture ?? true))
                         ? () async {
                             // Ensure that the camera is initialized.
                             await _initializeControllerFuture;
 
-                            if (!(_controller?.value?.isTakingPicture ??
-                                true)) {
+                            if (!(_controller?.value.isTakingPicture ?? true)) {
                               try {
                                 var file = await _controller!.takePicture();
                                 Map<String, dynamic>? croppingParams;
@@ -977,7 +976,7 @@ class _ImagePickerState extends State<ImagePicker>
                                 setState(() {
                                   _scrollController.animateTo(
                                     ((_selectedImages.length - 1) *
-                                            _configs!.thumbWidth)
+                                            _configs.thumbWidth)
                                         .toDouble(),
                                     duration: Duration(seconds: 1),
                                     curve: Curves.fastOutSlowIn,
@@ -1002,7 +1001,7 @@ class _ImagePickerState extends State<ImagePicker>
                         ? () async {
                             final lensDirection =
                                 _controller!.description.lensDirection;
-                            CameraDescription newDescription;
+                            CameraDescription? newDescription;
                             if (lensDirection == CameraLensDirection.front) {
                               newDescription = _cameras.firstWhere(
                                   (description) =>
@@ -1033,14 +1032,14 @@ class _ImagePickerState extends State<ImagePicker>
         backgroundColor: Colors.transparent,
         thumbColor: Colors.transparent,
         children: {
-          0: Text(_configs!.textCameraTitle,
+          0: Text(_configs.textCameraTitle,
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: (_mode == PickerMode.Camera)
                       ? Colors.white
                       : Colors.grey)),
-          1: Text(_configs!.textAlbumTitle,
+          1: Text(_configs.textAlbumTitle,
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -1180,11 +1179,6 @@ class _ImagePickerState extends State<ImagePicker>
       rethrow;
     }
   }
-
-  void _showInSnackBar(String message) {
-    // ignore: deprecated_member_use
-    _scaffoldKey.currentState?.showSnackBar(SnackBar(content: Text(message)));
-  }
 }
 
 /// Photo album widget
@@ -1208,7 +1202,7 @@ class MediaAlbumWidget extends StatefulWidget {
   final int albumThumbHeight;
 
   /// Album object
-  AssetPathEntity album;
+  final AssetPathEntity album;
 
   /// Selected image objects
   final List<ImageObject>? selectedImages;
