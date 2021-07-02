@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -227,6 +228,7 @@ class _ImagePickerState extends State<ImagePicker>
           cameraController.initialize().then((value) async {
         // After initialized, setting zoom & exposure values
         Future.wait([
+          cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
           cameraController
               .getMinExposureOffset()
               .then((value) => _minAvailableExposureOffset = value),
