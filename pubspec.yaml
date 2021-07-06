@@ -1,6 +1,6 @@
 name: advance_image_picker
 description: Flutter plugin in pure Dart code for selecting/editing multiple images from the Android/iOS image library and taking new pictures with the camera in the same view.
-version: 0.0.2+1
+version: 0.0.2+2
 homepage: https://freemar.vn
 repository: https://github.com/weta-vn/freemar_image_picker
 

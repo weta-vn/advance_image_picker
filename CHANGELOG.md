@@ -1,3 +1,7 @@
+## [0.0.2+2]
+
+* Fixbug camera number.
+
 ## [0.0.2+1]
 
 * Lock capture orientation.
