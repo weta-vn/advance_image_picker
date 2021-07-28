@@ -1,3 +1,8 @@
+## [0.0.3]
+
+* Add ON/OFF camera/album feature
+* Add lens direction setting feature
+
 ## [0.0.2+2]
 
 * Fixbug camera number.

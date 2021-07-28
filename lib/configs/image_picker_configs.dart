@@ -1,3 +1,4 @@
+import 'package:advance_image_picker/widgets/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -78,6 +79,13 @@ class ImagePickerConfigs {
 
   /// Enable sticker adding function
   bool stickerFeatureEnabled = true;
+
+  /// Picker mode settings
+  bool cameraPickerModeEnabled = true;
+  bool albumPickerModeEnabled = true;
+
+  /// Camera direction setting, null: use all available camera, 0: only use front camera, 1: only use back camera
+  int? cameraLensDirection;
 
   /// UI style settings
   Color backgroundColor = Colors.black;

@@ -134,6 +134,7 @@ class _ImagePickerState extends State<ImagePicker>
     // Setting preview screen mode from configuration
     if (widget.configs != null) _configs = widget.configs!;
     _isFullscreenImage = widget.isFullscreenImage;
+    _mode = (widget.isCaptureFirst && _configs.cameraPickerModeEnabled) ? PickerMode.Camera : PickerMode.Album;
 
     // Setting animation controller
     _exposureModeControlRowAnimationController = AnimationController(
@@ -147,7 +148,7 @@ class _ImagePickerState extends State<ImagePicker>
 
     // Init camera or album
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      if (widget.isCaptureFirst)
+      if (_mode == PickerMode.Camera)
         await _initPhotoCapture();
       else
         await _initPhotoGallery();
@@ -190,7 +191,28 @@ class _ImagePickerState extends State<ImagePicker>
     _cameras = await availableCameras();
 
     // Select new camera for capturing
-    if (_cameras.length > 0) _onNewCameraSelected(_cameras.first);
+    if (_cameras.length > 0) {
+      CameraDescription? newDescription = _getCamera(_cameras, _getCameraDirection(_configs.cameraLensDirection));
+      if (newDescription != null) _onNewCameraSelected(newDescription);
+    }
+  }
+
+  /// Get camera direction
+  CameraLensDirection? _getCameraDirection(int? direction) {
+    if (direction == null) return null;
+    else if (direction == 0) return CameraLensDirection.front;
+    else return CameraLensDirection.back;
+  }
+
+  /// Get camera description
+  CameraDescription? _getCamera(List<CameraDescription> cameras, CameraLensDirection? direction) {
+    if (direction == null) return cameras.first;
+    else {
+      CameraDescription? newDescription = _cameras
+            .firstWhereOrNull((description) => description.lensDirection == direction);
+      newDescription ??= cameras.first;
+      return newDescription;
+    }
   }
 
   /// Select new camera for capturing
@@ -814,6 +836,8 @@ class _ImagePickerState extends State<ImagePicker>
       else if (value == FlashMode.off) return [FlashMode.always, Icons.flash_off];
     }();
 
+    final canSwitchCamera = _cameras.length > 1 && _configs.cameraLensDirection == null;
+
     return _mode == PickerMode.Camera
         ? Container(
             height: 60,
@@ -882,18 +906,11 @@ class _ImagePickerState extends State<ImagePicker>
                     : null,
               ),
               GestureDetector(
-                child: Icon(Icons.switch_camera, size: 32, color: (_cameras.length > 1) ? Colors.white : Colors.grey),
-                onTap: (_cameras.length > 1)
+                child: Icon(Icons.switch_camera, size: 32, color: canSwitchCamera ? Colors.white : Colors.grey),
+                onTap: canSwitchCamera
                     ? () async {
                         final lensDirection = _controller!.description.lensDirection;
-                        CameraDescription? newDescription;
-                        if (lensDirection == CameraLensDirection.front) {
-                          newDescription = _cameras
-                              .firstWhere((description) => description.lensDirection == CameraLensDirection.back);
-                        } else {
-                          newDescription = _cameras
-                              .firstWhere((description) => description.lensDirection == CameraLensDirection.front);
-                        }
+                        CameraDescription? newDescription = _getCamera(_cameras, lensDirection == CameraLensDirection.front ? CameraLensDirection.back : CameraLensDirection.front);
                         if (newDescription != null) {
                           print("Start new camera: " + newDescription.toString());
                           _onNewCameraSelected(newDescription);
@@ -908,31 +925,35 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build picker mode list
   _buildPickerModeList(BuildContext context) {
-    return CupertinoSlidingSegmentedControl(
-        backgroundColor: Colors.transparent,
-        thumbColor: Colors.transparent,
-        children: {
-          0: Text(_configs.textCameraTitle,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: (_mode == PickerMode.Camera) ? Colors.white : Colors.grey)),
-          1: Text(_configs.textAlbumTitle,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: (_mode == PickerMode.Album) ? Colors.white : Colors.grey)),
-        },
-        groupValue: _mode,
-        onValueChanged: (dynamic val) async {
-          if (val == PickerMode.Camera && this._cameras.length == 0)
-            _initPhotoCapture();
-          else if (val == PickerMode.Album && this._albums.length == 0) _initPhotoGallery();
+    if (_configs.albumPickerModeEnabled && _configs.cameraPickerModeEnabled)
+      return CupertinoSlidingSegmentedControl(
+          backgroundColor: Colors.transparent,
+          thumbColor: Colors.transparent,
+          children: {
+              0: Text(_configs.textCameraTitle,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: (_mode == PickerMode.Camera) ? Colors.white : Colors.grey)),
+              1: Text(_configs.textAlbumTitle,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: (_mode == PickerMode.Album) ? Colors.white : Colors.grey)),
+          },
+          groupValue: _mode,
+          onValueChanged: (dynamic val) async {
+            if (_mode != val) {
+              if (val == PickerMode.Camera && this._cameras.length == 0)
+                _initPhotoCapture();
+              else if (val == PickerMode.Album && this._albums.length == 0) _initPhotoGallery();
 
-          setState(() {
-            _mode = val;
+              setState(() {
+                _mode = val;
+              });
+            }
           });
-        });
+    return const SizedBox();
   }
 
   /// Build exposure mode control widget

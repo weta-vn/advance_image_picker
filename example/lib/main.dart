@@ -18,7 +18,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Setup image picker configs
     var configs = ImagePickerConfigs();
+    // AppBar text color
     configs.appBarTextColor = Colors.white;
+    // Disable select images from album
+    configs.albumPickerModeEnabled = false;
+    // Only use front camera for capturing
+    configs.cameraLensDirection = 0;
+    // Translate function
     configs.translateFunc = (name, value) => Intl.message(value, name: name);
 
     return MaterialApp(
@@ -90,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Get max 5 images
           List<ImageObject>? objects = await Navigator.of(context)
               .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
-            return ImagePicker(maxCount: 5);
+            return ImagePicker(maxCount: 5, isCaptureFirst: true);
           }));
 
           if ((objects?.length ?? 0) > 0) {
