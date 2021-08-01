@@ -885,7 +885,10 @@ class _ImagePickerState extends State<ImagePicker>
                               croppingParams["originX"] = 0;
                               croppingParams["originY"] = 0;
                               croppingParams["widthPercent"] = 1.0;
-                              croppingParams["heightPercent"] = (size.height - kBottomControlPanelHeight) / size.height;
+                              if (_configs.cameraPickerModeEnabled && _configs.albumPickerModeEnabled)
+                                croppingParams["heightPercent"] = (size.height - kBottomControlPanelHeight) / size.height;
+                              else
+                                croppingParams["heightPercent"] = (size.height - kBottomControlPanelHeight + 32) / size.height;
                             }
                             var capturedFile =
                                 await this._imagePreProcessing(file.path, croppingParams: croppingParams);

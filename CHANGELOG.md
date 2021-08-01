@@ -1,3 +1,8 @@
+## [0.0.4]
+
+* Fixbug image rotated in some android device
+* Modified max width / max height default setting for capture images
+
 ## [0.0.3]
 
 * Add ON/OFF camera/album feature

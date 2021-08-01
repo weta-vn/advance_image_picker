@@ -34,9 +34,9 @@ class ImageSticker extends StatefulWidget {
   ImageSticker(
       {required this.file,
       required this.title,
-      this.maxWidth = 1920,
-      this.configs,
-      this.maxHeight = 1080});
+      this.maxWidth = 1080,
+      this.maxHeight = 1920,
+      this.configs});
 
   @override
   _ImageStickerState createState() => _ImageStickerState();

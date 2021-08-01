@@ -18,22 +18,31 @@ class ImageUtils {
   /// Compare & resize image file in [path]
   /// Pass [quality], [maxWidth], [maxHeight] for output image file
   static Future<File> compressResizeImage(String path,
-      {int quality = 90, int maxWidth = 1920, int maxHeight = 1080}) async {
+      {int quality = 90, int maxWidth = 1080, int maxHeight = 1920}) async {
     // Get image properties
     ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
     // Create output width & height
-    var outputWidth = properties.width;
-    var outputHeight = properties.height;
+    int outputWidth = properties.width!;
+    int outputHeight = properties.height!;
+
+    // Re-calculate max width, max height with orientation info
+    int mWidth = maxWidth;
+    int mHeight = maxHeight;
+    if (properties.orientation == ImageOrientation.rotate90 || 
+        properties.orientation == ImageOrientation.rotate270) {
+      mWidth = maxHeight;
+      mHeight = maxWidth;
+    }
 
     // Re-calculate output width & heigth by comparing with original size
-    if (properties.width! > maxWidth || properties.height! > maxHeight) {
-      var ratio = properties.width! / properties.height!;
-      outputWidth = min(properties.width!, maxWidth);
+    if (outputWidth > mWidth || outputHeight > mHeight) {
+      var ratio = outputWidth / outputHeight;
+      outputWidth = min(outputWidth, mWidth);
       outputHeight = outputWidth ~/ ratio;
-      if (outputHeight > maxHeight) {
-        outputHeight = min(properties.height!, maxHeight);
+      if (outputHeight > mHeight) {
+        outputHeight = min(outputHeight, mHeight);
         outputWidth = (outputHeight * ratio).toInt();
       }
 
@@ -58,13 +67,26 @@ class ImageUtils {
     ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
+    // Get exact image size from properties
+    int width = properties.width!;
+    int height = properties.height!;
+
+    // Re-calculate crop params with orientation info
+    double wPercent = widthPercent;
+    double hPercent = heightPercent;
+    if (properties.orientation == ImageOrientation.rotate90 || 
+        properties.orientation == ImageOrientation.rotate270) {
+      wPercent = heightPercent;
+      hPercent = widthPercent;
+    }
+
     // Crop image
     return await FlutterNativeImage.cropImage(
         path,
         originX,
         originY,
-        (widthPercent * properties.width!).toInt(),
-        (heightPercent * properties.height!).toInt());
+        (wPercent * width).toInt(),
+        (hPercent * height).toInt());
   }
 
   /// Get temp file created in temporary directory of device

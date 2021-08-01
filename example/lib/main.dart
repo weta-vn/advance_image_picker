@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     // Disable select images from album
     configs.albumPickerModeEnabled = false;
     // Only use front camera for capturing
-    configs.cameraLensDirection = 0;
+    // configs.cameraLensDirection = 0;
     // Translate function
     configs.translateFunc = (name, value) => Intl.message(value, name: name);
 

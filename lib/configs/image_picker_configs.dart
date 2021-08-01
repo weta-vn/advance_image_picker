@@ -45,10 +45,10 @@ class ImagePickerConfigs {
   int albumThumbHeight = 200;
 
   /// Max width for output
-  int maxWidth = 1920;
+  int maxWidth = 1080;
 
   /// Max height for output
-  int maxHeight = 1080;
+  int maxHeight = 1920;
 
   /// Quality for output
   int compressQuality = 90;

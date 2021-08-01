@@ -11,7 +11,7 @@ PODS:
     - Flutter
   - path_provider (0.0.1):
     - Flutter
-  - photo_manager (0.0.1):
+  - photo_manager (1.0.0):
     - Flutter
     - FlutterMacOS
   - TOCropViewController (2.6.0)
@@ -52,7 +52,7 @@ SPEC CHECKSUMS:
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
   image_editor: c1d038630eedea60d2dee9c14f36aa66c7f9cfab
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  photo_manager: 61cdd6835af271b9ad1bb533fccf71d5db02fff3
+  photo_manager: 84fa94fbeb82e607333ea9a13c43b58e0903a463
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c

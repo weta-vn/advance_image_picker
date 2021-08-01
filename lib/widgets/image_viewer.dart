@@ -76,11 +76,6 @@ class _ImageViewerState extends State<ImageViewer>
     onPageChanged(_currentIndex);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   /// Pre-processing function
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled)

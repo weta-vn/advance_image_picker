@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>This application accesses your Camera to capture new images for your spots and activities you want to upload</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This application accesses your Library to get images for your spots and activities you want to upload</string>
 </dict>
 </plist>

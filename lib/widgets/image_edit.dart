@@ -33,8 +33,8 @@ class ImageEdit extends StatefulWidget {
       {required this.file,
       required this.title,
       this.configs,
-      this.maxWidth = 1920,
-      this.maxHeight = 1080});
+      this.maxWidth = 1080,
+      this.maxHeight = 1920});
 
   @override
   _ImageEditState createState() => _ImageEditState();
