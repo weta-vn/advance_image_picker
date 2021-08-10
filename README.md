@@ -62,7 +62,7 @@ Change the minimum Android sdk version to 21 (or higher) in your `android/app/bu
 minSdkVersion 21
 ~~~~
 
-Recommended add `android:requestLegacyExternalStorage="true"` to your `AndroidManifest.xml`, just like next.
+Add activity and uses-permissions to your `AndroidManifest.xml`, just like next.
 
 ```
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -73,7 +73,14 @@ Recommended add `android:requestLegacyExternalStorage="true"` to your `AndroidMa
         android:label="freemarimagepicker_example"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>
 ```
 

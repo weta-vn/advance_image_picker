@@ -1,3 +1,7 @@
+## [0.0.4+1]
+
+* Update setting instructions for android
+
 ## [0.0.4]
 
 * Fixbug image rotated in some android device
