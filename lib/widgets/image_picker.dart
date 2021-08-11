@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../configs/image_picker_configs.dart';
+import '../utils/log_utils.dart';
 import '../models/image_object.dart';
 import '../utils/image_utils.dart';
 import 'image_viewer.dart';
@@ -187,6 +188,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Initialize the camera for photo capturing
   Future<void> _initPhotoCapture() async {
+    LogUtils.log("[_initPhotoCapture] start");
+
     // Listup all cameras in current device
     _cameras = await availableCameras();
 
@@ -217,6 +220,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Select new camera for capturing
   void _onNewCameraSelected(CameraDescription cameraDescription) async {
+    LogUtils.log("[_onNewCameraSelected] start");
+
     // Dispose old then create new camera controller
     if (_controller != null) {
       await _controller!.dispose();
@@ -240,6 +245,8 @@ class _ImagePickerState extends State<ImagePicker>
     // Create future object for initilizing new camera controller
     try {
       _initializeControllerFuture = cameraController.initialize().then((value) async {
+        LogUtils.log("[_onNewCameraSelected] cameraController inited.");
+
         // After initialized, setting zoom & exposure values
         Future.wait([
           cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
@@ -261,6 +268,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Init photo gallery for image selecting
   Future<void> _initPhotoGallery() async {
+    LogUtils.log("[_initPhotoGallery] start");
+
     // Request permission for image selecting
     var result = await PhotoManager.requestPermission();
     if (result) {
@@ -277,6 +286,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Run pre-processing for input image in [path] and [croppingParams]
   Future<File> _imagePreProcessing(String path, {Map? croppingParams}) async {
+    LogUtils.log("[_imagePreProcessing] start");
+
     if (_configs.imagePreProcessingEnabled) {
       // Run compress & resize image
       var file = await ImageUtils.compressResizeImage(path,
@@ -288,16 +299,26 @@ class _ImagePickerState extends State<ImagePicker>
             widthPercent: croppingParams["widthPercent"],
             heightPercent: croppingParams["heightPercent"]));
       }
+
+      LogUtils.log("[_imagePreProcessing] end");
       return file;
     }
+
+    LogUtils.log("[_imagePreProcessing] end");
     return File(path);
   }
 
   /// Run post-processing for output image
   Future<File> _imagePostProcessing(String path) async {
-    if (!_configs.imagePreProcessingEnabled)
+    LogUtils.log("[_imagePostProcessing] start");
+
+    if (!_configs.imagePreProcessingEnabled) {
+      LogUtils.log("[_imagePostProcessing] end");
       return await ImageUtils.compressResizeImage(path,
           maxWidth: _configs.maxWidth, maxHeight: _configs.maxHeight, quality: _configs.compressQuality);
+    }
+
+    LogUtils.log("[_imagePostProcessing] end");
     return File(path);
   }
 
@@ -531,6 +552,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build camera preview widget
   _buildCameraPreview(BuildContext context) {
+    LogUtils.log("[_buildCameraPreview] start");
+
     final size = MediaQuery.of(context).size;
     if (_controller?.value == null)
       return Container(width: size.width, height: size.height, child: Center(child: CircularProgressIndicator()));
@@ -603,6 +626,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build album preview widget
   _buildAlbumPreview(BuildContext context) {
+    LogUtils.log("[_buildAlbumPreview] start");
+
     var bottomHeight = (widget.maxCount == 1) ? (kBottomControlPanelHeight - 40) : kBottomControlPanelHeight;
 
     return Container(
@@ -616,6 +641,8 @@ class _ImagePickerState extends State<ImagePicker>
               selectedImages: _selectedImages,
               preProcessing: this._imagePreProcessing,
               onImageSelected: (image) async {
+                LogUtils.log("[_buildAlbumPreview] onImageSelected start");
+
                 var idx = _selectedImages.indexWhere((element) => element.assetId == image.assetId);
                 setState(() {
                   if (idx >= 0)
@@ -636,6 +663,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build album thumbnail preview
   _buildAlbumThumbnails() async {
+    LogUtils.log("[_buildAlbumThumbnails] start");
+
     if (_albums.isNotEmpty && _albumThumbnails.isEmpty) {
       List<Uint8List?> ret = [];
       for (var a in _albums) {
@@ -652,6 +681,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build album list screen
   _buildAlbumList(List<AssetPathEntity> albums, BuildContext context, Function(AssetPathEntity newValue) callback) {
+    LogUtils.log("[_buildAlbumList] start");
+
     return FutureBuilder(
       future: _buildAlbumThumbnails(),
       builder: (BuildContext context, snapshot) {
@@ -682,6 +713,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Reorder selected image list event
   _reorderSelectedImageList(int oldIndex, int newIndex) {
+    LogUtils.log("[_reorderSelectedImageList] start");
+
     if (oldIndex >= this._selectedImages.length ||
         newIndex > this._selectedImages.length ||
         oldIndex < 0 ||
@@ -699,6 +732,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build reorderable selected image list
   _buildReorderableSelectedImageList(BuildContext context) {
+    LogUtils.log("[_buildReorderableSelectedImageList] start");
+
     var makeThumbnailImage = (String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
@@ -872,12 +907,16 @@ class _ImagePickerState extends State<ImagePicker>
                     color: !isMaxCount ? Colors.white : Colors.grey),
                 onTap: (!isMaxCount && !(_controller?.value.isTakingPicture ?? true))
                     ? () async {
+                        LogUtils.log("[_buildCameraControls] capture pressed");
+
                         // Ensure that the camera is initialized.
                         await _initializeControllerFuture;
 
                         if (!(_controller?.value.isTakingPicture ?? true)) {
                           try {
                             var file = await _controller!.takePicture();
+                            LogUtils.log("[_buildCameraControls] takePicture done");
+
                             Map<String, dynamic>? croppingParams;
                             if (!_isFullscreenImage) {
                               croppingParams = {};
@@ -1159,6 +1198,8 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
 
   /// Get thumbnail bytes for an asset
   Future<Uint8List?> _getAssetThumbnail(AssetEntity asset) async {
+    LogUtils.log("[_getAssetThumbnail] start");
+
     if (_thumbnailCache.containsKey(asset.id))
       return _thumbnailCache[asset.id];
     else {
@@ -1170,6 +1211,8 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
 
   /// Fetch media/assets for [currentAlbum]
   _fetchMedia(AssetPathEntity currentAlbum) async {
+    LogUtils.log("[_fetchMedia] start");
+    
     if (_assets.isEmpty) {
       var ret = await currentAlbum.getAssetListRange(start: 0, end: 5000);
 
@@ -1201,6 +1244,8 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
           return GestureDetector(
             onTap: (isSelectable && _loadingAsset.isEmpty)
                 ? () async {
+                    LogUtils.log("[_MediaAlbumWidgetState.build] onTap start");
+
                     setState(() {
                       _loadingAsset = asset.id;
                     });

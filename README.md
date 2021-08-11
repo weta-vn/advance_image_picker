@@ -7,7 +7,7 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 
 ## Key Features
 
-- Display live camera preview in a widget.
+- Display live camera preview in a widget
 - Adjust exposure
 - Zoom camera preview
 - Capture photo without saving into device library
@@ -20,15 +20,20 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 
 ## Apps using this package
 
-**freemar.vn - Shopping app for Vietnamese**
+**1. freemar.vn - Shopping app for Vietnamese**
 
 <a href="https://play.google.com/store/apps/details?id=com.freemar.vn" class="download-btn"><i class="bx bxl-play-store"></i> Google Play</a>
 <a href="https://apps.apple.com/vn/app/freemar/id1530667938?l=vi" class="download-btn"><i class="bx bxl-apple"></i> App Store</a>
 
-**trainghiem.vn - Find places to have fun, find places to experience!**
+**2. trainghiem.vn - Find places to have fun, find places to experience!**
 
 <a target="_blank" data-animation="fadeInRight" data-delay="1.0s" href="https://play.google.com/store/apps/details?id=com.trainghiem.vn" class="btn" tabindex="0" style="animation-delay: 1s;">Google Play</a>
 <a target="_blank" data-animation="fadeInLeft" data-delay="1.0s" href="https://apps.apple.com/vn/app/trainghiemvn/id1537519143?l=vi" class="btn" tabindex="0" style="animation-delay: 1s;">App Store</a>
+
+**3. Henoo - Heritage in your pocket (Le patrimoine dans la poche)**
+
+<a href="https://play.google.com/apps/testing/fr.henoo.henooapp" class="download-btn"><i class="bx bxl-play-store"></i> Google Play</a>
+<a href="https://apps.apple.com/fr/app/henoo/id1550979414" class="download-btn"><i class="bx bxl-apple"></i> App Store</a>
 
 ## Demo & Screenshots
 
