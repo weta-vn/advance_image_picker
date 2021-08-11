@@ -1,3 +1,8 @@
+## [0.0.5]
+
+* Fixbug when removing selected images from list
+* Fixbug when capture image rotated 270 degree
+
 ## [0.0.4+1]
 
 * Update setting instructions for android

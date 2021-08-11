@@ -81,10 +81,15 @@ class ImageUtils {
     }
 
     // Crop image
+    int x = originX, y = originY;
+    if (properties.orientation == ImageOrientation.rotate270) {      
+      x = ((1.0-wPercent) * width).toInt();
+      y = ((1.0-hPercent) * height).toInt();
+    }
     return await FlutterNativeImage.cropImage(
         path,
-        originX,
-        originY,
+        x,
+        y,
         (wPercent * width).toInt(),
         (hPercent * height).toInt());
   }

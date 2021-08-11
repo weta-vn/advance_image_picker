@@ -433,6 +433,8 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build body view
   _buildBodyView(BuildContext context) {
+    LogUtils.log("[_buildBodyView] start");
+
     final size = MediaQuery.of(context).size;
     var bottomHeight = (widget.maxCount == 1) ? (kBottomControlPanelHeight - 40) : kBottomControlPanelHeight;
 
@@ -757,8 +759,8 @@ class _ImagePickerState extends State<ImagePicker>
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                height: 16,
-                width: 16,
+                height: 24,
+                width: 24,
                 child: const Icon(
                   Icons.close,
                   size: 16,
@@ -787,6 +789,8 @@ class _ImagePickerState extends State<ImagePicker>
                             setState(() {
                               this._selectedImages.removeAt(index);
                             });
+                            _currentAlbumKey.currentState
+                                          ?.updateStateFromExternal(selectedImages: this._selectedImages);
                           },
                         ),
                       ],
@@ -914,6 +918,14 @@ class _ImagePickerState extends State<ImagePicker>
 
                         if (!(_controller?.value.isTakingPicture ?? true)) {
                           try {
+                            // Scroll to end of list
+                            _scrollController.animateTo(
+                              ((_selectedImages.length - 1) * _configs.thumbWidth).toDouble(),
+                              duration: Duration(seconds: 1),
+                              curve: Curves.fastOutSlowIn,
+                            );
+
+                            // Take new picture
                             var file = await _controller!.takePicture();
                             LogUtils.log("[_buildCameraControls] takePicture done");
 
@@ -931,12 +943,9 @@ class _ImagePickerState extends State<ImagePicker>
                             }
                             var capturedFile =
                                 await this._imagePreProcessing(file.path, croppingParams: croppingParams);
+
                             setState(() {
-                              _scrollController.animateTo(
-                                ((_selectedImages.length - 1) * _configs.thumbWidth).toDouble(),
-                                duration: Duration(seconds: 1),
-                                curve: Curves.fastOutSlowIn,
-                              );
+                              LogUtils.log("[_buildCameraControls] update image list after capturing");                              
                               _selectedImages
                                   .add(ImageObject(originalPath: capturedFile.path, modifiedPath: capturedFile.path));
                             });
@@ -1198,8 +1207,6 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
 
   /// Get thumbnail bytes for an asset
   Future<Uint8List?> _getAssetThumbnail(AssetEntity asset) async {
-    LogUtils.log("[_getAssetThumbnail] start");
-
     if (_thumbnailCache.containsKey(asset.id))
       return _thumbnailCache[asset.id];
     else {
