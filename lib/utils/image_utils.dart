@@ -30,7 +30,7 @@ class ImageUtils {
     // Re-calculate max width, max height with orientation info
     int mWidth = maxWidth;
     int mHeight = maxHeight;
-    if (properties.orientation == ImageOrientation.rotate90 || 
+    if (properties.orientation == ImageOrientation.rotate90 ||
         properties.orientation == ImageOrientation.rotate270) {
       mWidth = maxHeight;
       mHeight = maxWidth;
@@ -74,7 +74,7 @@ class ImageUtils {
     // Re-calculate crop params with orientation info
     double wPercent = widthPercent;
     double hPercent = heightPercent;
-    if (properties.orientation == ImageOrientation.rotate90 || 
+    if (properties.orientation == ImageOrientation.rotate90 ||
         properties.orientation == ImageOrientation.rotate270) {
       wPercent = heightPercent;
       hPercent = widthPercent;
@@ -82,16 +82,12 @@ class ImageUtils {
 
     // Crop image
     int x = originX, y = originY;
-    if (properties.orientation == ImageOrientation.rotate270) {      
-      x = ((1.0-wPercent) * width).toInt();
-      y = ((1.0-hPercent) * height).toInt();
+    if (properties.orientation == ImageOrientation.rotate270) {
+      x = ((1.0 - wPercent) * width).toInt();
+      y = ((1.0 - hPercent) * height).toInt();
     }
     return await FlutterNativeImage.cropImage(
-        path,
-        x,
-        y,
-        (wPercent * width).toInt(),
-        (hPercent * height).toInt());
+        path, x, y, (wPercent * width).toInt(), (hPercent * height).toInt());
   }
 
   /// Get temp file created in temporary directory of device
