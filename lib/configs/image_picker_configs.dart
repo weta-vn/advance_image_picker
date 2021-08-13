@@ -145,7 +145,7 @@ class ImagePickerConfigs {
   String get textExposureLocked => getTranslatedString(
       "image_picker_exposure_locked_title",
       "Locked");  
-  String get textExposureLocked => getTranslatedString(
+  String get textExposureAuto => getTranslatedString(
       "image_picker_exposure_auto_title",
       "auto");  
   /// Translate string by translateFunc
