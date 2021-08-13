@@ -138,10 +138,10 @@ class _ImageEditState extends State<ImageEdit>
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("contrast: ${_contrast.toString()}", style: textStyle),
-                  Text("brightness: ${_brightness.toString()}",
+                  Text("${_configs.textConstrast}: ${_contrast.toString()}", style: textStyle),
+                  Text("${_configs.textBrightness}: ${_brightness.toString()}",
                       style: textStyle),
-                  Text("saturation: ${_saturation.toString()}",
+                  Text("${_configs.textSaturation}: ${_saturation.toString()}",
                       style: textStyle),
                   Icon(Icons.keyboard_arrow_up)
                 ])),
@@ -243,7 +243,7 @@ class _ImageEditState extends State<ImageEdit>
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text("contrast", style: textStyle),
+          Text(_configs.textContrast, style: textStyle),
           Spacer(),
           Text(_contrast.toString(), style: textStyle)
         ]),
@@ -279,7 +279,7 @@ class _ImageEditState extends State<ImageEdit>
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text("brightness", style: textStyle),
+          Text(_configs.textBrightness, style: textStyle),
           Spacer(),
           Text(_brightness.toString(), style: textStyle)
         ]),
@@ -315,7 +315,7 @@ class _ImageEditState extends State<ImageEdit>
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text("saturation", style: textStyle),
+          Text(_configs.textSaturation, style: textStyle),
           Spacer(),
           Text(_saturation.toString(), style: textStyle)
         ]),
