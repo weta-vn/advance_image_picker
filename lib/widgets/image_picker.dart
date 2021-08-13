@@ -1180,10 +1180,10 @@ class _ImagePickerState extends State<ImagePicker>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text("EXPOSURE", style: textStyle),
+                  Text(_configs.textExposure, style: textStyle),
                   SizedBox(width: 8),
                   TextButton(
-                    child: Text('auto'),
+                    child: Text(_configs.textExposureAuto), 
                     style: styleAuto,
                     onPressed: _controller != null
                         ? () =>
@@ -1196,7 +1196,7 @@ class _ImagePickerState extends State<ImagePicker>
                     },
                   ),
                   TextButton(
-                    child: Text('locked'),
+                    child: Text(_configs.textExposureLocked),
                     style: styleLocked,
                     onPressed: _controller != null
                         ? () =>
