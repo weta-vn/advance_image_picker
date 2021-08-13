@@ -147,7 +147,17 @@ class ImagePickerConfigs {
       "Locked");  
   String get textExposureAuto => getTranslatedString(
       "image_picker_exposure_auto_title",
-      "auto");  
+      "auto");      
+  String get textContrast => getTranslatedString(
+      "image_picker_image_edit_contrast",
+      "contrast"); 
+  String get textBrightness => getTranslatedString(
+      "image_picker_image_edit_brightness",
+      "brightness"); 
+   String get textSaturation => getTranslatedString(
+      "image_picker_image_edit_saturation",
+      "saturation");
+  
   /// Translate string by translateFunc
   String getTranslatedString(String name, String defaultValue) {
     return translateFunc.call(name, defaultValue);
