@@ -410,7 +410,8 @@ class _ImagePickerState extends State<ImagePicker>
                           return Scaffold(
                               appBar: AppBar(
                                   title: _buildAlbumSelectButton(context,
-                                      isPop: true)),
+                                      isPop: true),
+                                  centerTitle: false),
                               body: Material(
                                   color: Colors.black,
                                   child: SafeArea(
@@ -606,6 +607,7 @@ class _ImagePickerState extends State<ImagePicker>
       return Text(_configs.textCameraTitle,
           style: TextStyle(color: _configs.appBarTextColor, fontSize: 16));
 
+    final size = MediaQuery.of(context).size;
     var container = Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -613,17 +615,26 @@ class _ImagePickerState extends State<ImagePicker>
         padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(_currentAlbum?.name ?? "",
-                style:
-                    TextStyle(color: _configs.appBarTextColor, fontSize: 16)),
-            Icon(
-                isPop
-                    ? Icons.arrow_upward_outlined
-                    : Icons.arrow_downward_outlined,
-                size: 16)
+            Container(
+              constraints: BoxConstraints(maxWidth: size.width / 2.5),
+              child: Text(_currentAlbum?.name ?? "",
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      TextStyle(color: _configs.appBarTextColor, fontSize: 16)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Icon(
+                  isPop
+                      ? Icons.arrow_upward_outlined
+                      : Icons.arrow_downward_outlined,
+                  size: 16),
+            )
           ],
         ));
+
     return isPop
         ? GestureDetector(
             child: container,
