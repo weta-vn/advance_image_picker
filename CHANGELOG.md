@@ -1,3 +1,11 @@
+## [0.0.5+2]
+
+* Fixbug UI
+
+## [0.0.5+1]
+
+* Fixbug CameraPreview error while get camera permission
+
 ## [0.0.5]
 
 * Fixbug when removing selected images from list
