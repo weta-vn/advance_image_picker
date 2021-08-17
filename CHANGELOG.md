@@ -1,3 +1,7 @@
+## [0.0.5+2]
+
+* Fixbug UI
+
 ## [0.0.5+1]
 
 * Fixbug CameraPreview error while get camera permission
