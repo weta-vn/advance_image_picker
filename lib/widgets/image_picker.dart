@@ -134,6 +134,8 @@ class _ImagePickerState extends State<ImagePicker>
   /// Global key for this screen
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool _isDisposed = false;
+
   @override
   void initState() {
     super.initState();
@@ -190,7 +192,9 @@ class _ImagePickerState extends State<ImagePicker>
     // Process when app state changed
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
+      _isDisposed = true;
     } else if (state == AppLifecycleState.resumed) {
+      _isDisposed = false;
       _onNewCameraSelected(cameraController.description);
     }
   }
@@ -635,7 +639,7 @@ class _ImagePickerState extends State<ImagePicker>
     LogUtils.log("[_buildCameraPreview] start");
 
     final size = MediaQuery.of(context).size;
-    if (_controller?.value == null)
+    if (_controller?.value == null || _isDisposed)
       return Container(
           width: size.width,
           height: size.height,
