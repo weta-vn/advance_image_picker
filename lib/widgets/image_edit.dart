@@ -138,7 +138,7 @@ class _ImageEditState extends State<ImageEdit>
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${_configs.textConstrast}: ${_contrast.toString()}", style: textStyle),
+                  Text("${_configs.textContrast}: ${_contrast.toString()}", style: textStyle),
                   Text("${_configs.textBrightness}: ${_brightness.toString()}",
                       style: textStyle),
                   Text("${_configs.textSaturation}: ${_saturation.toString()}",
