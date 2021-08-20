@@ -302,8 +302,11 @@ class _ImagePickerState extends State<ImagePicker>
     var result = await PhotoManager.requestPermission();
     if (result) {
       // Get albums then set first album as current album
+      var type = RequestType.common;
+      if (_configs.mediaType != null) 
+        type = (_configs.mediaType == 0) ? RequestType.image : RequestType.video;
       _albums = await PhotoManager.getAssetPathList(
-          type: RequestType.image, onlyAll: false);
+          type: type, onlyAll: false);
       if (_albums.length > 0) {
         var isAllAlbum = _albums.firstWhereOrNull((element) => element.isAll);
         setState(() {
@@ -743,6 +746,7 @@ class _ImagePickerState extends State<ImagePicker>
               album: _currentAlbum!,
               selectedImages: _selectedImages,
               preProcessing: this._imagePreProcessing,
+              configs: _configs,
               onImageSelected: (image) async {
                 LogUtils.log("[_buildAlbumPreview] onImageSelected start");
 
@@ -1319,6 +1323,9 @@ class MediaAlbumWidget extends StatefulWidget {
   /// Image selected event
   final Function(ImageObject)? onImageSelected;
 
+  /// Image picker config
+  final ImagePickerConfigs configs;
+
   MediaAlbumWidget(
       {Key? key,
       this.gridCount = 4,
@@ -1330,7 +1337,8 @@ class MediaAlbumWidget extends StatefulWidget {
       this.albumThumbHeight = 200,
       this.selectedImages,
       this.preProcessing,
-      this.onImageSelected})
+      this.onImageSelected,
+      required this.configs})
       : super(key: key);
 
   @override
@@ -1403,7 +1411,8 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
 
       List<AssetEntity> assets = [];
       for (var asset in ret) {
-        if (asset.type == AssetType.image) assets.add(asset);
+        if (((widget.configs.mediaType ?? 0) == 0) && (asset.type == AssetType.image)) assets.add(asset);
+        if (((widget.configs.mediaType ?? 1) == 1) && (asset.type == AssetType.video)) assets.add(asset);
       }
 
       setState(() {
@@ -1448,7 +1457,8 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
                     var image = ImageObject(
                         originalPath: file!.path,
                         modifiedPath: file.path,
-                        assetId: asset.id);
+                        assetId: asset.id,
+                        type: (asset.type == AssetType.image) ? 0 : 1);
 
                     setState(() {
                       if (idx >= 0)
@@ -1487,6 +1497,13 @@ class _MediaAlbumWidgetState extends State<MediaAlbumWidget> {
                         color: Colors.grey.shade200.withOpacity(0.8))),
               if (_loadingAsset == asset.id)
                 Positioned.fill(child: CupertinoActivityIndicator()),
+              if (asset.type == AssetType.video)
+                Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.music_video_rounded,
+                          color: Colors.pinkAccent, size: 24),
+                    )),
               if (idx >= 0)
                 Positioned(
                     top: 10,

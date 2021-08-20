@@ -87,6 +87,9 @@ class ImagePickerConfigs {
   /// Camera direction setting, null: use all available camera, 0: only use front camera, 1: only use back camera
   int? cameraLensDirection;
 
+  /// Media types, null: video+image, 0: image only, 1: video only
+  int? mediaType; 
+
   /// UI style settings
   Color backgroundColor = Colors.black;
   Color bottomPanelColor = Colors.black;
