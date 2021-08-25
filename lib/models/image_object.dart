@@ -1,5 +1,13 @@
-/// Image object using inside this package
+/// Image object using inside this package.
 class ImageObject {
+  /// Default constructor for the image object using inside this package.
+  ImageObject(
+      {required this.originalPath,
+      required this.modifiedPath,
+      this.assetId = "",
+      this.modifiedWidth,
+      this.modifiedHeight});
+
   /// Original image path (input image path)
   String originalPath;
 
@@ -14,11 +22,4 @@ class ImageObject {
 
   /// Asset id
   String? assetId;
-
-  ImageObject(
-      {required this.originalPath,
-      required this.modifiedPath,
-      this.assetId = "",
-      this.modifiedWidth,
-      this.modifiedHeight});
 }

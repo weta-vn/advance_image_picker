@@ -11,9 +11,9 @@ import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../configs/image_picker_configs.dart';
-import '../utils/log_utils.dart';
 import '../models/image_object.dart';
 import '../utils/image_utils.dart';
+import '../utils/log_utils.dart';
 import 'image_viewer.dart';
 import 'portrait_mode_mixin.dart';
 
@@ -23,10 +23,12 @@ class PickerMode {
   static const int Album = 1;
 }
 
-/// Default height of botton control panel
+/// Default height of bottom control panel
 const int kBottomControlPanelHeight = 265;
 
-/// Image picker for selecting **multiple images** from the Android and iOS image library, **taking new pictures with the camera**, and **edit** them before using such as rotation, cropping, adding sticker/filters.
+/// Image picker for selecting **multiple images** from the Android and iOS
+/// image library, **taking new pictures with the camera**, and **edit** them
+/// before using such as rotation, cropping, adding sticker/filters.
 class ImagePicker extends StatefulWidget {
   /// Max selecting count
   final int maxCount;
@@ -363,18 +365,33 @@ class _ImagePickerState extends State<ImagePicker>
 
     return (await showDialog<bool>(
             context: context,
-            builder: (context) => new AlertDialog(
-                  title: new Text(_configs.textConfirm),
-                  content:
-                      new Text(_configs.textConfirmExitWithoutSelectingImages),
+            builder: (context) => AlertDialog(
+                  title: Text(_configs.textConfirm),
+                  content: Text(_configs.textConfirmExitWithoutSelectingImages),
                   actions: <Widget>[
-                    new FlatButton(
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        primary: Colors.black87,
+                        minimumSize: Size(88, 36),
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                        ),
+                      ),
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: new Text(_configs.textNo),
+                      child: Text(_configs.textNo),
                     ),
-                    new FlatButton(
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        primary: Colors.black87,
+                        minimumSize: Size(88, 36),
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                        ),
+                      ),
                       onPressed: () => Navigator.of(context).pop(true),
-                      child: new Text(_configs.textYes),
+                      child: Text(_configs.textYes),
                     ),
                   ],
                 ))) ??
@@ -385,22 +402,61 @@ class _ImagePickerState extends State<ImagePicker>
   Widget build(BuildContext context) {
     super.build(context);
 
+    // Use theme based AppBar colors if config values are not defined.
+    // The logic is based on same approach that is used in AppBar SDK source.
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final AppBarTheme appBarTheme = AppBarTheme.of(context);
+    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
+    // The AppBar theme backwards compatibility will be deprecated in Flutter
+    // SDK soon. When that happens it will be removed here too.
+    final bool backwardsCompatibility =
+        appBarTheme.backwardsCompatibility ?? false;
+    final Color _appBarBackgroundColor = backwardsCompatibility
+        ? _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            theme.primaryColor
+        : _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            (colorScheme.brightness == Brightness.dark
+                ? colorScheme.surface
+                : colorScheme.primary);
+    final Color _appBarTextColor = _configs.appBarTextColor ??
+        appBarTheme.foregroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.onSurface
+            : colorScheme.onPrimary);
+    final Color _appBarDoneButtonColor =
+        _configs.appBarDoneButtonColor ?? _appBarBackgroundColor;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: _configs.backgroundColor,
           appBar: AppBar(
-            title: _buildAppBarTitle(context),
+            title: _buildAppBarTitle(
+              context,
+              _appBarBackgroundColor,
+              _appBarTextColor,
+            ),
+            backgroundColor: _appBarBackgroundColor,
+            foregroundColor: _appBarTextColor,
             centerTitle: false,
-            actions: <Widget>[_buildDoneButton(context)],
+            actions: <Widget>[
+              _buildDoneButton(context, _appBarDoneButtonColor),
+            ],
           ),
           body: SafeArea(child: _buildBodyView(context))),
     );
   }
 
   /// Build app bar title
-  _buildAppBarTitle(BuildContext context) {
+  _buildAppBarTitle(
+    BuildContext context,
+    Color appBarBackgroundColor,
+    appBarTextColor,
+  ) {
     return GestureDetector(
         onTap: (_mode == PickerMode.Album)
             ? () {
@@ -411,6 +467,8 @@ class _ImagePickerState extends State<ImagePicker>
                               appBar: AppBar(
                                   title: _buildAlbumSelectButton(context,
                                       isPop: true),
+                                  backgroundColor: appBarBackgroundColor,
+                                  foregroundColor: appBarTextColor,
                                   centerTitle: false),
                               body: Material(
                                   color: Colors.black,
@@ -435,7 +493,7 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Build done button
-  _buildDoneButton(BuildContext context) {
+  _buildDoneButton(BuildContext context, Color buttonColor) {
     return Padding(
         padding: EdgeInsets.all(8.0),
         child: OutlinedButton(
@@ -458,9 +516,7 @@ class _ImagePickerState extends State<ImagePicker>
           style: ButtonStyle(
             elevation: MaterialStateProperty.all(5),
             backgroundColor: MaterialStateProperty.all(
-                this._selectedImages.length > 0
-                    ? _configs.appBarDoneButtonColor
-                    : Colors.grey),
+                this._selectedImages.length > 0 ? buttonColor : Colors.grey),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0))),
           ),
@@ -468,7 +524,7 @@ class _ImagePickerState extends State<ImagePicker>
             Text(_configs.textSelectButtonTitle,
                 style: TextStyle(
                     color: this._selectedImages.length > 0
-                        ? ((_configs.appBarDoneButtonColor == Colors.white)
+                        ? ((buttonColor == Colors.white)
                             ? Colors.black
                             : Colors.white)
                         : Colors.black)),
@@ -521,10 +577,14 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build zoom ratio button
   _buildZoomRatioButton(BuildContext context) {
-    return FlatButton(
+    return TextButton(
+        style: TextButton.styleFrom(
+          primary: Colors.black12,
+          minimumSize: Size(88, 36),
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          shape: const CircleBorder(),
+        ),
         onPressed: null,
-        shape: CircleBorder(),
-        color: Colors.black12,
         child: Container(
           width: 48,
           height: 48,
@@ -537,10 +597,13 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build exposure adjusting button
   _buildExposureButton(BuildContext context) {
-    return FlatButton(
-      shape: CircleBorder(),
-      color: Colors.black12,
-      padding: EdgeInsets.all(4.0),
+    return TextButton(
+      style: TextButton.styleFrom(
+        primary: Colors.black12,
+        minimumSize: Size(88, 36),
+        padding: EdgeInsets.all(4.0),
+        shape: const CircleBorder(),
+      ),
       child: Icon(Icons.exposure, color: Colors.white, size: 40),
       onPressed: _controller != null ? _onExposureModeButtonPressed : null,
     );
@@ -557,20 +620,25 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build image full option
   _buildImageFullOption(BuildContext context) {
-    return FlatButton(
-        onPressed: () {
-          setState(() {
-            _isFullscreenImage = !_isFullscreenImage;
-          });
-        },
-        shape: CircleBorder(),
-        color: Colors.black12,
-        child: Icon(
-            _isFullscreenImage
-                ? Icons.fullscreen_exit_rounded
-                : Icons.fullscreen_rounded,
-            color: Colors.white,
-            size: 48));
+    return TextButton(
+      style: TextButton.styleFrom(
+        primary: Colors.black12,
+        minimumSize: Size(88, 36),
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        shape: const CircleBorder(),
+      ),
+      onPressed: () {
+        setState(() {
+          _isFullscreenImage = !_isFullscreenImage;
+        });
+      },
+      child: Icon(
+          _isFullscreenImage
+              ? Icons.fullscreen_exit_rounded
+              : Icons.fullscreen_rounded,
+          color: Colors.white,
+          size: 48),
+    );
   }
 
   /// Build bottom panel
@@ -1198,7 +1266,7 @@ class _ImagePickerState extends State<ImagePicker>
                   Text(_configs.textExposure, style: textStyle),
                   SizedBox(width: 8),
                   TextButton(
-                    child: Text(_configs.textExposureAuto), 
+                    child: Text(_configs.textExposureAuto),
                     style: styleAuto,
                     onPressed: _controller != null
                         ? () =>
@@ -1265,7 +1333,7 @@ class _ImagePickerState extends State<ImagePicker>
 
     try {
       await _controller!.setExposureMode(mode);
-    } on CameraException catch (e) {
+    } on CameraException catch (_) {
       rethrow;
     }
   }
@@ -1281,7 +1349,7 @@ class _ImagePickerState extends State<ImagePicker>
     });
     try {
       offset = await _controller!.setExposureOffset(offset);
-    } on CameraException catch (e) {
+    } on CameraException catch (_) {
       rethrow;
     }
   }

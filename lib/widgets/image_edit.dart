@@ -82,10 +82,37 @@ class _ImageEditState extends State<ImageEdit>
   Widget build(BuildContext context) {
     super.build(context);
 
+    // Use theme based AppBar colors if config values are not defined.
+    // The logic is based on same approach that is used in AppBar SDK source.
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final AppBarTheme appBarTheme = AppBarTheme.of(context);
+    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
+    // The AppBar theme backwards compatibility will be deprecated in Flutter
+    // SDK soon. When that happens it will be removed here too.
+    final bool backwardsCompatibility =
+        appBarTheme.backwardsCompatibility ?? false;
+    final Color _appBarBackgroundColor = backwardsCompatibility
+        ? _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            theme.primaryColor
+        : _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            (colorScheme.brightness == Brightness.dark
+                ? colorScheme.surface
+                : colorScheme.primary);
+    final Color _appBarTextColor = _configs.appBarTextColor ??
+        appBarTheme.foregroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.onSurface
+            : colorScheme.onPrimary);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: _appBarBackgroundColor,
+        foregroundColor: _appBarTextColor,
         actions: <Widget>[_buildDoneButton(context)],
       ),
       body: Column(
@@ -138,7 +165,10 @@ class _ImageEditState extends State<ImageEdit>
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("${_configs.textContrast}: ${_contrast.toString()}", style: textStyle),
+                  Text(
+                      "${_configs.textContrast}: "
+                      "${_contrast.toString()}",
+                      style: textStyle),
                   Text("${_configs.textBrightness}: ${_brightness.toString()}",
                       style: textStyle),
                   Text("${_configs.textSaturation}: ${_saturation.toString()}",
@@ -154,8 +184,8 @@ class _ImageEditState extends State<ImageEdit>
       icon: Icon(Icons.done),
       onPressed: () async {
         final dir = await PathProvider.getTemporaryDirectory();
-        final targetPath =
-            "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+        final targetPath = "${dir.absolute.path}/temp_"
+            "${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
         File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
         Navigator.of(context).pop(file);

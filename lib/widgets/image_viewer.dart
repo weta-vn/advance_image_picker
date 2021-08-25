@@ -60,12 +60,6 @@ class _ImageViewerState extends State<ImageViewer>
   /// Configuration
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
-  /// Text controller
-  TextEditingController _textFieldController = TextEditingController();
-
-  /// Flag indicate processing or not
-  bool _isProcessing = false;
-
   @override
   void initState() {
     super.initState();
@@ -98,11 +92,39 @@ class _ImageViewerState extends State<ImageViewer>
     super.build(context);
 
     var hasImages = (this._images.length > 0);
+
+    // Use theme based AppBar colors if config values are not defined.
+    // The logic is based on same approach that is used in AppBar SDK source.
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final AppBarTheme appBarTheme = AppBarTheme.of(context);
+    // TODO: Track AppBar heme backwards compatibility in Flutter SDK.
+    // This AppBar theme backwards compatibility will be deprecated in Flutter
+    // SDK soon. When that happens it will be removed here too.
+    final bool backwardsCompatibility =
+        appBarTheme.backwardsCompatibility ?? false;
+    final Color _appBarBackgroundColor = backwardsCompatibility
+        ? _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            theme.primaryColor
+        : _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            (colorScheme.brightness == Brightness.dark
+                ? colorScheme.surface
+                : colorScheme.primary);
+    final Color _appBarTextColor = _configs.appBarTextColor ??
+        appBarTheme.foregroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.onSurface
+            : colorScheme.onPrimary);
+
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-            title: Text(
-                "${widget.title} (${this._currentIndex! + 1} / ${this._images.length})"),
+            title: Text("${widget.title} (${this._currentIndex! + 1} "
+                "/ ${this._images.length})"),
+            backgroundColor: _appBarBackgroundColor,
+            foregroundColor: _appBarTextColor,
             actions: [
               GestureDetector(
                 child: Padding(
@@ -157,7 +179,11 @@ class _ImageViewerState extends State<ImageViewer>
               ? Column(children: [
                   _buildPhotoViewGallery(context),
                   _buildReorderableSelectedImageList(context),
-                  _buildEditorControls(context),
+                  _buildEditorControls(
+                    context,
+                    _appBarBackgroundColor,
+                    _appBarTextColor,
+                  ),
                 ])
               : Center(
                   child: Text(_configs.textNoImages,
@@ -305,7 +331,8 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Build editor controls
-  _buildEditorControls(BuildContext context) {
+  _buildEditorControls(
+      BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     var imageChanged = (_images[_currentIndex!].modifiedPath !=
         _images[_currentIndex!].originalPath);
 
@@ -333,8 +360,8 @@ class _ImageViewerState extends State<ImageViewer>
                   ],
                   androidUiSettings: AndroidUiSettings(
                       toolbarTitle: _configs.textImageCropTitle,
-                      toolbarColor: Colors.blue,
-                      toolbarWidgetColor: Colors.white,
+                      toolbarColor: toolbarColor,
+                      toolbarWidgetColor: toolbarWidgetColor,
                       initAspectRatio: CropAspectRatioPreset.original,
                       lockAspectRatio: false),
                   iosUiSettings: IOSUiSettings(
@@ -399,15 +426,15 @@ class _ImageViewerState extends State<ImageViewer>
             onTap: () async {
               var image = await this
                   ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
-              var edittedFile = await Navigator.of(context).push(
+              var editedFile = await Navigator.of(context).push(
                   MaterialPageRoute(
                       fullscreenDialog: true,
                       builder: (context) => ImageSticker(
                           file: image, title: _configs.textImageStickerTitle)));
-              if (edittedFile != null) {
+              if (editedFile != null) {
                 setState(() {
                   this._images[this._currentIndex!].modifiedPath =
-                      edittedFile.path;
+                      editedFile.path;
                   widget.onChanged?.call(this._images);
                 });
               }
