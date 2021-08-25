@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
+import 'custom_track_shape.dart';
 import 'portrait_mode_mixin.dart';
 
 /// Image editing widget, such as cropping, rotating, scaling, ...
@@ -29,19 +30,13 @@ class ImageEdit extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageEdit(
-      {required this.file,
-      required this.title,
-      this.configs,
-      this.maxWidth = 1080,
-      this.maxHeight = 1920});
+  ImageEdit({required this.file, required this.title, this.configs, this.maxWidth = 1080, this.maxHeight = 1920});
 
   @override
   _ImageEditState createState() => _ImageEditState();
 }
 
-class _ImageEditState extends State<ImageEdit>
-    with PortraitStatefulModeMixin<ImageEdit> {
+class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<ImageEdit> {
   double _contrast = 0;
   double _brightness = 0;
   double _saturation = 0;
@@ -90,10 +85,7 @@ class _ImageEditState extends State<ImageEdit>
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(child: _buildImageViewer(context)),
-          _buildAdjustControls(context)
-        ],
+        children: [Expanded(child: _buildImageViewer(context)), _buildAdjustControls(context)],
       ),
     );
   }
@@ -114,9 +106,7 @@ class _ImageEditState extends State<ImageEdit>
                   _controlExpanded = false;
                 });
               },
-              child: Container(
-                  child: Row(
-                      children: [Spacer(), Icon(Icons.keyboard_arrow_down)])),
+              child: Container(child: Row(children: [Spacer(), Icon(Icons.keyboard_arrow_down)])),
             ),
             Divider(),
             _buildContrastAdjustControl(context),
@@ -135,16 +125,12 @@ class _ImageEditState extends State<ImageEdit>
         child: Container(
             color: Color(0xFF212121),
             padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("${_configs.textContrast}: ${_contrast.toString()}", style: textStyle),
-                  Text("${_configs.textBrightness}: ${_brightness.toString()}",
-                      style: textStyle),
-                  Text("${_configs.textSaturation}: ${_saturation.toString()}",
-                      style: textStyle),
-                  Icon(Icons.keyboard_arrow_up)
-                ])),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text("${_configs.textContrast}: ${_contrast.toString()}", style: textStyle),
+              Text("${_configs.textBrightness}: ${_brightness.toString()}", style: textStyle),
+              Text("${_configs.textSaturation}: ${_saturation.toString()}", style: textStyle),
+              Icon(Icons.keyboard_arrow_up)
+            ])),
       );
     }
   }
@@ -154,8 +140,7 @@ class _ImageEditState extends State<ImageEdit>
       icon: Icon(Icons.done),
       onPressed: () async {
         final dir = await PathProvider.getTemporaryDirectory();
-        final targetPath =
-            "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+        final targetPath = "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
         File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
         Navigator.of(context).pop(file);
@@ -192,9 +177,7 @@ class _ImageEditState extends State<ImageEdit>
   _processImage() async {
     if (_isProcessing) return;
 
-    if (_contrastValues.length > 1 ||
-        _brightnessValues.length > 1 ||
-        _saturationValues.length > 1) {
+    if (_contrastValues.length > 1 || _brightnessValues.length > 1 || _saturationValues.length > 1) {
       _isProcessing = true;
 
       // Get last value
@@ -203,12 +186,9 @@ class _ImageEditState extends State<ImageEdit>
       var saturation = _saturationValues.last;
 
       // Remove old values
-      if (_contrastValues.length > 1)
-        _contrastValues.removeRange(0, _contrastValues.length - 1);
-      if (_brightnessValues.length > 1)
-        _brightnessValues.removeRange(0, _brightnessValues.length - 1);
-      if (_saturationValues.length > 1)
-        _saturationValues.removeRange(0, _saturationValues.length - 1);
+      if (_contrastValues.length > 1) _contrastValues.removeRange(0, _contrastValues.length - 1);
+      if (_brightnessValues.length > 1) _brightnessValues.removeRange(0, _brightnessValues.length - 1);
+      if (_saturationValues.length > 1) _saturationValues.removeRange(0, _saturationValues.length - 1);
 
       _processImageWithOptions(contrast, brightness, saturation).then((value) {
         _isProcessing = false;
@@ -223,14 +203,12 @@ class _ImageEditState extends State<ImageEdit>
     }
   }
 
-  Future<Uint8List?> _processImageWithOptions(
-      double contrast, double brightness, double saturation) async {
+  Future<Uint8List?> _processImageWithOptions(double contrast, double brightness, double saturation) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
-    return await ImageEditor.editImage(
-        image: _orgImageBytes!, imageEditorOption: option);
+    return await ImageEditor.editImage(image: _orgImageBytes!, imageEditorOption: option);
   }
 
   _calColorOptionValue(double value) {
@@ -343,22 +321,5 @@ class _ImageEditState extends State<ImageEdit>
         )
       ]),
     );
-  }
-}
-
-class CustomTrackShape extends RoundedRectSliderTrackShape {
-  Rect getPreferredRect({
-    required RenderBox parentBox,
-    Offset offset = Offset.zero,
-    required SliderThemeData sliderTheme,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-  }) {
-    final double trackHeight = sliderTheme.trackHeight!;
-    final double trackLeft = offset.dx;
-    final double trackTop =
-        offset.dy + (parentBox.size.height - trackHeight) / 2;
-    final double trackWidth = parentBox.size.width;
-    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
 }
