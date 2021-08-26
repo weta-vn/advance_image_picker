@@ -71,6 +71,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     super.dispose();
   }
 
+  /// Read image bytes from file
   _readImage() async {
     if (_imageBytes == null) {
       _imageBytes = await widget.file.readAsBytes();
@@ -94,28 +95,39 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (_imageBytes == null)
-              FutureBuilder(
-                  future: _readImage(),
-                  builder: (BuildContext context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return _buildImageStack(context);
-                    } else
-                      return Container(
-                          child: Center(
-                        child: CupertinoActivityIndicator(),
-                      ));
-                  })
-            else
-              _buildImageStack(context),
+            Expanded(
+              child: (_imageBytes == null)
+                  ? FutureBuilder(
+                      future: _readImage(),
+                      builder: (BuildContext context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return _buildImageStack(context);
+                        } else
+                          return Container(
+                              child: Center(
+                            child: CupertinoActivityIndicator(),
+                          ));
+                      })
+                  : _buildImageStack(context),
+            ),
             _buildStickerList(context)
           ],
         ),
-        Positioned(bottom: 170, left: 20, right: 20, child: _buildScalingControl(context))
+        Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(_configs.textImageStickerGuide, style: TextStyle(color: Colors.white)),
+            ))),
+        Positioned(bottom: 120, left: 0, right: 0, child: _buildScalingControl(context))
       ]),
     );
   }
 
+  /// Done process button
   _buildDoneButton(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.done),
@@ -139,6 +151,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     );
   }
 
+  /// Build sticker list panel
   _buildStickerList(BuildContext context) {
     return Container(
         color: Colors.black,
@@ -149,28 +162,32 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
           itemCount: _stickerList.length,
           itemBuilder: (BuildContext context, int i) {
             return Padding(
-                padding: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.all(1.0),
                 child: Container(
                   color: Colors.white,
-                  child: FlatButton(
-                      onPressed: () {
+                  child: GestureDetector(
+                      onTap: () {
                         _attachSticker(_stickerList[i]);
                       },
-                      child: _stickerList[i]),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _stickerList[i],
+                      )),
                 ));
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0),
         ),
-        height: 160);
+        height: 120);
   }
 
+  /// Build image & stickers stack panel
   _buildImageStack(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
     return RepaintBoundary(
       key: this._boundaryKey,
       child: Listener(
-        onPointerDown: (v) {
+        onPointerDown: (v) async {
           _selectedStickerView = _getSelectedSticker(v);
         },
         onPointerMove: (v) async {
@@ -200,10 +217,12 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     );
   }
 
+  /// Build control to scale selected sticker icon
   _buildScalingControl(BuildContext context) {
     if (_selectedStickerView == null) return const SizedBox();
 
-    return Padding(
+    return Container(
+      color: Colors.black,
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SliderTheme(
         data: SliderThemeData(
@@ -226,6 +245,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     );
   }
 
+  /// Determine which sticker is selecting
   _getSelectedSticker(PointerEvent event) {
     final result = BoxHitTestResult();
 
@@ -238,6 +258,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     }
   }
 
+  /// Add new sticker to stack
   _attachSticker(Image image) {
     setState(() {
       _attachedList.add(StickerView(
@@ -257,6 +278,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     });
   }
 
+  /// Export image & sticker stack to image bytes
   _exportWidgetToImage(GlobalKey key) async {
     RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
@@ -266,6 +288,7 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
   }
 }
 
+/// Sticker view
 // ignore: must_be_immutable
 class StickerView extends StatefulWidget {
   final Image image;

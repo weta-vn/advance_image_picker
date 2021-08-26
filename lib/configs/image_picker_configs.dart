@@ -1,4 +1,3 @@
-import 'package:advance_image_picker/widgets/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -95,69 +94,41 @@ class ImagePickerConfigs {
   Color appBarDoneButtonColor = Colors.blue;
 
   /// UI label strings (for localization)
-  String get textSelectedImagesTitle => getTranslatedString(
-      "image_picker_select_images_title", "Selected images count");
-  String get textSelectedImagesGuide => getTranslatedString(
-      "image_picker_select_images_guide",
-      "You can drag images for sorting list...");
-  String get textCameraTitle =>
-      getTranslatedString("image_picker_camera_title", "Camera");
-  String get textAlbumTitle =>
-      getTranslatedString("image_picker_album_title", "Album");
-  String get textPreviewTitle =>
-      getTranslatedString("image_picker_preview_title", "Preview");
-  String get textConfirm =>
-      getTranslatedString("image_picker_confirm", "Confirm");
-  String get textConfirmExitWithoutSelectingImages => translateFunc(
-      "image_picker_exit_without_selecting",
-      "Do you want to exit without selecting images?");
-  String get textConfirmDelete => getTranslatedString(
-      "image_picker_confirm_delete", "Do you want to delete this image?");
-  String get textConfirmResetChanges => getTranslatedString(
-      "image_picker_confirm_reset_changes",
-      "Do you want to clear all changes for this image?");
+  String get textSelectedImagesTitle =>
+      getTranslatedString("image_picker_select_images_title", "Selected images count");
+  String get textSelectedImagesGuide =>
+      getTranslatedString("image_picker_select_images_guide", "You can drag images for sorting list...");
+  String get textCameraTitle => getTranslatedString("image_picker_camera_title", "Camera");
+  String get textAlbumTitle => getTranslatedString("image_picker_album_title", "Album");
+  String get textPreviewTitle => getTranslatedString("image_picker_preview_title", "Preview");
+  String get textConfirm => getTranslatedString("image_picker_confirm", "Confirm");
+  String get textConfirmExitWithoutSelectingImages =>
+      translateFunc("image_picker_exit_without_selecting", "Do you want to exit without selecting images?");
+  String get textConfirmDelete =>
+      getTranslatedString("image_picker_confirm_delete", "Do you want to delete this image?");
+  String get textConfirmResetChanges =>
+      getTranslatedString("image_picker_confirm_reset_changes", "Do you want to clear all changes for this image?");
   String get textYes => getTranslatedString("yes", "Yes");
   String get textNo => getTranslatedString("no", "No");
   String get textSave => getTranslatedString("save", "Save");
   String get textClear => getTranslatedString("clear", "Clear");
-  String get textEditText =>
-      getTranslatedString("image_picker_edit_text", "Edit text");
-  String get textNoImages =>
-      getTranslatedString("image_picker_no_images", "No images ...");
-  String get textImageCropTitle =>
-      getTranslatedString("image_picker_image_crop_title", "Image crop");
-  String get textImageFilterTitle =>
-      getTranslatedString("image_picker_image_filter_title", "Image filter");
-  String get textImageEditTitle =>
-      getTranslatedString("image_picker_image_edit_title", "Image edit");
-  String get textImageStickerTitle =>
-      getTranslatedString("image_picker_image_sticker_title", "Image sticker");
-  String get textImageAddTextTitle =>
-      getTranslatedString("image_picker_image_addtext_title", "Image add text");
-  String get textSelectButtonTitle =>
-      getTranslatedString("image_picker_select_button_title", "Select");
-  String get textImageStickerGuide => getTranslatedString(
-      "image_picker_image_sticker_guide",
-      "You can click on below icons to add into image, double click to remove it from image");
-  String get textExposure => getTranslatedString(
-      "image_picker_exposure_title",
-      "Exposure");
-  String get textExposureLocked => getTranslatedString(
-      "image_picker_exposure_locked_title",
-      "Locked");  
-  String get textExposureAuto => getTranslatedString(
-      "image_picker_exposure_auto_title",
-      "auto");      
-  String get textContrast => getTranslatedString(
-      "image_picker_image_edit_contrast",
-      "contrast"); 
-  String get textBrightness => getTranslatedString(
-      "image_picker_image_edit_brightness",
-      "brightness"); 
-   String get textSaturation => getTranslatedString(
-      "image_picker_image_edit_saturation",
-      "saturation");
-  
+  String get textEditText => getTranslatedString("image_picker_edit_text", "Edit text");
+  String get textNoImages => getTranslatedString("image_picker_no_images", "No images ...");
+  String get textImageCropTitle => getTranslatedString("image_picker_image_crop_title", "Image crop");
+  String get textImageFilterTitle => getTranslatedString("image_picker_image_filter_title", "Image filter");
+  String get textImageEditTitle => getTranslatedString("image_picker_image_edit_title", "Image edit");
+  String get textImageStickerTitle => getTranslatedString("image_picker_image_sticker_title", "Image sticker");
+  String get textImageAddTextTitle => getTranslatedString("image_picker_image_addtext_title", "Image add text");
+  String get textSelectButtonTitle => getTranslatedString("image_picker_select_button_title", "Select");
+  String get textImageStickerGuide => getTranslatedString("image_picker_image_sticker_guide",
+      "You can click on sticker icons to scale it or double click to remove it from image");
+  String get textExposure => getTranslatedString("image_picker_exposure_title", "Exposure");
+  String get textExposureLocked => getTranslatedString("image_picker_exposure_locked_title", "Locked");
+  String get textExposureAuto => getTranslatedString("image_picker_exposure_auto_title", "auto");
+  String get textContrast => getTranslatedString("image_picker_image_edit_contrast", "contrast");
+  String get textBrightness => getTranslatedString("image_picker_image_edit_brightness", "brightness");
+  String get textSaturation => getTranslatedString("image_picker_image_edit_saturation", "saturation");
+
   /// Translate string by translateFunc
   String getTranslatedString(String name, String defaultValue) {
     return translateFunc.call(name, defaultValue);
