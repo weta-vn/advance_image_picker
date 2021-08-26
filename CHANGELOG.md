@@ -1,3 +1,9 @@
+## [0.1.0]
+
+* Rewrite image sticker feature
+* Update camera plugin to v0.9.1
+* Improve UI customization
+
 ## [0.0.5+3]
 
 * Fixbug repo

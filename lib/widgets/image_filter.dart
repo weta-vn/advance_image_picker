@@ -3,11 +3,12 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:advance_image_picker/utils/time_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
@@ -229,7 +230,7 @@ class _ImageFilterState extends State<ImageFilter>
   Future<File> saveFilteredImage() async {
     final dir = await PathProvider.getTemporaryDirectory();
     final targetPath =
-        "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+        "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
     File imageFile = File(targetPath);
 
     // Run selected filter on output image
