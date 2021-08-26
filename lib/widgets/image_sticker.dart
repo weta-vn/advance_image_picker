@@ -85,10 +85,37 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
 
     _boundaryKey = GlobalKey();
 
+    // Use theme based AppBar colors if config values are not defined.
+    // The logic is based on same approach that is used in AppBar SDK source.
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final AppBarTheme appBarTheme = AppBarTheme.of(context);
+    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
+    // The AppBar theme backwards compatibility will be deprecated in Flutter
+    // SDK soon. When that happens it will be removed here too.
+    final bool backwardsCompatibility =
+        appBarTheme.backwardsCompatibility ?? false;
+    final Color _appBarBackgroundColor = backwardsCompatibility
+        ? _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            theme.primaryColor
+        : _configs.appBarBackgroundColor ??
+            appBarTheme.backgroundColor ??
+            (colorScheme.brightness == Brightness.dark
+                ? colorScheme.surface
+                : colorScheme.primary);
+    final Color _appBarTextColor = _configs.appBarTextColor ??
+        appBarTheme.foregroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.onSurface
+            : colorScheme.onPrimary);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: _appBarBackgroundColor,
+        foregroundColor: _appBarTextColor,
         actions: <Widget>[_buildDoneButton(context)],
       ),
       body: Stack(fit: StackFit.passthrough, children: [

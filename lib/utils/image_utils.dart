@@ -36,7 +36,7 @@ class ImageUtils {
       mHeight = maxWidth;
     }
 
-    // Re-calculate output width & heigth by comparing with original size
+    // Re-calculate output width & height by comparing with original size
     if (outputWidth > mWidth || outputHeight > mHeight) {
       var ratio = outputWidth / outputHeight;
       outputWidth = min(outputWidth, mWidth);
