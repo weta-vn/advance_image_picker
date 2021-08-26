@@ -140,14 +140,12 @@ This software uses the following open source packages:
 
 - camera
 - photo_manager
-- image_cropper
 - photo_view
-- flutter_native_image
-- image_editor
-- matrix_gesture_detector
-- path_provider
 - image
-- intl
+- image_cropper
+- image_editor
+- flutter_native_image
+- path_provider
 
 ## Support
 

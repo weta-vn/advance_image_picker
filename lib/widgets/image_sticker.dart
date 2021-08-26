@@ -2,10 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:advance_image_picker/utils/time_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
@@ -30,13 +31,19 @@ class ImageSticker extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageSticker({required this.file, required this.title, this.maxWidth = 1080, this.maxHeight = 1920, this.configs});
+  ImageSticker(
+      {required this.file,
+      required this.title,
+      this.maxWidth = 1080,
+      this.maxHeight = 1920,
+      this.configs});
 
   @override
   _ImageStickerState createState() => _ImageStickerState();
 }
 
-class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMixin<ImageSticker> {
+class _ImageStickerState extends State<ImageSticker>
+    with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
@@ -147,9 +154,14 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
             child: Center(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(_configs.textImageStickerGuide, style: TextStyle(color: Colors.white)),
+              child: Text(_configs.textImageStickerGuide,
+                  style: TextStyle(color: Colors.white)),
             ))),
-        Positioned(bottom: 120, left: 0, right: 0, child: _buildScalingControl(context))
+        Positioned(
+            bottom: 120,
+            left: 0,
+            right: 0,
+            child: _buildScalingControl(context))
       ]),
     );
   }
@@ -165,7 +177,8 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
 
               // Output to file
               final dir = await PathProvider.getTemporaryDirectory();
-              final targetPath = "${dir.absolute.path}/temp_${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+              final targetPath =
+                  "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
               File file = File(targetPath);
               await file.writeAsBytes(image);
 
@@ -202,7 +215,8 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
                       )),
                 ));
           },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 1.0),
         ),
         height: 120);
   }
@@ -220,10 +234,14 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
         onPointerMove: (v) async {
           setState(() {
             if (_selectedStickerView != null) {
-              _selectedStickerView!.top =
-                  v.localPosition.dy - (_selectedStickerView!.height * _selectedStickerView!.currentScale) / 2;
-              _selectedStickerView!.left =
-                  v.localPosition.dx - (_selectedStickerView!.width * _selectedStickerView!.currentScale) / 2;
+              _selectedStickerView!.top = v.localPosition.dy -
+                  (_selectedStickerView!.height *
+                          _selectedStickerView!.currentScale) /
+                      2;
+              _selectedStickerView!.left = v.localPosition.dx -
+                  (_selectedStickerView!.width *
+                          _selectedStickerView!.currentScale) /
+                      2;
             }
           });
         },
@@ -234,10 +252,14 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
               width: size.width,
               height: size.height - 300,
               decoration: BoxDecoration(
-                  color: Colors.black, image: DecorationImage(fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
+                  color: Colors.black,
+                  image: DecorationImage(
+                      fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
             ),
-            ..._attachedList
-                .map((e) => Positioned(top: e.top, left: e.left, child: e..isFocus = (e == _selectedStickerView))),
+            ..._attachedList.map((e) => Positioned(
+                top: e.top,
+                left: e.left,
+                child: e..isFocus = (e == _selectedStickerView))),
           ],
         ),
       ),
@@ -277,7 +299,8 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
     final result = BoxHitTestResult();
 
     for (StickerView s in _attachedList) {
-      final RenderBox box = (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
+      final RenderBox box =
+          (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
       Offset localBox = box.globalToLocal(event.position);
       if (box.hitTest(result, position: localBox)) {
         return s;
@@ -297,7 +320,9 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
         left: 20,
         onTapRemove: (sticker) {
           setState(() {
-            if (_selectedStickerView != null && _selectedStickerView!.key == sticker.key) _selectedStickerView = null;
+            if (_selectedStickerView != null &&
+                _selectedStickerView!.key == sticker.key)
+              _selectedStickerView = null;
             this._attachedList.removeWhere((s) => s.key == sticker.key);
           });
         },
@@ -307,7 +332,8 @@ class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMi
 
   /// Export image & sticker stack to image bytes
   _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
     var byteData = await image.toByteData(format: ImageByteFormat.png);
     var pngBytes = byteData?.buffer.asUint8List();
@@ -357,7 +383,9 @@ class _StickerViewState extends State<StickerView> {
       },
       child: Container(
           decoration: BoxDecoration(
-            border: this.widget.isFocus ? Border.all(color: Colors.pinkAccent, width: 3.0) : null,
+            border: this.widget.isFocus
+                ? Border.all(color: Colors.pinkAccent, width: 3.0)
+                : null,
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           width: this.widget.width * this.widget.currentScale,

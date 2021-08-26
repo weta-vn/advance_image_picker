@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
     var configs = ImagePickerConfigs();
     // AppBar text color
     configs.appBarTextColor = Colors.white;
+    configs.appBarBackgroundColor = Colors.orange;
     // Disable select images from album
     // configs.albumPickerModeEnabled = false;
     // Only use front camera for capturing

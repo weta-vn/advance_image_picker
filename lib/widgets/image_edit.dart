@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:advance_image_picker/utils/time_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 import '../configs/image_picker_configs.dart';
@@ -30,13 +30,19 @@ class ImageEdit extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageEdit({required this.file, required this.title, this.configs, this.maxWidth = 1080, this.maxHeight = 1920});
+  ImageEdit(
+      {required this.file,
+      required this.title,
+      this.configs,
+      this.maxWidth = 1080,
+      this.maxHeight = 1920});
 
   @override
   _ImageEditState createState() => _ImageEditState();
 }
 
-class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<ImageEdit> {
+class _ImageEditState extends State<ImageEdit>
+    with PortraitStatefulModeMixin<ImageEdit> {
   double _contrast = 0;
   double _brightness = 0;
   double _saturation = 0;
@@ -112,7 +118,10 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [Expanded(child: _buildImageViewer(context)), _buildAdjustControls(context)],
+        children: [
+          Expanded(child: _buildImageViewer(context)),
+          _buildAdjustControls(context)
+        ],
       ),
     );
   }
@@ -133,7 +142,9 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
                   _controlExpanded = false;
                 });
               },
-              child: Container(child: Row(children: [Spacer(), Icon(Icons.keyboard_arrow_down)])),
+              child: Container(
+                  child: Row(
+                      children: [Spacer(), Icon(Icons.keyboard_arrow_down)])),
             ),
             Divider(),
             _buildContrastAdjustControl(context),
@@ -175,7 +186,7 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
       onPressed: () async {
         final dir = await PathProvider.getTemporaryDirectory();
         final targetPath = "${dir.absolute.path}/temp_"
-            "${DateFormat('yyMMdd_hhmmss').format(DateTime.now())}.jpg";
+            "${TimeUtils.getTimeString(DateTime.now())}.jpg";
         File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
         Navigator.of(context).pop(file);
@@ -212,7 +223,9 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
   _processImage() async {
     if (_isProcessing) return;
 
-    if (_contrastValues.length > 1 || _brightnessValues.length > 1 || _saturationValues.length > 1) {
+    if (_contrastValues.length > 1 ||
+        _brightnessValues.length > 1 ||
+        _saturationValues.length > 1) {
       _isProcessing = true;
 
       // Get last value
@@ -221,9 +234,12 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
       var saturation = _saturationValues.last;
 
       // Remove old values
-      if (_contrastValues.length > 1) _contrastValues.removeRange(0, _contrastValues.length - 1);
-      if (_brightnessValues.length > 1) _brightnessValues.removeRange(0, _brightnessValues.length - 1);
-      if (_saturationValues.length > 1) _saturationValues.removeRange(0, _saturationValues.length - 1);
+      if (_contrastValues.length > 1)
+        _contrastValues.removeRange(0, _contrastValues.length - 1);
+      if (_brightnessValues.length > 1)
+        _brightnessValues.removeRange(0, _brightnessValues.length - 1);
+      if (_saturationValues.length > 1)
+        _saturationValues.removeRange(0, _saturationValues.length - 1);
 
       _processImageWithOptions(contrast, brightness, saturation).then((value) {
         _isProcessing = false;
@@ -238,12 +254,14 @@ class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<Im
     }
   }
 
-  Future<Uint8List?> _processImageWithOptions(double contrast, double brightness, double saturation) async {
+  Future<Uint8List?> _processImageWithOptions(
+      double contrast, double brightness, double saturation) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
-    return await ImageEditor.editImage(image: _orgImageBytes!, imageEditorOption: option);
+    return await ImageEditor.editImage(
+        image: _orgImageBytes!, imageEditorOption: option);
   }
 
   _calColorOptionValue(double value) {
