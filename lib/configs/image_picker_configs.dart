@@ -311,8 +311,7 @@ class ImagePickerConfigs {
   /// click to remove it from image".
   String get textImageStickerGuide => getTranslatedString(
       "image_picker_image_sticker_guide",
-      "You can click on below icons to add into image, "
-          "double click to remove it from image");
+      "You can click on sticker icons to scale it or double click to remove it from image");
 
   /// Get localized text for label "image_picker_exposure_title".
   ///
