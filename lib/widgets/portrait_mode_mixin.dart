@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.Dart';
-import 'package:flutter/services.Dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 /// Forces portrait-only mode application-wide
 /// Use this Mixin on the main app widget i.e. app.Dart
