@@ -10,7 +10,7 @@ class LogUtils {
   /// Log a message with debugPrint and a DateTime stamp to the console.
   ///
   /// Never logs in release mode builds.
-  static log(String message) {
+  static void log(String message) {
     if (!kReleaseMode) {
       debugPrint("${DateTime.now().toIso8601String()}: $message");
     }

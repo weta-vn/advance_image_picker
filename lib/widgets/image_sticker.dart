@@ -31,19 +31,13 @@ class ImageSticker extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageSticker(
-      {required this.file,
-      required this.title,
-      this.maxWidth = 1080,
-      this.maxHeight = 1920,
-      this.configs});
+  ImageSticker({required this.file, required this.title, this.maxWidth = 1080, this.maxHeight = 1920, this.configs});
 
   @override
   _ImageStickerState createState() => _ImageStickerState();
 }
 
-class _ImageStickerState extends State<ImageSticker>
-    with PortraitStatefulModeMixin<ImageSticker> {
+class _ImageStickerState extends State<ImageSticker> with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
   TransformationController _controller = TransformationController();
@@ -79,7 +73,7 @@ class _ImageStickerState extends State<ImageSticker>
   }
 
   /// Read image bytes from file
-  _readImage() async {
+  Future<Uint8List?>? _readImage() async {
     if (_imageBytes == null) {
       _imageBytes = await widget.file.readAsBytes();
     }
@@ -100,22 +94,15 @@ class _ImageStickerState extends State<ImageSticker>
     // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
     // The AppBar theme backwards compatibility will be deprecated in Flutter
     // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
+    final bool backwardsCompatibility = appBarTheme.backwardsCompatibility ?? false;
     final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
+        ? _configs.appBarBackgroundColor ?? appBarTheme.backgroundColor ?? theme.primaryColor
         : _configs.appBarBackgroundColor ??
             appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+            (colorScheme.brightness == Brightness.dark ? colorScheme.surface : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
-        (colorScheme.brightness == Brightness.dark
-            ? colorScheme.onSurface
-            : colorScheme.onPrimary);
+        (colorScheme.brightness == Brightness.dark ? colorScheme.onSurface : colorScheme.onPrimary);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -138,7 +125,7 @@ class _ImageStickerState extends State<ImageSticker>
                           return _buildImageStack(context);
                         } else
                           return Container(
-                              child: Center(
+                              child: const Center(
                             child: CupertinoActivityIndicator(),
                           ));
                       })
@@ -154,45 +141,40 @@ class _ImageStickerState extends State<ImageSticker>
             child: Center(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(_configs.textImageStickerGuide,
-                  style: TextStyle(color: Colors.white)),
+              child: Text(_configs.textImageStickerGuide, style: const TextStyle(color: Colors.white)),
             ))),
-        Positioned(
-            bottom: 120,
-            left: 0,
-            right: 0,
-            child: _buildScalingControl(context))
+        Positioned(bottom: 120, left: 0, right: 0, child: _buildScalingControl(context))
       ]),
     );
   }
 
   /// Done process button
-  _buildDoneButton(BuildContext context) {
+  Widget _buildDoneButton(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.done),
+      icon: const Icon(Icons.done),
       onPressed: (_selectedStickerView == null)
           ? () async {
               // Save current image editing
-              Uint8List image = await _exportWidgetToImage(_boundaryKey!);
+              Uint8List? image = await _exportWidgetToImage(_boundaryKey!);
+              if (image != null) {
+                // Output to file
+                final dir = await PathProvider.getTemporaryDirectory();
+                final targetPath = "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
+                File file = File(targetPath);
+                await file.writeAsBytes(image);
 
-              // Output to file
-              final dir = await PathProvider.getTemporaryDirectory();
-              final targetPath =
-                  "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
-              File file = File(targetPath);
-              await file.writeAsBytes(image);
-
-              // Compress & resize result image
-              file = await ImageUtils.compressResizeImage(targetPath,
-                  maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
-              Navigator.of(context).pop(file);
+                // Compress & resize result image
+                file = await ImageUtils.compressResizeImage(targetPath,
+                    maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
+                Navigator.of(context).pop(file);
+              }
             }
           : null,
     );
   }
 
   /// Build sticker list panel
-  _buildStickerList(BuildContext context) {
+  Widget _buildStickerList(BuildContext context) {
     return Container(
         color: Colors.black,
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -215,14 +197,13 @@ class _ImageStickerState extends State<ImageSticker>
                       )),
                 ));
           },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, childAspectRatio: 1.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.0),
         ),
         height: 120);
   }
 
   /// Build image & stickers stack panel
-  _buildImageStack(BuildContext context) {
+  Widget _buildImageStack(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
     return RepaintBoundary(
@@ -234,14 +215,10 @@ class _ImageStickerState extends State<ImageSticker>
         onPointerMove: (v) async {
           setState(() {
             if (_selectedStickerView != null) {
-              _selectedStickerView!.top = v.localPosition.dy -
-                  (_selectedStickerView!.height *
-                          _selectedStickerView!.currentScale) /
-                      2;
-              _selectedStickerView!.left = v.localPosition.dx -
-                  (_selectedStickerView!.width *
-                          _selectedStickerView!.currentScale) /
-                      2;
+              _selectedStickerView!.top =
+                  v.localPosition.dy - (_selectedStickerView!.height * _selectedStickerView!.currentScale) / 2;
+              _selectedStickerView!.left =
+                  v.localPosition.dx - (_selectedStickerView!.width * _selectedStickerView!.currentScale) / 2;
             }
           });
         },
@@ -252,14 +229,10 @@ class _ImageStickerState extends State<ImageSticker>
               width: size.width,
               height: size.height - 300,
               decoration: BoxDecoration(
-                  color: Colors.black,
-                  image: DecorationImage(
-                      fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
+                  color: Colors.black, image: DecorationImage(fit: BoxFit.contain, image: MemoryImage(_imageBytes!))),
             ),
-            ..._attachedList.map((e) => Positioned(
-                top: e.top,
-                left: e.left,
-                child: e..isFocus = (e == _selectedStickerView))),
+            ..._attachedList
+                .map((e) => Positioned(top: e.top, left: e.left, child: e..isFocus = (e == _selectedStickerView))),
           ],
         ),
       ),
@@ -267,7 +240,7 @@ class _ImageStickerState extends State<ImageSticker>
   }
 
   /// Build control to scale selected sticker icon
-  _buildScalingControl(BuildContext context) {
+  Widget _buildScalingControl(BuildContext context) {
     if (_selectedStickerView == null) return const SizedBox();
 
     return Container(
@@ -295,12 +268,11 @@ class _ImageStickerState extends State<ImageSticker>
   }
 
   /// Determine which sticker is selecting
-  _getSelectedSticker(PointerEvent event) {
+  StickerView? _getSelectedSticker(PointerEvent event) {
     final result = BoxHitTestResult();
 
     for (StickerView s in _attachedList) {
-      final RenderBox box =
-          (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
+      final RenderBox box = (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
       Offset localBox = box.globalToLocal(event.position);
       if (box.hitTest(result, position: localBox)) {
         return s;
@@ -309,7 +281,7 @@ class _ImageStickerState extends State<ImageSticker>
   }
 
   /// Add new sticker to stack
-  _attachSticker(Image image) {
+  void _attachSticker(Image image) {
     setState(() {
       _attachedList.add(StickerView(
         image,
@@ -318,11 +290,9 @@ class _ImageStickerState extends State<ImageSticker>
         height: 80,
         top: 20,
         left: 20,
-        onTapRemove: (sticker) {
+        onTapRemove: (StickerView sticker) {
           setState(() {
-            if (_selectedStickerView != null &&
-                _selectedStickerView!.key == sticker.key)
-              _selectedStickerView = null;
+            if (_selectedStickerView != null && _selectedStickerView!.key == sticker.key) _selectedStickerView = null;
             this._attachedList.removeWhere((s) => s.key == sticker.key);
           });
         },
@@ -331,9 +301,8 @@ class _ImageStickerState extends State<ImageSticker>
   }
 
   /// Export image & sticker stack to image bytes
-  _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+  Future<Uint8List?>? _exportWidgetToImage(GlobalKey key) async {
+    RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage(pixelRatio: 3.0);
     var byteData = await image.toByteData(format: ImageByteFormat.png);
     var pngBytes = byteData?.buffer.asUint8List();
@@ -383,10 +352,8 @@ class _StickerViewState extends State<StickerView> {
       },
       child: Container(
           decoration: BoxDecoration(
-            border: this.widget.isFocus
-                ? Border.all(color: Colors.pinkAccent, width: 3.0)
-                : null,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            border: this.widget.isFocus ? Border.all(color: Colors.pinkAccent, width: 3.0) : null,
+            borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
           ),
           width: this.widget.width * this.widget.currentScale,
           height: this.widget.height * this.widget.currentScale,
