@@ -30,19 +30,13 @@ class ImageEdit extends StatefulWidget {
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  ImageEdit(
-      {required this.file,
-      required this.title,
-      this.configs,
-      this.maxWidth = 1080,
-      this.maxHeight = 1920});
+  ImageEdit({required this.file, required this.title, this.configs, this.maxWidth = 1080, this.maxHeight = 1920});
 
   @override
   _ImageEditState createState() => _ImageEditState();
 }
 
-class _ImageEditState extends State<ImageEdit>
-    with PortraitStatefulModeMixin<ImageEdit> {
+class _ImageEditState extends State<ImageEdit> with PortraitStatefulModeMixin<ImageEdit> {
   double _contrast = 0;
   double _brightness = 0;
   double _saturation = 0;
@@ -69,7 +63,7 @@ class _ImageEditState extends State<ImageEdit>
     super.dispose();
   }
 
-  _readImage() async {
+  Future<Uint8List?>? _readImage() async {
     if (_orgImageBytes == null) {
       _orgImageBytes = await widget.file.readAsBytes();
     }
@@ -91,22 +85,15 @@ class _ImageEditState extends State<ImageEdit>
     // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
     // The AppBar theme backwards compatibility will be deprecated in Flutter
     // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
+    final bool backwardsCompatibility = appBarTheme.backwardsCompatibility ?? false;
     final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
+        ? _configs.appBarBackgroundColor ?? appBarTheme.backgroundColor ?? theme.primaryColor
         : _configs.appBarBackgroundColor ??
             appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+            (colorScheme.brightness == Brightness.dark ? colorScheme.surface : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
-        (colorScheme.brightness == Brightness.dark
-            ? colorScheme.onSurface
-            : colorScheme.onPrimary);
+        (colorScheme.brightness == Brightness.dark ? colorScheme.onSurface : colorScheme.onPrimary);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -118,21 +105,18 @@ class _ImageEditState extends State<ImageEdit>
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(child: _buildImageViewer(context)),
-          _buildAdjustControls(context)
-        ],
+        children: [Expanded(child: _buildImageViewer(context)), _buildAdjustControls(context)],
       ),
     );
   }
 
-  _buildAdjustControls(BuildContext context) {
-    var textStyle = TextStyle(color: Colors.white, fontSize: 10);
+  Widget _buildAdjustControls(BuildContext context) {
+    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
 
     if (_controlExpanded) {
       return Container(
-        color: Color(0xFF212121),
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        color: const Color(0xFF212121),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -142,11 +126,9 @@ class _ImageEditState extends State<ImageEdit>
                   _controlExpanded = false;
                 });
               },
-              child: Container(
-                  child: Row(
-                      children: [Spacer(), Icon(Icons.keyboard_arrow_down)])),
+              child: Container(child: Row(children: [const Spacer(), const Icon(Icons.keyboard_arrow_down)])),
             ),
-            Divider(),
+            const Divider(),
             _buildContrastAdjustControl(context),
             _buildBrightnessAdjustControl(context),
             _buildSaturationAdjustControl(context)
@@ -161,28 +143,24 @@ class _ImageEditState extends State<ImageEdit>
           });
         },
         child: Container(
-            color: Color(0xFF212121),
-            padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                      "${_configs.textContrast}: "
-                      "${_contrast.toString()}",
-                      style: textStyle),
-                  Text("${_configs.textBrightness}: ${_brightness.toString()}",
-                      style: textStyle),
-                  Text("${_configs.textSaturation}: ${_saturation.toString()}",
-                      style: textStyle),
-                  Icon(Icons.keyboard_arrow_up)
-                ])),
+            color: const Color(0xFF212121),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(
+                  "${_configs.textContrast}: "
+                  "${_contrast.toString()}",
+                  style: textStyle),
+              Text("${_configs.textBrightness}: ${_brightness.toString()}", style: textStyle),
+              Text("${_configs.textSaturation}: ${_saturation.toString()}", style: textStyle),
+              const Icon(Icons.keyboard_arrow_up)
+            ])),
       );
     }
   }
 
-  _buildDoneButton(BuildContext context) {
+  Widget _buildDoneButton(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.done),
+      icon: const Icon(Icons.done),
       onPressed: () async {
         final dir = await PathProvider.getTemporaryDirectory();
         final targetPath = "${dir.absolute.path}/temp_"
@@ -194,9 +172,9 @@ class _ImageEditState extends State<ImageEdit>
     );
   }
 
-  _buildImageViewer(BuildContext context) {
+  Widget _buildImageViewer(BuildContext context) {
     var view = () => Container(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         color: Colors.black,
         child: Image.memory(
           _imageBytes!,
@@ -212,7 +190,7 @@ class _ImageEditState extends State<ImageEdit>
               return view();
             } else
               return Container(
-                  child: Center(
+                  child: const Center(
                 child: CupertinoActivityIndicator(),
               ));
           });
@@ -220,12 +198,10 @@ class _ImageEditState extends State<ImageEdit>
       return view();
   }
 
-  _processImage() async {
+  Future<void> _processImage() async {
     if (_isProcessing) return;
 
-    if (_contrastValues.length > 1 ||
-        _brightnessValues.length > 1 ||
-        _saturationValues.length > 1) {
+    if (_contrastValues.length > 1 || _brightnessValues.length > 1 || _saturationValues.length > 1) {
       _isProcessing = true;
 
       // Get last value
@@ -234,12 +210,9 @@ class _ImageEditState extends State<ImageEdit>
       var saturation = _saturationValues.last;
 
       // Remove old values
-      if (_contrastValues.length > 1)
-        _contrastValues.removeRange(0, _contrastValues.length - 1);
-      if (_brightnessValues.length > 1)
-        _brightnessValues.removeRange(0, _brightnessValues.length - 1);
-      if (_saturationValues.length > 1)
-        _saturationValues.removeRange(0, _saturationValues.length - 1);
+      if (_contrastValues.length > 1) _contrastValues.removeRange(0, _contrastValues.length - 1);
+      if (_brightnessValues.length > 1) _brightnessValues.removeRange(0, _brightnessValues.length - 1);
+      if (_saturationValues.length > 1) _saturationValues.removeRange(0, _saturationValues.length - 1);
 
       _processImageWithOptions(contrast, brightness, saturation).then((value) {
         _isProcessing = false;
@@ -254,28 +227,26 @@ class _ImageEditState extends State<ImageEdit>
     }
   }
 
-  Future<Uint8List?> _processImageWithOptions(
-      double contrast, double brightness, double saturation) async {
+  Future<Uint8List?> _processImageWithOptions(double contrast, double brightness, double saturation) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
-    return await ImageEditor.editImage(
-        image: _orgImageBytes!, imageEditorOption: option);
+    return await ImageEditor.editImage(image: _orgImageBytes!, imageEditorOption: option);
   }
 
-  _calColorOptionValue(double value) {
+  double _calColorOptionValue(double value) {
     return (value / 10.0) + 1.0;
   }
 
-  _buildContrastAdjustControl(BuildContext context) {
-    var textStyle = TextStyle(color: Colors.white, fontSize: 10);
+  Widget _buildContrastAdjustControl(BuildContext context) {
+    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textContrast, style: textStyle),
-          Spacer(),
+          const Spacer(),
           Text(_contrast.toString(), style: textStyle)
         ]),
         SliderTheme(
@@ -304,14 +275,14 @@ class _ImageEditState extends State<ImageEdit>
     );
   }
 
-  _buildBrightnessAdjustControl(BuildContext context) {
-    var textStyle = TextStyle(color: Colors.white, fontSize: 10);
+  Widget _buildBrightnessAdjustControl(BuildContext context) {
+    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textBrightness, style: textStyle),
-          Spacer(),
+          const Spacer(),
           Text(_brightness.toString(), style: textStyle)
         ]),
         SliderTheme(
@@ -340,14 +311,14 @@ class _ImageEditState extends State<ImageEdit>
     );
   }
 
-  _buildSaturationAdjustControl(BuildContext context) {
-    var textStyle = TextStyle(color: Colors.white, fontSize: 10);
+  Widget _buildSaturationAdjustControl(BuildContext context) {
+    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textSaturation, style: textStyle),
-          Spacer(),
+          const Spacer(),
           Text(_saturation.toString(), style: textStyle)
         ]),
         SliderTheme(

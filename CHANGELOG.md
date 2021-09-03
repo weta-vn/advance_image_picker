@@ -1,3 +1,8 @@
+## [0.1.1]
+
+* Optimize code by applying lint option from mr.rydmike
+* Update camera plugin
+
 ## [0.1.0]
 
 * Rewrite image sticker feature

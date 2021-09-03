@@ -37,20 +37,14 @@ class ImageViewer extends StatefulWidget {
   /// Changed event
   final Function(dynamic)? onChanged;
 
-  ImageViewer(
-      {this.initialIndex = 0,
-      this.title,
-      this.images,
-      this.configs,
-      this.onChanged})
+  ImageViewer({this.initialIndex = 0, this.title, this.images, this.configs, this.onChanged})
       : pageController = PageController(initialPage: initialIndex);
 
   @override
   _ImageViewerState createState() => _ImageViewerState();
 }
 
-class _ImageViewerState extends State<ImageViewer>
-    with PortraitStatefulModeMixin<ImageViewer> {
+class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixin<ImageViewer> {
   /// Current index of image in list
   int? _currentIndex;
 
@@ -74,9 +68,7 @@ class _ImageViewerState extends State<ImageViewer>
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled)
       return await ImageUtils.compressResizeImage(path!,
-          maxWidth: _configs.maxWidth,
-          maxHeight: _configs.maxHeight,
-          quality: _configs.compressQuality);
+          maxWidth: _configs.maxWidth, maxHeight: _configs.maxHeight, quality: _configs.compressQuality);
     return File(path!);
   }
 
@@ -101,22 +93,15 @@ class _ImageViewerState extends State<ImageViewer>
     // TODO: Track AppBar heme backwards compatibility in Flutter SDK.
     // This AppBar theme backwards compatibility will be deprecated in Flutter
     // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
+    final bool backwardsCompatibility = appBarTheme.backwardsCompatibility ?? false;
     final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
+        ? _configs.appBarBackgroundColor ?? appBarTheme.backgroundColor ?? theme.primaryColor
         : _configs.appBarBackgroundColor ??
             appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+            (colorScheme.brightness == Brightness.dark ? colorScheme.surface : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
-        (colorScheme.brightness == Brightness.dark
-            ? colorScheme.onSurface
-            : colorScheme.onPrimary);
+        (colorScheme.brightness == Brightness.dark ? colorScheme.onSurface : colorScheme.onPrimary);
 
     return Scaffold(
         backgroundColor: Colors.black,
@@ -129,14 +114,11 @@ class _ImageViewerState extends State<ImageViewer>
               GestureDetector(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.delete,
-                      size: 32,
-                      color:
-                          hasImages ? _configs.appBarTextColor : Colors.grey),
+                  child: Icon(Icons.delete, size: 32, color: hasImages ? _configs.appBarTextColor : Colors.grey),
                 ),
                 onTap: hasImages
                     ? () async {
-                        showDialog(
+                        showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             // return object of type Dialog
@@ -157,8 +139,7 @@ class _ImageViewerState extends State<ImageViewer>
                                     setState(() {
                                       var deleteIndex = this._currentIndex!;
                                       if (this._images.length > 1)
-                                        this._currentIndex =
-                                            max(this._currentIndex! - 1, 0);
+                                        this._currentIndex = max(this._currentIndex! - 1, 0);
                                       else
                                         this._currentIndex = -1;
                                       this._images.removeAt(deleteIndex);
@@ -185,14 +166,12 @@ class _ImageViewerState extends State<ImageViewer>
                     _appBarTextColor,
                   ),
                 ])
-              : Center(
-                  child: Text(_configs.textNoImages,
-                      style: TextStyle(color: Colors.grey))),
+              : Center(child: Text(_configs.textNoImages, style: const TextStyle(color: Colors.grey))),
         ));
   }
 
   /// Image viewer as gallery for selected image
-  _buildPhotoViewGallery(BuildContext context) {
+  Widget _buildPhotoViewGallery(BuildContext context) {
     return Expanded(
       child: Stack(
         children: [
@@ -209,11 +188,7 @@ class _ImageViewerState extends State<ImageViewer>
               onPageChanged: onPageChanged,
             ),
           ),
-          Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _buildCurrentImageInfoView(context)),
+          Positioned(top: 0, left: 0, right: 0, child: _buildCurrentImageInfoView(context)),
         ],
       ),
     );
@@ -230,7 +205,7 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Reorder selected image list
-  _reorderSelectedImageList(int oldIndex, int newIndex) {
+  bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex < 0 || newIndex < 0) return false;
 
     setState(() {
@@ -245,22 +220,19 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Build reorderable selected image list
-  _buildReorderableSelectedImageList(BuildContext context) {
+  Widget _buildReorderableSelectedImageList(BuildContext context) {
     var makeThumbnail = (String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
-              fit: BoxFit.cover,
-              width: _configs.thumbWidth.toDouble(),
-              height: _configs.thumbHeight.toDouble()));
+              fit: BoxFit.cover, width: _configs.thumbWidth.toDouble(), height: _configs.thumbHeight.toDouble()));
     };
 
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
         height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
-          data: ThemeData(
-              canvasColor: Colors.transparent, shadowColor: Colors.red),
+          data: ThemeData(canvasColor: Colors.transparent, shadowColor: Colors.red),
           child: ReorderableListView(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -268,15 +240,11 @@ class _ImageViewerState extends State<ImageViewer>
                 for (var i = 0; i < _images.length; i++)
                   Container(
                       key: ValueKey(i.toString()),
-                      margin: EdgeInsets.all(4.0),
+                      margin: const EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
                         color: Colors.grey,
-                        border: Border.all(
-                            color: (i == this._currentIndex)
-                                ? Colors.blue
-                                : Colors.white,
-                            width: 3.0),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        border: Border.all(color: (i == this._currentIndex) ? Colors.blue : Colors.white, width: 3.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: GestureDetector(
                         onTap: () async {
@@ -285,10 +253,8 @@ class _ImageViewerState extends State<ImageViewer>
                           });
 
                           if (widget.pageController.hasClients)
-                            await widget.pageController.animateToPage(
-                                this._currentIndex!,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.easeIn);
+                            await widget.pageController.animateToPage(this._currentIndex!,
+                                duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
                         },
                         child: makeThumbnail(_images[i].modifiedPath),
                       ))
@@ -298,7 +264,7 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Image viewer for current image
-  _buildCurrentImageInfoView(BuildContext context) {
+  Widget _buildCurrentImageInfoView(BuildContext context) {
     var image = this._images[this._currentIndex!];
 
     Future<ImageObject> imageProc = ImageUtils.getImageInfo(image);
@@ -314,38 +280,31 @@ class _ImageViewerState extends State<ImageViewer>
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.all(4.0),
                   color: Colors.black.withOpacity(0.5),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("${image.modifiedWidth}x${image.modifiedHeight}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ]),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text("${image.modifiedWidth}x${image.modifiedHeight}",
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ]),
                 ),
               ],
             );
           } else
-            return CupertinoActivityIndicator();
+            return const CupertinoActivityIndicator();
         });
   }
 
   /// Build editor controls
-  _buildEditorControls(
-      BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
-    var imageChanged = (_images[_currentIndex!].modifiedPath !=
-        _images[_currentIndex!].originalPath);
+  Widget _buildEditorControls(BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
+    var imageChanged = (_images[_currentIndex!].modifiedPath != _images[_currentIndex!].originalPath);
 
     return Container(
       height: 80,
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         if (_configs.cropFeatureEnabled)
           GestureDetector(
-            child: Icon(Icons.crop_rotate, size: 32, color: Colors.white),
+            child: const Icon(Icons.crop_rotate, size: 32, color: Colors.white),
             onTap: () async {
-              var image = await this
-                  ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
+              var image = await this._imagePreProcessing(_images[_currentIndex!].modifiedPath);
               File? croppedFile = await ImageCropper.cropImage(
                   sourcePath: image.path,
                   compressQuality: _configs.compressQuality,
@@ -364,13 +323,12 @@ class _ImageViewerState extends State<ImageViewer>
                       toolbarWidgetColor: toolbarWidgetColor,
                       initAspectRatio: CropAspectRatioPreset.original,
                       lockAspectRatio: false),
-                  iosUiSettings: IOSUiSettings(
+                  iosUiSettings: const IOSUiSettings(
                     minimumAspectRatio: 1.0,
                   ));
               if (croppedFile != null) {
                 setState(() {
-                  this._images[this._currentIndex!].modifiedPath =
-                      croppedFile.path;
+                  this._images[this._currentIndex!].modifiedPath = croppedFile.path;
                   widget.onChanged?.call(this._images);
                 });
               }
@@ -378,22 +336,19 @@ class _ImageViewerState extends State<ImageViewer>
           ),
         if (_configs.filterFeatureEnabled)
           GestureDetector(
-            child: Icon(Icons.auto_awesome, size: 32, color: Colors.white),
+            child: const Icon(Icons.auto_awesome, size: 32, color: Colors.white),
             onTap: () async {
-              var image = await this
-                  ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
+              var image = await this._imagePreProcessing(_images[_currentIndex!].modifiedPath);
               File? filteredFile = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   fullscreenDialog: true,
-                  builder: (context) => new ImageFilter(
-                      title: _configs.textImageFilterTitle, file: image),
+                  builder: (context) => new ImageFilter(title: _configs.textImageFilterTitle, file: image),
                 ),
               );
               if (filteredFile != null) {
                 setState(() {
-                  this._images[this._currentIndex!].modifiedPath =
-                      filteredFile.path;
+                  this._images[this._currentIndex!].modifiedPath = filteredFile.path;
                   widget.onChanged?.call(this._images);
                 });
               }
@@ -401,19 +356,15 @@ class _ImageViewerState extends State<ImageViewer>
           ),
         if (_configs.adjustFeatureEnabled)
           GestureDetector(
-            child: Icon(Icons.wb_sunny_outlined, size: 32, color: Colors.white),
+            child: const Icon(Icons.wb_sunny_outlined, size: 32, color: Colors.white),
             onTap: () async {
-              var image = await this
-                  ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
-              var edittedFile = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) => ImageEdit(
-                          file: image, title: _configs.textImageEditTitle)));
+              var image = await this._imagePreProcessing(_images[_currentIndex!].modifiedPath);
+              var edittedFile = await Navigator.of(context).push(MaterialPageRoute<File>(
+                  fullscreenDialog: true,
+                  builder: (context) => ImageEdit(file: image, title: _configs.textImageEditTitle)));
               if (edittedFile != null) {
                 setState(() {
-                  this._images[this._currentIndex!].modifiedPath =
-                      edittedFile.path;
+                  this._images[this._currentIndex!].modifiedPath = edittedFile.path;
                   widget.onChanged?.call(this._images);
                 });
               }
@@ -421,31 +372,25 @@ class _ImageViewerState extends State<ImageViewer>
           ),
         if (_configs.stickerFeatureEnabled)
           GestureDetector(
-            child: Icon(Icons.insert_emoticon_rounded,
-                size: 32, color: Colors.white),
+            child: const Icon(Icons.insert_emoticon_rounded, size: 32, color: Colors.white),
             onTap: () async {
-              var image = await this
-                  ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
-              var editedFile = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) => ImageSticker(
-                          file: image, title: _configs.textImageStickerTitle)));
+              var image = await this._imagePreProcessing(_images[_currentIndex!].modifiedPath);
+              var editedFile = await Navigator.of(context).push(MaterialPageRoute<File>(
+                  fullscreenDialog: true,
+                  builder: (context) => ImageSticker(file: image, title: _configs.textImageStickerTitle)));
               if (editedFile != null) {
                 setState(() {
-                  this._images[this._currentIndex!].modifiedPath =
-                      editedFile.path;
+                  this._images[this._currentIndex!].modifiedPath = editedFile.path;
                   widget.onChanged?.call(this._images);
                 });
               }
             },
           ),
         GestureDetector(
-          child: Icon(Icons.replay,
-              size: 32, color: imageChanged ? Colors.white : Colors.grey),
+          child: Icon(Icons.replay, size: 32, color: imageChanged ? Colors.white : Colors.grey),
           onTap: imageChanged
               ? () async {
-                  showDialog(
+                  showDialog<void>(
                     context: context,
                     builder: (BuildContext context) {
                       // return object of type Dialog
@@ -465,9 +410,7 @@ class _ImageViewerState extends State<ImageViewer>
                               Navigator.of(context).pop();
                               setState(() {
                                 this._images[this._currentIndex!].modifiedPath =
-                                    this
-                                        ._images[this._currentIndex!]
-                                        .originalPath;
+                                    this._images[this._currentIndex!].originalPath;
                                 widget.onChanged?.call(this._images);
                               });
                             },
