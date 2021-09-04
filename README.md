@@ -16,7 +16,7 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 - Preview selected images
 - Support button label & text translation
 - Easy image editing features, such as rotation, cropping, adding sticker/filters
-- Object detector & OCR (implement in future)
+- Allow user add external image editors for editing selected images.
 
 ## Apps using this package
 
@@ -113,6 +113,26 @@ configs.appBarTextColor = Colors.black;
 configs.stickerFeatureEnabled = false; // ON/OFF features
 configs.translateFunc = (name, value) => Intl.message(value, name: name); // Use intl function
 ```
+
+Sample for adding external image editors.  
+(You can replace ImageEdit widget by your owned image editor widget, that output file after editing finised)
+```
+configs.externalImageEditors['external_image_editor_1'] = EditorParams(
+      title: 'external_image_editor_1',
+      icon: Icons.edit_rounded,
+      onEditorEvent: (
+              {required BuildContext context,
+              required File file,
+              required String title,
+              int maxWidth = 1080,
+              int maxHeight = 1920,
+              int compressQuality = 90,
+              ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+              fullscreenDialog: true,
+              builder: (context) => ImageEdit(file: file, title: 'external_image_editor_1', maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
+  );
+```
+
 
 Sample for usage
 

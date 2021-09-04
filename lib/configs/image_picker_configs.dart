@@ -1,5 +1,11 @@
+import 'dart:core';
+import 'dart:io';
+
+import 'package:advance_image_picker/widgets/editors/editor_params.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/editors/editor_params.dart';
 
 /// Global configuration for flutter app using advance_image_picker plugin
 /// Call once inside application before using image picker functions
@@ -177,6 +183,23 @@ class ImagePickerConfigs {
   /// Defaults to null.
   /// This results in [appBarBackgroundColor] being used.
   Color? appBarDoneButtonColor;
+
+  /// Allow add custom image editors from external call
+  ///
+  /// Sample usage:
+  ///
+  /// configs.externalImageEditors['external_image_editor'] = EditorParams(
+  ///   title: 'external_image_editor',
+  ///   icon: Icons.wb_sunny_outlined,
+  ///   onEditorEvent: (
+  ///      {required File file,
+  ///       required String title,
+  ///       int maxWidth = 1080,
+  ///       int maxHeight = 1920,
+  ///       ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+  ///       fullscreenDialog: true,
+  ///       builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
+  Map<String, EditorParams> externalImageEditors = {};
 
   // UI label strings (for localization)
 

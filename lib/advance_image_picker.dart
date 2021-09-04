@@ -17,4 +17,10 @@ export 'models/image_object.dart';
 export 'utils/image_utils.dart';
 
 /// Advanced image picker widget.
-export 'widgets/image_picker.dart';
+export 'widgets/picker/image_picker.dart';
+
+/// Preset image editors
+export 'widgets/editors/editor_params.dart';
+export 'widgets/editors/image_edit.dart';
+export 'widgets/editors/image_filter.dart';
+export 'widgets/editors/image_sticker.dart';
