@@ -27,6 +27,36 @@ class MyApp extends StatelessWidget {
     // configs.cameraLensDirection = 0;
     // Translate function
     configs.translateFunc = (name, value) => Intl.message(value, name: name);
+    // Disable edit function, then add other edit control instead
+    configs.adjustFeatureEnabled = false;
+    configs.externalImageEditors['external_image_editor_1'] = EditorParams(
+          title: 'external_image_editor_1',
+          icon: Icons.edit_rounded,
+          onEditorEvent: (
+                  {required BuildContext context,
+                  required File file,
+                  required String title,
+                  int maxWidth = 1080,
+                  int maxHeight = 1920,
+                  int compressQuality = 90,
+                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+                  fullscreenDialog: true,
+                  builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
+      );
+    configs.externalImageEditors['external_image_editor_2'] = EditorParams(
+          title: 'external_image_editor_2',
+          icon: Icons.edit_attributes,
+          onEditorEvent: (
+                  {required BuildContext context,
+                  required File file,
+                  required String title,
+                  int maxWidth = 1080,
+                  int maxHeight = 1920,
+                  int compressQuality = 90,
+                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+                  fullscreenDialog: true,
+                  builder: (context) => ImageSticker(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
+      );
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -77,12 +107,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 shrinkWrap: true,
                 itemCount: _imgObjs.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, mainAxisSpacing: 2, crossAxisSpacing: 2, childAspectRatio: 1),
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 2,
+                    crossAxisSpacing: 2,
+                    childAspectRatio: 1),
                 itemBuilder: (BuildContext context, int index) {
                   var image = _imgObjs[index];
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Image.file(File(image.modifiedPath), height: 80, fit: BoxFit.cover),
+                    child: Image.file(File(image.modifiedPath),
+                        height: 80, fit: BoxFit.cover),
                   );
                 })
           ],
@@ -91,8 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          List<ImageObject>? objects =
-              await Navigator.of(context).push(PageRouteBuilder(pageBuilder: (context, animation, __) {
+          List<ImageObject>? objects = await Navigator.of(context)
+              .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
             return const ImagePicker(maxCount: 5, isCaptureFirst: true);
           }));
 
