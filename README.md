@@ -129,7 +129,7 @@ configs.externalImageEditors['external_image_editor_1'] = EditorParams(
               int compressQuality = 90,
               ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
               fullscreenDialog: true,
-              builder: (context) => ImageEdit(file: file, title: 'external_image_editor_1', maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
+              builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
   );
 ```
 
