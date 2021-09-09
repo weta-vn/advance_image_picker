@@ -4,6 +4,9 @@ import 'package:advance_image_picker/advance_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+// We don't care about missing API docs in the example app.
+// ignore_for_file: public_member_api_docs
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = (FlutterErrorDetails details) {
