@@ -110,7 +110,7 @@ class _ImageFilterState extends State<ImageFilter>
         await Future<void>.delayed(const Duration(milliseconds: 100));
         continue;
       }
-      print("_runningCount: " + _runningCount.toString());
+      print("_runningCount: ${_runningCount.toString()}");
 
       final func = _queuedApplyFilterFuncList.removeFirst();
       _runningCount++;

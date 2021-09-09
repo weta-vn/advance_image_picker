@@ -1181,8 +1181,8 @@ class _ImagePickerState extends State<ImagePicker>
                                         ? CameraLensDirection.back
                                         : CameraLensDirection.front);
                             if (newDescription != null) {
-                              print("Start new camera: " +
-                                  newDescription.toString());
+                              print("Start new camera: "
+                                  "${newDescription.toString()}");
                               _onNewCameraSelected(newDescription);
                             }
                           }
