@@ -719,7 +719,7 @@ linter:
     # Lint           disabled : https://pub.dev/packages/lint
     # VG Analysis    disabled : https://pub.dev/packages/very_good_analysis
     # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
-    require_trailing_commas: false,
+    require_trailing_commas: false
 
     # DO sort constructor declarations before other members.
     #
