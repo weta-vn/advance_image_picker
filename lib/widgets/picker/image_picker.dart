@@ -306,8 +306,7 @@ class _ImagePickerState extends State<ImagePicker>
     final result = await PhotoManager.requestPermission();
     if (result) {
       // Get albums then set first album as current album
-      _albums = await PhotoManager.getAssetPathList(
-          type: RequestType.image);
+      _albums = await PhotoManager.getAssetPathList(type: RequestType.image);
       if (_albums.isNotEmpty) {
         final isAllAlbum = _albums.firstWhere((element) => element.isAll,
             orElse: () => _albums.first);
@@ -542,7 +541,10 @@ class _ImagePickerState extends State<ImagePicker>
 
     return Stack(children: [
       SizedBox(height: size.height, width: size.width),
-      if (_mode == PickerMode.Camera) Center(child: _buildCameraPreview(context)) else _buildAlbumPreview(context),
+      if (_mode == PickerMode.Camera)
+        Center(child: _buildCameraPreview(context))
+      else
+        _buildAlbumPreview(context),
       if (_mode == PickerMode.Camera) ...[
         Positioned(
             bottom: bottomHeight.toDouble(),
@@ -640,22 +642,20 @@ class _ImagePickerState extends State<ImagePicker>
           ? _configs.bottomPanelColorInFullscreen
           : _configs.bottomPanelColor,
       padding: const EdgeInsets.all(8),
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.maxCount > 1) ...[
-              Text(
-                  "${_configs.textSelectedImagesTitle}: ${_selectedImages.length.toString()} / ${widget.maxCount.toString()}",
-                  style: const TextStyle(color: Colors.white, fontSize: 14)),
-              Text(_configs.textSelectedImagesGuide,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14))
-            ],
-            _buildReorderableSelectedImageList(context),
-            _buildCameraControls(context),
-            Padding(
-                padding: const EdgeInsets.all(8),
-                child: _buildPickerModeList(context))
-          ]),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        if (widget.maxCount > 1) ...[
+          Text(
+              "${_configs.textSelectedImagesTitle}: ${_selectedImages.length.toString()} / ${widget.maxCount.toString()}",
+              style: const TextStyle(color: Colors.white, fontSize: 14)),
+          Text(_configs.textSelectedImagesGuide,
+              style: const TextStyle(color: Colors.grey, fontSize: 14))
+        ],
+        _buildReorderableSelectedImageList(context),
+        _buildCameraControls(context),
+        Padding(
+            padding: const EdgeInsets.all(8),
+            child: _buildPickerModeList(context))
+      ]),
     );
   }
 
@@ -988,6 +988,7 @@ class _ImagePickerState extends State<ImagePicker>
               scrollController: _scrollController,
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
+              onReorder: _reorderSelectedImageList,
               children: <Widget>[
                 for (var i = 0; i < widget.maxCount; i++)
                   if (_selectedImages.length > i)
@@ -1020,8 +1021,7 @@ class _ImagePickerState extends State<ImagePicker>
                                       });
                                       _currentAlbumKey.currentState
                                           ?.updateStateFromExternal(
-                                              selectedImages:
-                                                  _selectedImages);
+                                              selectedImages: _selectedImages);
                                     }
                                   });
                             }));
@@ -1045,8 +1045,7 @@ class _ImagePickerState extends State<ImagePicker>
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10)),
                         ))
-              ],
-              onReorder: _reorderSelectedImageList),
+              ]),
         ));
   }
 
@@ -1148,8 +1147,9 @@ class _ImagePickerState extends State<ImagePicker>
                                             size.height;
                                   }
                                 }
-                                final capturedFile = await _imagePreProcessing(file.path,
-                                        croppingParams: croppingParams);
+                                final capturedFile = await _imagePreProcessing(
+                                    file.path,
+                                    croppingParams: croppingParams);
 
                                 setState(() {
                                   LogUtils.log(
@@ -1173,11 +1173,12 @@ class _ImagePickerState extends State<ImagePicker>
                         ? () async {
                             final lensDirection =
                                 _controller!.description.lensDirection;
-                            final CameraDescription? newDescription = _getCamera(
-                                _cameras,
-                                lensDirection == CameraLensDirection.front
-                                    ? CameraLensDirection.back
-                                    : CameraLensDirection.front);
+                            final CameraDescription? newDescription =
+                                _getCamera(
+                                    _cameras,
+                                    lensDirection == CameraLensDirection.front
+                                        ? CameraLensDirection.back
+                                        : CameraLensDirection.front);
                             if (newDescription != null) {
                               print("Start new camera: " +
                                   newDescription.toString());
