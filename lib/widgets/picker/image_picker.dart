@@ -30,12 +30,12 @@ const int kBottomControlPanelHeight = 265;
 /// image library, **taking new pictures with the camera**, and **edit** them
 /// before using such as rotation, cropping, adding sticker/filters.
 class ImagePicker extends StatefulWidget {
-  /// Constructor
+  /// Constructor for the ImagePicker.
   const ImagePicker(
-      {this.maxCount = 10,
+      {final Key? key, this.maxCount = 10,
       this.isFullscreenImage = false,
       this.isCaptureFirst = true,
-      this.configs});
+      this.configs}): super(key: key);
 
   /// Max selecting count
   final int maxCount;
