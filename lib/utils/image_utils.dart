@@ -20,7 +20,7 @@ class ImageUtils {
   static Future<File> compressResizeImage(String path,
       {int quality = 90, int maxWidth = 1080, int maxHeight = 1920}) async {
     // Get image properties
-    ImageProperties properties =
+    final ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
     // Create output width & height
@@ -38,7 +38,7 @@ class ImageUtils {
 
     // Re-calculate output width & height by comparing with original size
     if (outputWidth > mWidth || outputHeight > mHeight) {
-      var ratio = outputWidth / outputHeight;
+      final ratio = outputWidth / outputHeight;
       outputWidth = min(outputWidth, mWidth);
       outputHeight = outputWidth ~/ ratio;
       if (outputHeight > mHeight) {
@@ -47,7 +47,7 @@ class ImageUtils {
       }
 
       // Compress output file
-      File compressedFile = await FlutterNativeImage.compressImage(path,
+      final File compressedFile = await FlutterNativeImage.compressImage(path,
           quality: quality,
           targetWidth: outputWidth,
           targetHeight: outputHeight);
@@ -64,12 +64,12 @@ class ImageUtils {
       required double widthPercent,
       required double heightPercent}) async {
     // Get image properties
-    ImageProperties properties =
+    final ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
     // Get exact image size from properties
-    int width = properties.width!;
-    int height = properties.height!;
+    final int width = properties.width!;
+    final int height = properties.height!;
 
     // Re-calculate crop params with orientation info
     double wPercent = widthPercent;
@@ -92,21 +92,21 @@ class ImageUtils {
 
   /// Get temp file created in temporary directory of device
   static Future<File> getTempFile(String filename) async {
-    var dir = await getTemporaryDirectory();
+    final dir = await getTemporaryDirectory();
     return File('$dir/$filename');
   }
 
   /// Check [asset] & [image] file is the same asset or not
   static bool isTheSameAsset(AssetEntity asset, ImageObject image) {
-    return (asset.id == image.assetId);
+    return asset.id == image.assetId;
   }
 
   /// Get image information of image object [img]
   static Future<ImageObject> getImageInfo(ImageObject img) async {
     // Get image width/height
     if (img.modifiedWidth == null || img.modifiedHeight == null) {
-      var bytes = await File(img.modifiedPath).readAsBytes();
-      var decodedImg = decodeImage(bytes)!;
+      final bytes = await File(img.modifiedPath).readAsBytes();
+      final decodedImg = decodeImage(bytes)!;
       img.modifiedWidth = decodedImg.width;
       img.modifiedHeight = decodedImg.height;
     }

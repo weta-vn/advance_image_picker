@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:advance_image_picker/configs/image_picker_configs.dart';
+import '../../configs/image_picker_configs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

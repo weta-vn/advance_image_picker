@@ -2,20 +2,20 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:advance_image_picker/configs/image_picker_configs.dart';
-import 'package:advance_image_picker/utils/image_utils.dart';
-import 'package:advance_image_picker/utils/time_utils.dart';
-import 'package:advance_image_picker/widgets/common/custom_track_shape.dart';
-import 'package:advance_image_picker/widgets/common/portrait_mode_mixin.dart';
+import '../../configs/image_picker_configs.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/time_utils.dart';
+import '../common/custom_track_shape.dart';
+import '../common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
 
 /// Image sticker width allow adding sticker icon into image
 class ImageSticker extends StatefulWidget {
-  ImageSticker(
+  const ImageSticker(
       {required this.file,
       required this.title,
       this.configs,
@@ -45,14 +45,14 @@ class _ImageStickerState extends State<ImageSticker>
     with PortraitStatefulModeMixin<ImageSticker> {
   GlobalKey? _boundaryKey;
   Uint8List? _imageBytes;
-  TransformationController _controller = TransformationController();
+  final TransformationController _controller = TransformationController();
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
   late List<StickerView> _attachedList;
   late List<Image> _stickerList;
 
-  double _minScale = 0.5;
-  double _maxScale = 2.5;
+  final double _minScale = 0.5;
+  final double _maxScale = 2.5;
 
   StickerView? _selectedStickerView;
 
@@ -79,9 +79,7 @@ class _ImageStickerState extends State<ImageSticker>
 
   /// Read image bytes from file
   Future<Uint8List?>? _readImage() async {
-    if (_imageBytes == null) {
-      _imageBytes = await widget.file.readAsBytes();
-    }
+    _imageBytes ??= await widget.file.readAsBytes();
     return _imageBytes;
   }
 
@@ -96,20 +94,11 @@ class _ImageStickerState extends State<ImageSticker>
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
-    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
-    // The AppBar theme backwards compatibility will be deprecated in Flutter
-    // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
-    final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
-        : _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+    final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
+        appBarTheme.backgroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
         (colorScheme.brightness == Brightness.dark
@@ -135,11 +124,12 @@ class _ImageStickerState extends State<ImageSticker>
                       builder: (BuildContext context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return _buildImageStack(context);
-                        } else
+                        } else {
                           return Container(
                               child: const Center(
                             child: CupertinoActivityIndicator(),
                           ));
+                        }
                       })
                   : _buildImageStack(context),
             ),
@@ -152,7 +142,7 @@ class _ImageStickerState extends State<ImageSticker>
             right: 0,
             child: Center(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Text(_configs.textImageStickerGuide,
                   style: const TextStyle(color: Colors.white)),
             ))),
@@ -172,7 +162,7 @@ class _ImageStickerState extends State<ImageSticker>
       onPressed: (_selectedStickerView == null)
           ? () async {
               // Save current image editing
-              Uint8List? image = await _exportWidgetToImage(_boundaryKey!);
+              final Uint8List? image = await _exportWidgetToImage(_boundaryKey!);
               if (image != null) {
                 // Output to file
                 final dir = await PathProvider.getTemporaryDirectory();
@@ -202,7 +192,7 @@ class _ImageStickerState extends State<ImageSticker>
           itemCount: _stickerList.length,
           itemBuilder: (BuildContext context, int i) {
             return Padding(
-                padding: const EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(1),
                 child: Container(
                   color: Colors.white,
                   child: GestureDetector(
@@ -210,23 +200,23 @@ class _ImageStickerState extends State<ImageSticker>
                         _attachSticker(_stickerList[i]);
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8),
                         child: _stickerList[i],
                       )),
                 ));
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, childAspectRatio: 1.0),
+              crossAxisCount: 2, childAspectRatio: 1),
         ),
         height: 120);
   }
 
   /// Build image & stickers stack panel
   Widget _buildImageStack(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return RepaintBoundary(
-      key: this._boundaryKey,
+      key: _boundaryKey,
       child: Listener(
         onPointerDown: (v) async {
           setState(() {
@@ -274,7 +264,7 @@ class _ImageStickerState extends State<ImageSticker>
 
     return Container(
       color: Colors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: SliderTheme(
         data: SliderThemeData(
           trackShape: CustomTrackShape(),
@@ -300,10 +290,10 @@ class _ImageStickerState extends State<ImageSticker>
   StickerView? _getSelectedSticker(PointerEvent event) {
     final result = BoxHitTestResult();
 
-    for (StickerView s in _attachedList) {
+    for (final StickerView s in _attachedList) {
       final RenderBox box =
           (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
-      Offset localBox = box.globalToLocal(event.position);
+      final Offset localBox = box.globalToLocal(event.position);
       if (box.hitTest(result, position: localBox)) {
         return s;
       }
@@ -325,9 +315,10 @@ class _ImageStickerState extends State<ImageSticker>
         onTapRemove: (StickerView sticker) {
           setState(() {
             if (_selectedStickerView != null &&
-                _selectedStickerView!.key == sticker.key)
+                _selectedStickerView!.key == sticker.key) {
               _selectedStickerView = null;
-            this._attachedList.removeWhere((s) => s.key == sticker.key);
+            }
+            _attachedList.removeWhere((s) => s.key == sticker.key);
           });
         },
       ));
@@ -336,11 +327,11 @@ class _ImageStickerState extends State<ImageSticker>
 
   /// Export image & sticker stack to image bytes
   Future<Uint8List?>? _exportWidgetToImage(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
+    final RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    var image = await boundary.toImage(pixelRatio: 3.0);
-    var byteData = await image.toByteData(format: ImageByteFormat.png);
-    var pngBytes = byteData?.buffer.asUint8List();
+    final image = await boundary.toImage(pixelRatio: 3);
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    final pngBytes = byteData?.buffer.asUint8List();
     return pngBytes;
   }
 }
@@ -380,21 +371,21 @@ class _StickerViewState extends State<StickerView> {
     return GestureDetector(
       onDoubleTap: () {
         setState(() {
-          if (this.widget.onTapRemove != null) {
-            this.widget.onTapRemove!(this.widget);
+          if (widget.onTapRemove != null) {
+            widget.onTapRemove!(widget);
           }
         });
       },
       child: Container(
           decoration: BoxDecoration(
-            border: this.widget.isFocus
-                ? Border.all(color: Colors.pinkAccent, width: 3.0)
+            border: widget.isFocus
+                ? Border.all(color: Colors.pinkAccent, width: 3)
                 : null,
-            borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
-          width: this.widget.width * this.widget.currentScale,
-          height: this.widget.height * this.widget.currentScale,
-          child: this.widget.image),
+          width: widget.width * widget.currentScale,
+          height: widget.height * widget.currentScale,
+          child: widget.image),
     );
   }
 }

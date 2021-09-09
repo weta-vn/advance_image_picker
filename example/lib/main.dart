@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:advance_image_picker/advance_image_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Setup image picker configs
-    var configs = ImagePickerConfigs();
+    final configs = ImagePickerConfigs();
     // AppBar text color
     configs.appBarTextColor = Colors.white;
     configs.appBarBackgroundColor = Colors.orange;
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -101,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             GridView.builder(
                 shrinkWrap: true,
@@ -109,12 +108,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
                     mainAxisSpacing: 2,
-                    crossAxisSpacing: 2,
-                    childAspectRatio: 1),
+                    crossAxisSpacing: 2),
                 itemBuilder: (BuildContext context, int index) {
-                  var image = _imgObjs[index];
+                  final image = _imgObjs[index];
                   return Padding(
-                    padding: const EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.all(2),
                     child: Image.file(File(image.modifiedPath),
                         height: 80, fit: BoxFit.cover),
                   );
@@ -125,9 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          List<ImageObject>? objects = await Navigator.of(context)
+          final List<ImageObject>? objects = await Navigator.of(context)
               .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
-            return const ImagePicker(maxCount: 5, isCaptureFirst: true);
+            return const ImagePicker(maxCount: 5);
           }));
 
           if ((objects?.length ?? 0) > 0) {

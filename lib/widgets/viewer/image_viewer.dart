@@ -66,7 +66,7 @@ class _ImageViewerState extends State<ImageViewer>
     super.initState();
 
     // Add images
-    _images = []..addAll(widget.images!);
+    _images = [...widget.images!];
     if (widget.configs != null) _configs = widget.configs!;
 
     // Setup current selected index
@@ -75,11 +75,12 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Build image editor controls
-  List<Widget> _buildImageEditorControls(BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
-    Map<String, EditorParams> imageEditors = {};
+  List<Widget> _buildImageEditorControls(
+      BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
+    final Map<String, EditorParams> imageEditors = {};
 
     // Add preset image editors
-    if (_configs.cropFeatureEnabled)
+    if (_configs.cropFeatureEnabled) {
       imageEditors[_configs.textImageCropTitle] = EditorParams(
           title: _configs.textImageCropTitle,
           icon: Icons.crop_rotate,
@@ -90,7 +91,8 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxWidth = 1080,
                   int maxHeight = 1920,
                   int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await ImageCropper.cropImage(
+                  ImagePickerConfigs? configs}) async =>
+              await ImageCropper.cropImage(
                   sourcePath: file.path,
                   compressQuality: compressQuality,
                   maxWidth: maxWidth,
@@ -109,10 +111,10 @@ class _ImageViewerState extends State<ImageViewer>
                       initAspectRatio: CropAspectRatioPreset.original,
                       lockAspectRatio: false),
                   iosUiSettings: const IOSUiSettings(
-                    minimumAspectRatio: 1.0,
-                  ))
-      );
-    if (_configs.adjustFeatureEnabled)
+                    minimumAspectRatio: 1,
+                  )));
+    }
+    if (_configs.adjustFeatureEnabled) {
       imageEditors[_configs.textImageEditTitle] = EditorParams(
           title: _configs.textImageEditTitle,
           icon: Icons.wb_sunny_outlined,
@@ -123,11 +125,17 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxWidth = 1080,
                   int maxHeight = 1920,
                   int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+                  ImagePickerConfigs? configs}) async =>
+              await Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
-                  builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
-      );
-    if (_configs.filterFeatureEnabled)
+                  builder: (context) => ImageEdit(
+                      file: file,
+                      title: title,
+                      maxWidth: maxWidth,
+                      maxHeight: maxHeight,
+                      configs: _configs))));
+    }
+    if (_configs.filterFeatureEnabled) {
       imageEditors[_configs.textImageFilterTitle] = EditorParams(
           title: _configs.textImageFilterTitle,
           icon: Icons.auto_awesome,
@@ -138,11 +146,17 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxWidth = 1080,
                   int maxHeight = 1920,
                   int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+                  ImagePickerConfigs? configs}) async =>
+              await Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
-                  builder: (context) => ImageFilter(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
-      );
-    if (_configs.stickerFeatureEnabled)
+                  builder: (context) => ImageFilter(
+                      file: file,
+                      title: title,
+                      maxWidth: maxWidth,
+                      maxHeight: maxHeight,
+                      configs: _configs))));
+    }
+    if (_configs.stickerFeatureEnabled) {
       imageEditors[_configs.textImageStickerTitle] = EditorParams(
           title: _configs.textImageStickerTitle,
           icon: Icons.insert_emoticon_rounded,
@@ -153,10 +167,16 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxWidth = 1080,
                   int maxHeight = 1920,
                   int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+                  ImagePickerConfigs? configs}) async =>
+              await Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
-                  builder: (context) => ImageSticker(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
-      );
+                  builder: (context) => ImageSticker(
+                      file: file,
+                      title: title,
+                      maxWidth: maxWidth,
+                      maxHeight: maxHeight,
+                      configs: _configs))));
+    }
 
     // Add custom image editors
     imageEditors.addAll(_configs.externalImageEditors);
@@ -166,14 +186,19 @@ class _ImageViewerState extends State<ImageViewer>
         .map((e) => GestureDetector(
               child: Icon(e.icon, size: 32, color: Colors.white),
               onTap: () async {
-                var image = await this
-                    ._imagePreProcessing(_images[_currentIndex!].modifiedPath);
-                File? outputFile = await e.onEditorEvent(context: context, file: image, title: e.title, maxWidth: _configs.maxWidth, maxHeight: _configs.maxHeight, configs: _configs);
+                final image = await _imagePreProcessing(_images[_currentIndex!].modifiedPath);
+                final File? outputFile = await e.onEditorEvent(
+                    context: context,
+                    file: image,
+                    title: e.title,
+                    maxWidth: _configs.maxWidth,
+                    maxHeight: _configs.maxHeight,
+                    configs: _configs);
                 if (outputFile != null) {
                   setState(() {
-                    this._images[this._currentIndex!].modifiedPath =
+                    _images[_currentIndex!].modifiedPath =
                         outputFile.path;
-                    widget.onChanged?.call(this._images);
+                    widget.onChanged?.call(_images);
                   });
                 }
               },
@@ -183,11 +208,12 @@ class _ImageViewerState extends State<ImageViewer>
 
   /// Pre-processing function
   Future<File> _imagePreProcessing(String? path) async {
-    if (_configs.imagePreProcessingBeforeEditingEnabled)
+    if (_configs.imagePreProcessingBeforeEditingEnabled) {
       return await ImageUtils.compressResizeImage(path!,
           maxWidth: _configs.maxWidth,
           maxHeight: _configs.maxHeight,
           quality: _configs.compressQuality);
+    }
     return File(path!);
   }
 
@@ -202,27 +228,18 @@ class _ImageViewerState extends State<ImageViewer>
   Widget build(BuildContext context) {
     super.build(context);
 
-    var hasImages = (this._images.length > 0);
+    final hasImages = this._images.isNotEmpty;
 
     // Use theme based AppBar colors if config values are not defined.
     // The logic is based on same approach that is used in AppBar SDK source.
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
-    // TODO: Track AppBar heme backwards compatibility in Flutter SDK.
-    // This AppBar theme backwards compatibility will be deprecated in Flutter
-    // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
-    final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
-        : _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+    final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
+        appBarTheme.backgroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
         (colorScheme.brightness == Brightness.dark
@@ -232,48 +249,42 @@ class _ImageViewerState extends State<ImageViewer>
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-            title: Text("${widget.title} (${this._currentIndex! + 1} "
-                "/ ${this._images.length})"),
+            title: Text("${widget.title} (${_currentIndex! + 1} "
+                "/ ${_images.length})"),
             backgroundColor: _appBarBackgroundColor,
             foregroundColor: _appBarTextColor,
             actions: [
               GestureDetector(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.delete,
-                      size: 32,
-                      color:
-                          hasImages ? _configs.appBarTextColor : Colors.grey),
-                ),
                 onTap: hasImages
                     ? () async {
-                        showDialog<void>(
+                        await showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             // return object of type Dialog
                             return AlertDialog(
-                              title: new Text(_configs.textConfirm),
-                              content: new Text(_configs.textConfirmDelete),
+                              title: Text(_configs.textConfirm),
+                              content: Text(_configs.textConfirmDelete),
                               actions: <Widget>[
                                 TextButton(
-                                  child: new Text(_configs.textNo),
+                                  child: Text(_configs.textNo),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                 ),
                                 TextButton(
-                                  child: new Text(_configs.textYes),
+                                  child: Text(_configs.textYes),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     setState(() {
-                                      var deleteIndex = this._currentIndex!;
-                                      if (this._images.length > 1)
-                                        this._currentIndex =
-                                            max(this._currentIndex! - 1, 0);
-                                      else
-                                        this._currentIndex = -1;
-                                      this._images.removeAt(deleteIndex);
-                                      widget.onChanged?.call(this._images);
+                                      final deleteIndex = _currentIndex!;
+                                      if (_images.length > 1) {
+                                        _currentIndex =
+                                            max(_currentIndex! - 1, 0);
+                                      } else {
+                                        _currentIndex = -1;
+                                      }
+                                      _images.removeAt(deleteIndex);
+                                      widget.onChanged?.call(_images);
                                     });
                                   },
                                 ),
@@ -283,6 +294,13 @@ class _ImageViewerState extends State<ImageViewer>
                         );
                       }
                     : null,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.delete,
+                      size: 32,
+                      color:
+                          hasImages ? _configs.appBarTextColor : Colors.grey),
+                ),
               ),
             ]),
         body: SafeArea(
@@ -308,7 +326,7 @@ class _ImageViewerState extends State<ImageViewer>
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: PhotoViewGallery.builder(
               scrollPhysics: const BouncingScrollPhysics(),
               builder: _buildItem,
@@ -350,14 +368,14 @@ class _ImageViewerState extends State<ImageViewer>
       }
       final items = _images.removeAt(oldIndex);
       _images.insert(newIndex, items);
-      widget.onChanged?.call(this._images);
+      widget.onChanged?.call(_images);
       return;
     });
   }
 
   /// Build reorderable selected image list
   Widget _buildReorderableSelectedImageList(BuildContext context) {
-    var makeThumbnail = (String? path) {
+    final makeThumbnail = (String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
@@ -367,7 +385,7 @@ class _ImageViewerState extends State<ImageViewer>
     };
 
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
           data: ThemeData(
@@ -375,6 +393,7 @@ class _ImageViewerState extends State<ImageViewer>
           child: ReorderableListView(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
+              onReorder: _reorderSelectedImageList,
               children: <Widget>[
                 for (var i = 0; i < _images.length; i++)
                   Container(
@@ -404,27 +423,26 @@ class _ImageViewerState extends State<ImageViewer>
                         },
                         child: makeThumbnail(_images[i].modifiedPath),
                       ))
-              ],
-              onReorder: _reorderSelectedImageList),
+              ]),
         ));
   }
 
   /// Image viewer for current image
   Widget _buildCurrentImageInfoView(BuildContext context) {
-    var image = this._images[this._currentIndex!];
+    final image = _images[_currentIndex!];
 
-    Future<ImageObject> imageProc = ImageUtils.getImageInfo(image);
+    final Future<ImageObject> imageProc = ImageUtils.getImageInfo(image);
 
     return FutureBuilder<ImageObject>(
         future: imageProc,
         builder: (BuildContext context, AsyncSnapshot<ImageObject> snapshot) {
           if (snapshot.hasData) {
-            var image = snapshot.data!;
+            final image = snapshot.data!;
             return Row(
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(4),
                   color: Colors.black.withOpacity(0.5),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,8 +455,9 @@ class _ImageViewerState extends State<ImageViewer>
                 ),
               ],
             );
-          } else
+          } else {
             return const CupertinoActivityIndicator();
+          }
         });
   }
 
@@ -447,7 +466,7 @@ class _ImageViewerState extends State<ImageViewer>
       BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     return Container(
       height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         ..._buildImageEditorControls(context, toolbarColor, toolbarWidgetColor),
         _buildEditorResetButton(context),
@@ -456,46 +475,44 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   Widget _buildEditorResetButton(BuildContext context) {
-    var imageChanged = (_images[_currentIndex!].modifiedPath !=
-        _images[_currentIndex!].originalPath);
+    final imageChanged = _images[_currentIndex!].modifiedPath !=
+        _images[_currentIndex!].originalPath;
     return GestureDetector(
-          child: Icon(Icons.replay,
-              size: 32, color: imageChanged ? Colors.white : Colors.grey),
-          onTap: imageChanged
-              ? () async {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      // return object of type Dialog
-                      return AlertDialog(
-                        title: new Text(_configs.textConfirm),
-                        content: new Text(_configs.textConfirmResetChanges),
-                        actions: <Widget>[
-                          TextButton(
-                            child: new Text(_configs.textNo),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: new Text(_configs.textYes),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                this._images[this._currentIndex!].modifiedPath =
-                                    this
-                                        ._images[this._currentIndex!]
-                                        .originalPath;
-                                widget.onChanged?.call(this._images);
-                              });
-                            },
-                          ),
-                        ],
-                      );
-                    },
+      onTap: imageChanged
+          ? () async {
+              await showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  // return object of type Dialog
+                  return AlertDialog(
+                    title: Text(_configs.textConfirm),
+                    content: Text(_configs.textConfirmResetChanges),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(_configs.textNo),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text(_configs.textYes),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            _images[_currentIndex!].modifiedPath =
+                                _images[_currentIndex!].originalPath;
+                            widget.onChanged?.call(_images);
+                          });
+                        },
+                      ),
+                    ],
                   );
-                }
-              : null,
-        );
+                },
+              );
+            }
+          : null,
+      child: Icon(Icons.replay,
+          size: 32, color: imageChanged ? Colors.white : Colors.grey),
+    );
   }
 }
