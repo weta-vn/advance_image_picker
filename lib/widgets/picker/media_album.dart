@@ -77,7 +77,7 @@ class MediaAlbumState extends State<MediaAlbum> {
   late AssetPathEntity _album;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _selectedImages.addAll(widget.selectedImages!);
     _album = widget.album;
