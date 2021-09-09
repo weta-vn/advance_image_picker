@@ -492,7 +492,7 @@ class _ImagePickerState extends State<ImagePicker>
     return Padding(
         padding: const EdgeInsets.all(8),
         child: OutlinedButton(
-          onPressed: (_selectedImages.length > 0)
+          onPressed: (_selectedImages.isNotEmpty)
               ? () async {
                   setState(() {
                     _isOutputCreating = true;
@@ -511,7 +511,7 @@ class _ImagePickerState extends State<ImagePicker>
           style: ButtonStyle(
             elevation: MaterialStateProperty.all(5),
             backgroundColor: MaterialStateProperty.all(
-                _selectedImages.length > 0 ? buttonColor : Colors.grey),
+                _selectedImages.isNotEmpty ? buttonColor : Colors.grey),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10))),
           ),
@@ -1223,7 +1223,7 @@ class _ImagePickerState extends State<ImagePicker>
             if (_mode != val) {
               if (val == PickerMode.Camera && _cameras.isEmpty) {
                 await _initPhotoCapture();
-              } else if (val == PickerMode.Album && _albums.length == 0) {
+              } else if (val == PickerMode.Album && _albums.isEmpty) {
                 await _initPhotoGallery();
               }
 
