@@ -117,7 +117,7 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildAdjustControls(BuildContext context) {
-    final textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
 
     if (_controlExpanded) {
       return Container(
@@ -263,7 +263,7 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildContrastAdjustControl(BuildContext context) {
-    final textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -299,7 +299,7 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildBrightnessAdjustControl(BuildContext context) {
-    final textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -335,7 +335,7 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildSaturationAdjustControl(BuildContext context) {
-    final textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

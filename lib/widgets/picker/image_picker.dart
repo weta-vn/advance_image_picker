@@ -32,10 +32,12 @@ const int kBottomControlPanelHeight = 265;
 class ImagePicker extends StatefulWidget {
   /// Constructor for the ImagePicker.
   const ImagePicker(
-      {final Key? key, this.maxCount = 10,
+      {final Key? key,
+      this.maxCount = 10,
       this.isFullscreenImage = false,
       this.isCaptureFirst = true,
-      this.configs}): super(key: key);
+      this.configs})
+      : super(key: key);
 
   /// Max selecting count
   final int maxCount;
@@ -1249,7 +1251,7 @@ class _ImagePickerState extends State<ImagePicker>
           : Colors.white,
     );
 
-    final textStyle = const TextStyle(color: Colors.white);
+    const textStyle = TextStyle(color: Colors.white);
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRRect(

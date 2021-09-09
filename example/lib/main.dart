@@ -9,7 +9,7 @@ void main() {
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return ErrorWidget(details.exception);
   };
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 /// Example app.
@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'advance_image_picker Demo'),
+      home: const MyHomePage(title: 'advance_image_picker Demo'),
     );
   }
 }
