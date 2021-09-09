@@ -3,15 +3,16 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
-import '../../configs/image_picker_configs.dart';
-import '../../utils/image_utils.dart';
-import '../../utils/time_utils.dart';
-import '../common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
+
+import '../../configs/image_picker_configs.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/time_utils.dart';
+import '../common/portrait_mode_mixin.dart';
 
 /// Image filter widget
 class ImageFilter extends StatefulWidget {
@@ -231,8 +232,7 @@ class _ImageFilterState extends State<ImageFilter>
   Widget _buildFilteredWidget(Filter filter, Uint8List imgBytes,
       {bool isThumbnail = false}) {
     final key = filter.name + (isThumbnail ? "thumbnail" : "");
-    final data =
-        _cachedFilters.containsKey(key) ? _cachedFilters[key] : null;
+    final data = _cachedFilters.containsKey(key) ? _cachedFilters[key] : null;
     final isSelected = filter.name == _filter.name;
 
     final createWidget = (Uint8List? bytes) {
@@ -710,9 +710,9 @@ class _ImageFilterState extends State<ImageFilter>
 }
 
 class Filter extends Object {
+  Filter({required this.name, this.matrix = defaultColorMatrix});
   final String name;
   final List<double> matrix;
-  Filter({required this.name, this.matrix = defaultColorMatrix});
 
   Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();

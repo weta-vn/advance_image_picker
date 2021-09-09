@@ -2,15 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import '../../configs/image_picker_configs.dart';
-import '../../utils/time_utils.dart';
-import '../common/custom_track_shape.dart';
-import '../common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_editor/image_editor.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
+
+import '../../configs/image_picker_configs.dart';
+import '../../utils/time_utils.dart';
+import '../common/custom_track_shape.dart';
+import '../common/portrait_mode_mixin.dart';
 
 /// Image editing widget, such as cropping, rotating, scaling, ...
 class ImageEdit extends StatefulWidget {
@@ -150,8 +151,7 @@ class _ImageEditState extends State<ImageEdit>
         },
         child: Container(
             color: const Color(0xFF212121),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -235,7 +235,8 @@ class _ImageEditState extends State<ImageEdit>
         _saturationValues.removeRange(0, _saturationValues.length - 1);
       }
 
-      await _processImageWithOptions(contrast, brightness, saturation).then((value) {
+      await _processImageWithOptions(contrast, brightness, saturation)
+          .then((value) {
         _isProcessing = false;
 
         setState(() {

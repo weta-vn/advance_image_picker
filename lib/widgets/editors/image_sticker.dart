@@ -2,16 +2,17 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import '../../configs/image_picker_configs.dart';
-import '../../utils/image_utils.dart';
-import '../../utils/time_utils.dart';
-import '../common/custom_track_shape.dart';
-import '../common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart' as PathProvider;
+
+import '../../configs/image_picker_configs.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/time_utils.dart';
+import '../common/custom_track_shape.dart';
+import '../common/portrait_mode_mixin.dart';
 
 /// Image sticker width allow adding sticker icon into image
 class ImageSticker extends StatefulWidget {
@@ -162,7 +163,8 @@ class _ImageStickerState extends State<ImageSticker>
       onPressed: (_selectedStickerView == null)
           ? () async {
               // Save current image editing
-              final Uint8List? image = await _exportWidgetToImage(_boundaryKey!);
+              final Uint8List? image =
+                  await _exportWidgetToImage(_boundaryKey!);
               if (image != null) {
                 // Output to file
                 final dir = await PathProvider.getTemporaryDirectory();
@@ -186,6 +188,7 @@ class _ImageStickerState extends State<ImageSticker>
     return Container(
         color: Colors.black,
         padding: const EdgeInsets.symmetric(horizontal: 4),
+        height: 120,
         child: GridView.builder(
           padding: EdgeInsets.zero,
           scrollDirection: Axis.horizontal,
@@ -207,8 +210,7 @@ class _ImageStickerState extends State<ImageSticker>
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, childAspectRatio: 1),
-        ),
-        height: 120);
+        ));
   }
 
   /// Build image & stickers stack panel
@@ -339,17 +341,6 @@ class _ImageStickerState extends State<ImageSticker>
 /// Sticker view
 // ignore: must_be_immutable
 class StickerView extends StatefulWidget {
-  final Image image;
-  final double width;
-  final double height;
-
-  double top;
-  double left;
-  double currentScale;
-  bool isFocus;
-
-  final Function? onTapRemove;
-
   StickerView(this.image,
       {Key? key,
       required this.width,
@@ -360,6 +351,17 @@ class StickerView extends StatefulWidget {
       this.isFocus = false,
       this.onTapRemove})
       : super(key: key);
+
+  final Image image;
+  final double width;
+  final double height;
+
+  double top;
+  double left;
+  double currentScale;
+  bool isFocus;
+
+  final Function? onTapRemove;
 
   @override
   _StickerViewState createState() => _StickerViewState();

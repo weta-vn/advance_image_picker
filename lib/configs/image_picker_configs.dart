@@ -16,12 +16,13 @@ import '../widgets/editors/editor_params.dart';
 /// configs.translateFunc = (name, value) => Intl.message(value, name: name);
 /// ```
 class ImagePickerConfigs {
-  /// Singleton object of config
-  static final ImagePickerConfigs _singleton = ImagePickerConfigs._internal();
   factory ImagePickerConfigs() {
     return _singleton;
   }
   ImagePickerConfigs._internal();
+
+  /// Singleton object of config
+  static final ImagePickerConfigs _singleton = ImagePickerConfigs._internal();
 
   /// UI labels translated function with 2 parameters [name] and [defaultValue]
   /// Declare [name] for what label needs to be translated in localization file,

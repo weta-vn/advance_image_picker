@@ -1,16 +1,31 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import '../../models/image_object.dart';
-import '../../utils/image_utils.dart';
-import '../../utils/log_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../models/image_object.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/log_utils.dart';
+
 /// Photo album widget
 class MediaAlbum extends StatefulWidget {
+  const MediaAlbum(
+      {Key? key,
+      this.gridCount = 4,
+      this.maxCount,
+      required this.album,
+      this.maxWidth = 1280,
+      this.maxHeight = 720,
+      this.albumThumbWidth = 200,
+      this.albumThumbHeight = 200,
+      this.selectedImages,
+      this.preProcessing,
+      this.onImageSelected})
+      : super(key: key);
+
   /// Grid count
   final int gridCount;
 
@@ -40,20 +55,6 @@ class MediaAlbum extends StatefulWidget {
 
   /// Image selected event
   final Function(ImageObject)? onImageSelected;
-
-  const MediaAlbum(
-      {Key? key,
-      this.gridCount = 4,
-      this.maxCount,
-      required this.album,
-      this.maxWidth = 1280,
-      this.maxHeight = 720,
-      this.albumThumbWidth = 200,
-      this.albumThumbHeight = 200,
-      this.selectedImages,
-      this.preProcessing,
-      this.onImageSelected})
-      : super(key: key);
 
   @override
   MediaAlbumState createState() => MediaAlbumState();
@@ -210,8 +211,7 @@ class MediaAlbumState extends State<MediaAlbum> {
                     child: Container(
                         color: Colors.grey.shade200.withOpacity(0.8))),
               if (_loadingAsset == asset.id)
-                const Positioned.fill(
-                    child: CupertinoActivityIndicator()),
+                const Positioned.fill(child: CupertinoActivityIndicator()),
               if (idx >= 0)
                 const Positioned(
                     top: 10,
