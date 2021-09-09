@@ -723,7 +723,7 @@ linter:
 
     # DO sort constructor declarations before other members.
     #
-    # We do like this lint rule. However please notice that if you want to have the
+    # We do like this lint rule. However, please notice that if you want to have the
     # default constructor first, followed by its properties, after this other named
     # constructors and factories. THat then this rule gets in the way of that and
     # forces you to put (often final) constructor properties after all
