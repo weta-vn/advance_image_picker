@@ -583,7 +583,7 @@ class _ImagePickerState extends State<ImagePicker>
           width: 48,
           height: 48,
           child: Center(
-            child: Text("${_currentScale.toStringAsFixed(1).toString()}x",
+            child: Text("${_currentScale.toStringAsFixed(1)}x",
                 style: const TextStyle(color: Colors.white)),
           ),
         ));
