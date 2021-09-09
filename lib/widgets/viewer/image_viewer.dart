@@ -186,7 +186,8 @@ class _ImageViewerState extends State<ImageViewer>
         .map((e) => GestureDetector(
               child: Icon(e.icon, size: 32, color: Colors.white),
               onTap: () async {
-                final image = await _imagePreProcessing(_images[_currentIndex!].modifiedPath);
+                final image = await _imagePreProcessing(
+                    _images[_currentIndex!].modifiedPath);
                 final File? outputFile = await e.onEditorEvent(
                     context: context,
                     file: image,
@@ -196,8 +197,7 @@ class _ImageViewerState extends State<ImageViewer>
                     configs: _configs);
                 if (outputFile != null) {
                   setState(() {
-                    _images[_currentIndex!].modifiedPath =
-                        outputFile.path;
+                    _images[_currentIndex!].modifiedPath = outputFile.path;
                     widget.onChanged?.call(_images);
                   });
                 }
@@ -228,7 +228,7 @@ class _ImageViewerState extends State<ImageViewer>
   Widget build(BuildContext context) {
     super.build(context);
 
-    final hasImages = this._images.isNotEmpty;
+    final hasImages = _images.isNotEmpty;
 
     // Use theme based AppBar colors if config values are not defined.
     // The logic is based on same approach that is used in AppBar SDK source.
@@ -402,7 +402,7 @@ class _ImageViewerState extends State<ImageViewer>
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         border: Border.all(
-                            color: (i == this._currentIndex)
+                            color: (i == _currentIndex)
                                 ? Colors.blue
                                 : Colors.white,
                             width: 3.0),
@@ -412,12 +412,12 @@ class _ImageViewerState extends State<ImageViewer>
                       child: GestureDetector(
                         onTap: () async {
                           setState(() {
-                            this._currentIndex = i;
+                            _currentIndex = i;
                           });
 
                           if (widget.pageController.hasClients)
                             await widget.pageController.animateToPage(
-                                this._currentIndex!,
+                                _currentIndex!,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeIn);
                         },
