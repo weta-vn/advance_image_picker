@@ -298,7 +298,7 @@ class _ImageViewerState extends State<ImageViewer>
                       }
                     : null,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Icon(Icons.delete,
                       size: 32,
                       color:
@@ -401,16 +401,16 @@ class _ImageViewerState extends State<ImageViewer>
                 for (var i = 0; i < _images.length; i++)
                   Container(
                       key: ValueKey(i.toString()),
-                      margin: const EdgeInsets.all(4.0),
+                      margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         border: Border.all(
                             color: (i == _currentIndex)
                                 ? Colors.blue
                                 : Colors.white,
-                            width: 3.0),
+                            width: 3),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10.0)),
+                            const BorderRadius.all(Radius.circular(10)),
                       ),
                       child: GestureDetector(
                         onTap: () async {
