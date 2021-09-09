@@ -81,7 +81,8 @@ class ImageUtils {
     }
 
     // Crop image
-    int x = originX, y = originY;
+    int x = originX;
+    int y = originY;
     if (properties.orientation == ImageOrientation.rotate270) {
       x = ((1.0 - wPercent) * width).toInt();
       y = ((1.0 - hPercent) * height).toInt();
