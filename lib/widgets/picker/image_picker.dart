@@ -363,7 +363,7 @@ class _ImagePickerState extends State<ImagePicker>
   Future<bool> _onWillPop() async {
     if (!_configs.showNonSelectedAlert ||
         _isImageSelectedDone ||
-        this._selectedImages.isEmpty) return true;
+        _selectedImages.isEmpty) return true;
 
     return (await showDialog<bool>(
             context: context,
@@ -516,7 +516,7 @@ class _ImagePickerState extends State<ImagePicker>
           child: Row(children: [
             Text(_configs.textSelectButtonTitle,
                 style: TextStyle(
-                    color: this._selectedImages.isNotEmpty
+                    color: _selectedImages.isNotEmpty
                         ? ((buttonColor == Colors.white)
                             ? Colors.black
                             : Colors.white)
@@ -1219,7 +1219,7 @@ class _ImagePickerState extends State<ImagePicker>
           groupValue: _mode,
           onValueChanged: (dynamic val) async {
             if (_mode != val) {
-              if (val == PickerMode.Camera && this._cameras.isEmpty) {
+              if (val == PickerMode.Camera && _cameras.isEmpty) {
                 await _initPhotoCapture();
               } else if (val == PickerMode.Album && _albums.length == 0) {
                 await _initPhotoGallery();
