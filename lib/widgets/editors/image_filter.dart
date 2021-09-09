@@ -147,18 +147,19 @@ class _ImageFilterState extends State<ImageFilter>
         backgroundColor: _appBarBackgroundColor,
         foregroundColor: _appBarTextColor,
         actions: <Widget>[
-          _loading
-              ? Container()
-              : IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () async {
-                    setState(() {
-                      _loading = true;
-                    });
-                    final imageFile = await saveFilteredImage();
-                    Navigator.pop(context, imageFile);
-                  },
-                )
+          if (_loading)
+            Container()
+          else
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                setState(() {
+                  _loading = true;
+                });
+                final imageFile = await saveFilteredImage();
+                Navigator.pop(context, imageFile);
+              },
+            )
         ],
       ),
       body: SizedBox(
