@@ -760,7 +760,3 @@ linter:
     # VG Analysis    disabled : https://pub.dev/packages/very_good_analysis
     # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
     unnecessary_final: false
-
-    # Rules for const use
-    prefer_const_constructors: true
-    prefer_const_declarations: true
