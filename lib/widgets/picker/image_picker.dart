@@ -242,7 +242,7 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Select new camera for capturing
-  void _onNewCameraSelected(CameraDescription cameraDescription) async {
+  Future<void> _onNewCameraSelected(CameraDescription cameraDescription) async {
     LogUtils.log("[_onNewCameraSelected] start");
 
     // Dispose old then create new camera controller

@@ -102,7 +102,7 @@ class _ImageFilterState extends State<ImageFilter>
     }
   }
 
-  void _runApplyFilterProcess() async {
+  Future<void> _runApplyFilterProcess() async {
     while (_queuedApplyFilterFuncList.isNotEmpty) {
       if (!mounted) break;
 
