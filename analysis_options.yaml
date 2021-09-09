@@ -449,6 +449,30 @@ linter:
     # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
     flutter_style_todos: false
 
+    # AVOID using library private types in public APIs.
+    #
+    # https://dart-lang.github.io/linter/lints/library_private_types_in_public_api.html
+    #
+    # For the purposes of this lint, a public API is considered to be any top-level or member
+    # declaration unless the declaration is library private or contained in a declaration that's library private.
+    #
+    # Disabled, this lint is triggered when using a private class createState() in StatefulWidget.
+    # since that is the default for them, it is a bit peculiar that this lint is triggered by it.
+    # Considering this it is also strange the Flutter repo has the rule enabled.
+    #
+    # Other known linters use:
+    #
+    # Core           disabled : https://pub.dev/packages/lints
+    # Recommended    disabled : https://pub.dev/packages/lints
+    # Flutter Lints  disabled : https://pub.dev/packages/flutter_lints
+    # Pedantic       disabled : https://pub.dev/packages/pedantic
+    # Effective Dart disabled : https://pub.dev/packages/effective_dart
+    # Flutter repo   enabled  : https://github.com/flutter/flutter/blob/master/analysis_options.yaml
+    # Lint           disabled : https://pub.dev/packages/lint
+    # VG Analysis    disabled : https://pub.dev/packages/very_good_analysis
+    # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
+    library_private_types_in_public_api: false
+
     # AVOID lines longer than 80 characters
     #
     # https://dart-lang.github.io/linter/lints/lines_longer_than_80_chars.html
@@ -669,6 +693,37 @@ linter:
     # VG Analysis    disabled : https://pub.dev/packages/very_good_analysis
     # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
     prefer_expression_function_bodies: false
+
+    # DO prefer declaring parameters as final if they are not reassigned in the function body.
+    #
+    # https://dart-lang.github.io/linter/lints/prefer_final_parameters.html
+    #
+    # Declaring parameters as final when possible is a good practice because it helps
+    # avoid accidental reassignments.
+    #
+    # Certainly good idea in many cases. There seems to be one "small" false positive issue with it.
+    # Lint is triggered by final constructor properties, eg a in
+    # `final int i;`  the parameter `this.i` is not also final, which is not really needed
+    # since the property is final. However, this triggers the rule, unnecessarily in our opinion.
+    # We need to turn OFF this rule due to that.
+    #
+    # The error rule we made at the start: parameter_assignments: warning will also catch
+    # parameter assignments and warn about them, this rule, while nice is thus not so
+    # necessary. We will monitor the situation when it comes to the as we see too many
+    # positives with this lint rule.
+    #
+    # Other known linters use:
+    #
+    # Core           disabled : https://pub.dev/packages/lints
+    # Recommended    disabled : https://pub.dev/packages/lints
+    # Flutter Lints  disabled : https://pub.dev/packages/flutter_lints
+    # Pedantic       disabled : https://pub.dev/packages/pedantic
+    # Effective Dart disabled : https://pub.dev/packages/effective_dart
+    # Flutter repo   disabled : https://github.com/flutter/flutter/blob/master/analysis_options.yaml
+    # Lint           disabled : https://pub.dev/packages/lint
+    # VG Analysis    disabled : https://pub.dev/packages/very_good_analysis
+    # RydMike        disabled : https://gist.github.com/rydmike/fdb53ddd933c37d20e6f3188a936cd4c
+    prefer_final_parameters: false
 
     # DO document all public members.
     #
