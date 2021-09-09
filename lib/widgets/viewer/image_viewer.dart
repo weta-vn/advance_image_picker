@@ -20,13 +20,16 @@ import '../editors/image_sticker.dart';
 
 /// Image viewer for selected images
 class ImageViewer extends StatefulWidget {
+  /// Image viewer for selected images
   ImageViewer(
-      {this.initialIndex = 0,
+      {final Key? key,
+      this.initialIndex = 0,
       this.title,
       this.images,
       this.configs,
       this.onChanged})
-      : pageController = PageController(initialPage: initialIndex);
+      : pageController = PageController(initialPage: initialIndex),
+        super(key: key);
 
   /// Initial index in image list
   final int initialIndex;

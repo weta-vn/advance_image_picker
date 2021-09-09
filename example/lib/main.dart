@@ -12,7 +12,10 @@ void main() {
   runApp(MyApp());
 }
 
+/// Example app.
 class MyApp extends StatelessWidget {
+  /// Example app constructor.
+  const MyApp({final Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,33 +33,43 @@ class MyApp extends StatelessWidget {
     // Disable edit function, then add other edit control instead
     configs.adjustFeatureEnabled = false;
     configs.externalImageEditors['external_image_editor_1'] = EditorParams(
-          title: 'external_image_editor_1',
-          icon: Icons.edit_rounded,
-          onEditorEvent: (
-                  {required BuildContext context,
-                  required File file,
-                  required String title,
-                  int maxWidth = 1080,
-                  int maxHeight = 1920,
-                  int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
-                  fullscreenDialog: true,
-                  builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
-      );
+        title: 'external_image_editor_1',
+        icon: Icons.edit_rounded,
+        onEditorEvent: (
+                {required BuildContext context,
+                required File file,
+                required String title,
+                int maxWidth = 1080,
+                int maxHeight = 1920,
+                int compressQuality = 90,
+                ImagePickerConfigs? configs}) async =>
+            await Navigator.of(context).push(MaterialPageRoute<File>(
+                fullscreenDialog: true,
+                builder: (context) => ImageEdit(
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
     configs.externalImageEditors['external_image_editor_2'] = EditorParams(
-          title: 'external_image_editor_2',
-          icon: Icons.edit_attributes,
-          onEditorEvent: (
-                  {required BuildContext context,
-                  required File file,
-                  required String title,
-                  int maxWidth = 1080,
-                  int maxHeight = 1920,
-                  int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
-                  fullscreenDialog: true,
-                  builder: (context) => ImageSticker(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
-      );
+        title: 'external_image_editor_2',
+        icon: Icons.edit_attributes,
+        onEditorEvent: (
+                {required BuildContext context,
+                required File file,
+                required String title,
+                int maxWidth = 1080,
+                int maxHeight = 1920,
+                int compressQuality = 90,
+                ImagePickerConfigs? configs}) async =>
+            await Navigator.of(context).push(MaterialPageRoute<File>(
+                fullscreenDialog: true,
+                builder: (context) => ImageSticker(
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -106,9 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 shrinkWrap: true,
                 itemCount: _imgObjs.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 2,
-                    crossAxisSpacing: 2),
+                    crossAxisCount: 4, mainAxisSpacing: 2, crossAxisSpacing: 2),
                 itemBuilder: (BuildContext context, int index) {
                   final image = _imgObjs[index];
                   return Padding(

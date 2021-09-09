@@ -16,12 +16,15 @@ import '../common/portrait_mode_mixin.dart';
 
 /// Image sticker width allow adding sticker icon into image
 class ImageSticker extends StatefulWidget {
+  /// Image sticker width allow adding sticker icon into image
   const ImageSticker(
-      {required this.file,
+      {final Key? key,
+      required this.file,
       required this.title,
       this.configs,
       this.maxWidth = 1080,
-      this.maxHeight = 1920});
+      this.maxHeight = 1920})
+      : super(key: key);
 
   /// Input file object
   final File file;

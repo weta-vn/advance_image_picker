@@ -15,12 +15,15 @@ import '../common/portrait_mode_mixin.dart';
 
 /// Image editing widget, such as cropping, rotating, scaling, ...
 class ImageEdit extends StatefulWidget {
+  /// Image editing widget, such as cropping, rotating, scaling, ...
   const ImageEdit(
-      {required this.file,
+      {final Key? key,
+      required this.file,
       required this.title,
       this.configs,
       this.maxWidth = 1080,
-      this.maxHeight = 1920});
+      this.maxHeight = 1920})
+      : super(key: key);
 
   @override
   _ImageEditState createState() => _ImageEditState();
