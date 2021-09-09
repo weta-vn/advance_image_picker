@@ -126,10 +126,9 @@ class _ImageStickerState extends State<ImageSticker>
                         if (snapshot.connectionState == ConnectionState.done) {
                           return _buildImageStack(context);
                         } else {
-                          return Container(
-                              child: const Center(
+                          return const Center(
                             child: CupertinoActivityIndicator(),
-                          ));
+                          );
                         }
                       })
                   : _buildImageStack(context),

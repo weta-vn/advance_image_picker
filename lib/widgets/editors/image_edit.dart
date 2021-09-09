@@ -129,11 +129,8 @@ class _ImageEditState extends State<ImageEdit>
                   _controlExpanded = false;
                 });
               },
-              child: Container(
-                  child: Row(children: const [
-                Spacer(),
-                Icon(Icons.keyboard_arrow_down)
-              ])),
+              child: Row(
+                  children: const [Spacer(), Icon(Icons.keyboard_arrow_down)]),
             ),
             const Divider(),
             _buildContrastAdjustControl(context),
@@ -200,10 +197,9 @@ class _ImageEditState extends State<ImageEdit>
             if (snapshot.connectionState == ConnectionState.done) {
               return view();
             } else {
-              return Container(
-                  child: const Center(
+              return const Center(
                 child: CupertinoActivityIndicator(),
-              ));
+              );
             }
           });
     } else {

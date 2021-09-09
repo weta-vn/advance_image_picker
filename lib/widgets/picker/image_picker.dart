@@ -875,10 +875,9 @@ class _ImagePickerState extends State<ImagePicker>
                 );
               });
         } else {
-          return Container(
-              child: const Center(
+          return const Center(
             child: CupertinoActivityIndicator(),
-          ));
+          );
         }
       },
     );

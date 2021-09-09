@@ -199,9 +199,8 @@ class MediaAlbumState extends State<MediaAlbum> {
                                 fit: BoxFit.cover,
                               );
                             }
-                            return Container(
-                                child: const Center(
-                                    child: CupertinoActivityIndicator()));
+                            return const Center(
+                                child: CupertinoActivityIndicator());
                           },
                         )
                       : Image.memory(data,
