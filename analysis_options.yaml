@@ -1,8 +1,10 @@
-# RydMike LINTER Preferences v1.2.3
+# This is based on RydMike LINTER Preferences v1.2.5
+# https://rydmike.com/blog_flutter_linting
 # Include and activate all lint rules, later below we disable the not used or desired ones.
 # For a comparison of all lint rules settings in rule style listed below, please see this
 # sheet: https://docs.google.com/spreadsheets/d/1Nc1gFjmCOMubWZD7f2E4fLhWN7LYaOE__tsA7bf2NjA
 include: all_lint_rules.yaml
+
 analyzer:
   exclude:
     - "**/*.g.dart"
@@ -12,9 +14,10 @@ analyzer:
     - "lib/generated_plugin_registrant.dart"
 
   strong-mode:
+    # Don't cast implicitly.
     implicit-casts: false
+    # Don't fall back to 'dynamic' implicitly.
     implicit-dynamic: false
-
   errors:
     # Without ignore here, we cause import of all_lint_rules to warn, because some rules conflict.
     # We explicitly enabled even conflicting rules and are fixing the conflicts in this file.
@@ -53,6 +56,10 @@ analyzer:
 
     # Allow having TODOs in the code.
     todo: ignore
+
+# LINTER Preferences
+#
+# Explicitly disable only the rules we do not want.
 
 linter:
   rules:
