@@ -68,6 +68,7 @@ linter:
     - empty_catches
     - empty_constructor_bodies
     - empty_statements
+    - eol_at_end_of_file
     - exhaustive_cases
     - file_names
     - flutter_style_todos
@@ -160,6 +161,7 @@ linter:
     - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const
+    - unnecessary_constructor_name
     - unnecessary_final
     - unnecessary_getters_setters
     - unnecessary_lambdas
