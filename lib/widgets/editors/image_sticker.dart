@@ -209,7 +209,7 @@ class _ImageStickerState extends State<ImageSticker>
                 ));
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, childAspectRatio: 1),
+              crossAxisCount: 2),
         ));
   }
 
