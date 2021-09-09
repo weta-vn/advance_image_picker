@@ -415,11 +415,12 @@ class _ImageViewerState extends State<ImageViewer>
                             _currentIndex = i;
                           });
 
-                          if (widget.pageController.hasClients)
+                          if (widget.pageController.hasClients) {
                             await widget.pageController.animateToPage(
                                 _currentIndex!,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeIn);
+                          }
                         },
                         child: makeThumbnail(_images[i].modifiedPath),
                       ))
