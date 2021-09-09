@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:path_provider/path_provider.dart' as PathProvider;
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../../configs/image_picker_configs.dart';
 import '../../utils/image_utils.dart';
@@ -218,7 +218,7 @@ class _ImageFilterState extends State<ImageFilter>
   }
 
   Future<File> saveFilteredImage() async {
-    final dir = await PathProvider.getTemporaryDirectory();
+    final dir = await path_provider.getTemporaryDirectory();
     final targetPath =
         "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
     final File imageFile = File(targetPath);

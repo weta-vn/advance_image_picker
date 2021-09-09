@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart' as PathProvider;
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../../configs/image_picker_configs.dart';
 import '../../utils/image_utils.dart';
@@ -169,7 +169,7 @@ class _ImageStickerState extends State<ImageSticker>
                   await _exportWidgetToImage(_boundaryKey!);
               if (image != null) {
                 // Output to file
-                final dir = await PathProvider.getTemporaryDirectory();
+                final dir = await path_provider.getTemporaryDirectory();
                 final targetPath =
                     "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
                 File file = File(targetPath);
