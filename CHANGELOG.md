@@ -1,3 +1,7 @@
+## [0.1.3]
+
+* Improve code lintings
+
 ## [0.1.2]
 
 * Add feature to allow user add their owned image editors with ease (from mr.minhthuanit)
