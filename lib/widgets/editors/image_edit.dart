@@ -2,24 +2,28 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:advance_image_picker/configs/image_picker_configs.dart';
-import 'package:advance_image_picker/utils/time_utils.dart';
-import 'package:advance_image_picker/widgets/common/custom_track_shape.dart';
-import 'package:advance_image_picker/widgets/common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:path_provider/path_provider.dart' as PathProvider;
+import 'package:path_provider/path_provider.dart' as path_provider;
+
+import '../../configs/image_picker_configs.dart';
+import '../../utils/time_utils.dart';
+import '../common/custom_track_shape.dart';
+import '../common/portrait_mode_mixin.dart';
 
 /// Image editing widget, such as cropping, rotating, scaling, ...
 class ImageEdit extends StatefulWidget {
-  ImageEdit(
-      {required this.file,
+  /// Image editing widget, such as cropping, rotating, scaling, ...
+  const ImageEdit(
+      {final Key? key,
+      required this.file,
       required this.title,
       this.configs,
       this.maxWidth = 1080,
-      this.maxHeight = 1920});
+      this.maxHeight = 1920})
+      : super(key: key);
 
   @override
   _ImageEditState createState() => _ImageEditState();
@@ -47,9 +51,9 @@ class _ImageEditState extends State<ImageEdit>
   double _saturation = 0;
   Uint8List? _imageBytes;
   Uint8List? _orgImageBytes;
-  List<double> _contrastValues = [0];
-  List<double> _brightnessValues = [0];
-  List<double> _saturationValues = [0];
+  final List<double> _contrastValues = [0];
+  final List<double> _brightnessValues = [0];
+  final List<double> _saturationValues = [0];
   bool _isProcessing = false;
   bool _controlExpanded = true;
   ImagePickerConfigs _configs = ImagePickerConfigs();
@@ -69,12 +73,8 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Future<Uint8List?>? _readImage() async {
-    if (_orgImageBytes == null) {
-      _orgImageBytes = await widget.file.readAsBytes();
-    }
-    if (_imageBytes == null) {
-      _imageBytes = Uint8List.fromList(_orgImageBytes!);
-    }
+    _orgImageBytes ??= await widget.file.readAsBytes();
+    _imageBytes ??= Uint8List.fromList(_orgImageBytes!);
     return _imageBytes;
   }
 
@@ -87,20 +87,11 @@ class _ImageEditState extends State<ImageEdit>
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
-    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
-    // The AppBar theme backwards compatibility will be deprecated in Flutter
-    // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
-    final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
-        : _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+    final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
+        appBarTheme.backgroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
         (colorScheme.brightness == Brightness.dark
@@ -126,12 +117,12 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildAdjustControls(BuildContext context) {
-    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
 
     if (_controlExpanded) {
       return Container(
         color: const Color(0xFF212121),
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -141,11 +132,8 @@ class _ImageEditState extends State<ImageEdit>
                   _controlExpanded = false;
                 });
               },
-              child: Container(
-                  child: Row(children: [
-                const Spacer(),
-                const Icon(Icons.keyboard_arrow_down)
-              ])),
+              child: Row(
+                  children: const [Spacer(), Icon(Icons.keyboard_arrow_down)]),
             ),
             const Divider(),
             _buildContrastAdjustControl(context),
@@ -163,8 +151,7 @@ class _ImageEditState extends State<ImageEdit>
         },
         child: Container(
             color: const Color(0xFF212121),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -186,10 +173,10 @@ class _ImageEditState extends State<ImageEdit>
     return IconButton(
       icon: const Icon(Icons.done),
       onPressed: () async {
-        final dir = await PathProvider.getTemporaryDirectory();
+        final dir = await path_provider.getTemporaryDirectory();
         final targetPath = "${dir.absolute.path}/temp_"
             "${TimeUtils.getTimeString(DateTime.now())}.jpg";
-        File file = File(targetPath);
+        final File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
         Navigator.of(context).pop(file);
       },
@@ -197,8 +184,8 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildImageViewer(BuildContext context) {
-    var view = () => Container(
-        padding: const EdgeInsets.all(12.0),
+    final view = () => Container(
+        padding: const EdgeInsets.all(12),
         color: Colors.black,
         child: Image.memory(
           _imageBytes!,
@@ -206,20 +193,21 @@ class _ImageEditState extends State<ImageEdit>
           gaplessPlayback: true,
         ));
 
-    if (_imageBytes == null)
+    if (_imageBytes == null) {
       return FutureBuilder(
           future: _readImage(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return view();
-            } else
-              return Container(
-                  child: const Center(
+            } else {
+              return const Center(
                 child: CupertinoActivityIndicator(),
-              ));
+              );
+            }
           });
-    else
+    } else {
       return view();
+    }
   }
 
   Future<void> _processImage() async {
@@ -231,19 +219,23 @@ class _ImageEditState extends State<ImageEdit>
       _isProcessing = true;
 
       // Get last value
-      var contrast = _contrastValues.last;
-      var brightness = _brightnessValues.last;
-      var saturation = _saturationValues.last;
+      final contrast = _contrastValues.last;
+      final brightness = _brightnessValues.last;
+      final saturation = _saturationValues.last;
 
       // Remove old values
-      if (_contrastValues.length > 1)
+      if (_contrastValues.length > 1) {
         _contrastValues.removeRange(0, _contrastValues.length - 1);
-      if (_brightnessValues.length > 1)
+      }
+      if (_brightnessValues.length > 1) {
         _brightnessValues.removeRange(0, _brightnessValues.length - 1);
-      if (_saturationValues.length > 1)
+      }
+      if (_saturationValues.length > 1) {
         _saturationValues.removeRange(0, _saturationValues.length - 1);
+      }
 
-      _processImageWithOptions(contrast, brightness, saturation).then((value) {
+      await _processImageWithOptions(contrast, brightness, saturation)
+          .then((value) {
         _isProcessing = false;
 
         setState(() {
@@ -271,9 +263,9 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildContrastAdjustControl(BuildContext context) {
-    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textContrast, style: textStyle),
@@ -285,8 +277,8 @@ class _ImageEditState extends State<ImageEdit>
             trackShape: CustomTrackShape(),
           ),
           child: Slider(
-            min: -10.0,
-            max: 10.0,
+            min: -10,
+            max: 10,
             divisions: 40,
             value: _contrast,
             activeColor: Colors.white,
@@ -297,7 +289,7 @@ class _ImageEditState extends State<ImageEdit>
                   _contrast = value;
                 });
                 _contrastValues.add(value);
-                _processImage();
+                await _processImage();
               }
             },
           ),
@@ -307,9 +299,9 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildBrightnessAdjustControl(BuildContext context) {
-    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textBrightness, style: textStyle),
@@ -321,8 +313,8 @@ class _ImageEditState extends State<ImageEdit>
             trackShape: CustomTrackShape(),
           ),
           child: Slider(
-            min: -10.0,
-            max: 10.0,
+            min: -10,
+            max: 10,
             divisions: 40,
             value: _brightness,
             activeColor: Colors.white,
@@ -333,7 +325,7 @@ class _ImageEditState extends State<ImageEdit>
                   _brightness = value;
                 });
                 _brightnessValues.add(value);
-                _processImage();
+                await _processImage();
               }
             },
           ),
@@ -343,9 +335,9 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildSaturationAdjustControl(BuildContext context) {
-    var textStyle = const TextStyle(color: Colors.white, fontSize: 10);
+    const textStyle = TextStyle(color: Colors.white, fontSize: 10);
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text(_configs.textSaturation, style: textStyle),
@@ -357,8 +349,8 @@ class _ImageEditState extends State<ImageEdit>
             trackShape: CustomTrackShape(),
           ),
           child: Slider(
-            min: -10.0,
-            max: 10.0,
+            min: -10,
+            max: 10,
             divisions: 40,
             value: _saturation,
             activeColor: Colors.white,
@@ -369,7 +361,7 @@ class _ImageEditState extends State<ImageEdit>
                   _saturation = value;
                 });
                 _saturationValues.add(value);
-                _processImage();
+                await _processImage();
               }
             },
           ),

@@ -1,16 +1,31 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:advance_image_picker/models/image_object.dart';
-import 'package:advance_image_picker/utils/image_utils.dart';
-import 'package:advance_image_picker/utils/log_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../models/image_object.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/log_utils.dart';
+
 /// Photo album widget
 class MediaAlbum extends StatefulWidget {
+  const MediaAlbum(
+      {Key? key,
+      this.gridCount = 4,
+      this.maxCount,
+      required this.album,
+      this.maxWidth = 1280,
+      this.maxHeight = 720,
+      this.albumThumbWidth = 200,
+      this.albumThumbHeight = 200,
+      this.selectedImages,
+      this.preProcessing,
+      this.onImageSelected})
+      : super(key: key);
+
   /// Grid count
   final int gridCount;
 
@@ -41,20 +56,6 @@ class MediaAlbum extends StatefulWidget {
   /// Image selected event
   final Function(ImageObject)? onImageSelected;
 
-  MediaAlbum(
-      {Key? key,
-      this.gridCount = 4,
-      this.maxCount,
-      required this.album,
-      this.maxWidth = 1280,
-      this.maxHeight = 720,
-      this.albumThumbWidth = 200,
-      this.albumThumbHeight = 200,
-      this.selectedImages,
-      this.preProcessing,
-      this.onImageSelected})
-      : super(key: key);
-
   @override
   MediaAlbumState createState() => MediaAlbumState();
 }
@@ -67,7 +68,7 @@ class MediaAlbumState extends State<MediaAlbum> {
   List<AssetEntity> _assets = [];
 
   /// Thumbnail cache
-  Map<String, Uint8List?> _thumbnailCache = {};
+  final Map<String, Uint8List?> _thumbnailCache = {};
 
   /// Loading asset
   String _loadingAsset = "";
@@ -76,7 +77,7 @@ class MediaAlbumState extends State<MediaAlbum> {
   late AssetPathEntity _album;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _selectedImages.addAll(widget.selectedImages!);
     _album = widget.album;
@@ -93,8 +94,9 @@ class MediaAlbumState extends State<MediaAlbum> {
   /// Update private state by function call from external function
   void updateStateFromExternal(
       {AssetPathEntity? album, List<ImageObject>? selectedImages}) {
-    if (selectedImages != null)
-      this._selectedImages = []..addAll(selectedImages);
+    if (selectedImages != null) {
+      _selectedImages = [...selectedImages];
+    }
     if (album != null) {
       _assets.clear();
       _thumbnailCache.clear();
@@ -105,10 +107,10 @@ class MediaAlbumState extends State<MediaAlbum> {
 
   /// Get thumbnail bytes for an asset
   Future<Uint8List?> _getAssetThumbnail(AssetEntity asset) async {
-    if (_thumbnailCache.containsKey(asset.id))
+    if (_thumbnailCache.containsKey(asset.id)) {
       return _thumbnailCache[asset.id];
-    else {
-      var data = await asset.thumbDataWithSize(
+    } else {
+      final data = await asset.thumbDataWithSize(
           widget.albumThumbWidth, widget.albumThumbHeight,
           quality: 90);
       _thumbnailCache[asset.id] = data;
@@ -121,10 +123,10 @@ class MediaAlbumState extends State<MediaAlbum> {
     LogUtils.log("[_fetchMedia] start");
 
     if (_assets.isEmpty) {
-      var ret = await currentAlbum.getAssetListRange(start: 0, end: 5000);
+      final ret = await currentAlbum.getAssetListRange(start: 0, end: 5000);
 
-      List<AssetEntity> assets = [];
-      for (var asset in ret) {
+      final List<AssetEntity> assets = [];
+      for (final asset in ret) {
         if (asset.type == AssetType.image) assets.add(asset);
       }
 
@@ -136,21 +138,20 @@ class MediaAlbumState extends State<MediaAlbum> {
 
   @override
   Widget build(BuildContext context) {
-    var gridview = GridView.builder(
+    final gridview = GridView.builder(
         shrinkWrap: true,
         itemCount: _assets.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.gridCount,
             mainAxisSpacing: 2,
-            crossAxisSpacing: 2,
-            childAspectRatio: 1),
+            crossAxisSpacing: 2),
         itemBuilder: (BuildContext context, int index) {
-          var asset = _assets[index];
-          var idx = this._selectedImages.indexWhere(
+          final asset = _assets[index];
+          final idx = _selectedImages.indexWhere(
               (element) => ImageUtils.isTheSameAsset(asset, element));
-          var isMaxCount = (this._selectedImages.length >= widget.maxCount!);
-          var isSelectable = ((idx >= 0) || !isMaxCount);
-          var data = (_thumbnailCache.containsKey(asset.id))
+          final isMaxCount = _selectedImages.length >= widget.maxCount!;
+          final isSelectable = (idx >= 0) || !isMaxCount;
+          final data = (_thumbnailCache.containsKey(asset.id))
               ? _thumbnailCache[asset.id]
               : null;
 
@@ -164,23 +165,25 @@ class MediaAlbumState extends State<MediaAlbum> {
                     });
 
                     var file = await asset.originFile;
-                    if (idx < 0)
+                    if (idx < 0) {
                       file =
                           await widget.preProcessing?.call(file!.path) ?? file;
-                    var image = ImageObject(
+                    }
+                    final image = ImageObject(
                         originalPath: file!.path,
                         modifiedPath: file.path,
                         assetId: asset.id);
 
                     setState(() {
-                      if (idx >= 0)
+                      if (idx >= 0) {
                         _selectedImages.removeAt(idx);
-                      else
+                      } else {
                         _selectedImages.add(image);
+                      }
                       _loadingAsset = "";
                     });
 
-                    this.widget.onImageSelected?.call(image);
+                    widget.onImageSelected?.call(image);
                   }
                 : null,
             child: Stack(fit: StackFit.passthrough, children: [
@@ -196,9 +199,8 @@ class MediaAlbumState extends State<MediaAlbum> {
                                 fit: BoxFit.cover,
                               );
                             }
-                            return Container(
-                                child: const Center(
-                                    child: CupertinoActivityIndicator()));
+                            return const Center(
+                                child: CupertinoActivityIndicator());
                           },
                         )
                       : Image.memory(data,
@@ -208,13 +210,12 @@ class MediaAlbumState extends State<MediaAlbum> {
                     child: Container(
                         color: Colors.grey.shade200.withOpacity(0.8))),
               if (_loadingAsset == asset.id)
-                const Positioned.fill(
-                    child: const CupertinoActivityIndicator()),
+                const Positioned.fill(child: CupertinoActivityIndicator()),
               if (idx >= 0)
                 const Positioned(
                     top: 10,
                     right: 10,
-                    child: const Icon(Icons.check_circle,
+                    child: Icon(Icons.check_circle,
                         color: Colors.pinkAccent, size: 24))
             ]),
           );

@@ -1,23 +1,29 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:advance_image_picker/advance_image_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+// We don't care about missing API docs in the example app.
+// ignore_for_file: public_member_api_docs
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return ErrorWidget(details.exception);
   };
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
+/// Example app.
 class MyApp extends StatelessWidget {
+  /// Example app constructor.
+  const MyApp({final Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     // Setup image picker configs
-    var configs = ImagePickerConfigs();
+    final configs = ImagePickerConfigs();
     // AppBar text color
     configs.appBarTextColor = Colors.white;
     configs.appBarBackgroundColor = Colors.orange;
@@ -30,33 +36,43 @@ class MyApp extends StatelessWidget {
     // Disable edit function, then add other edit control instead
     configs.adjustFeatureEnabled = false;
     configs.externalImageEditors['external_image_editor_1'] = EditorParams(
-          title: 'external_image_editor_1',
-          icon: Icons.edit_rounded,
-          onEditorEvent: (
-                  {required BuildContext context,
-                  required File file,
-                  required String title,
-                  int maxWidth = 1080,
-                  int maxHeight = 1920,
-                  int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
-                  fullscreenDialog: true,
-                  builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
-      );
+        title: 'external_image_editor_1',
+        icon: Icons.edit_rounded,
+        onEditorEvent: (
+                {required BuildContext context,
+                required File file,
+                required String title,
+                int maxWidth = 1080,
+                int maxHeight = 1920,
+                int compressQuality = 90,
+                ImagePickerConfigs? configs}) async =>
+            await Navigator.of(context).push(MaterialPageRoute<File>(
+                fullscreenDialog: true,
+                builder: (context) => ImageEdit(
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
     configs.externalImageEditors['external_image_editor_2'] = EditorParams(
-          title: 'external_image_editor_2',
-          icon: Icons.edit_attributes,
-          onEditorEvent: (
-                  {required BuildContext context,
-                  required File file,
-                  required String title,
-                  int maxWidth = 1080,
-                  int maxHeight = 1920,
-                  int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
-                  fullscreenDialog: true,
-                  builder: (context) => ImageSticker(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs)))
-      );
+        title: 'external_image_editor_2',
+        icon: Icons.edit_attributes,
+        onEditorEvent: (
+                {required BuildContext context,
+                required File file,
+                required String title,
+                int maxWidth = 1080,
+                int maxHeight = 1920,
+                int compressQuality = 90,
+                ImagePickerConfigs? configs}) async =>
+            await Navigator.of(context).push(MaterialPageRoute<File>(
+                fullscreenDialog: true,
+                builder: (context) => ImageSticker(
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -72,13 +88,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'advance_image_picker Demo'),
+      home: const MyHomePage(title: 'advance_image_picker Demo'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -101,20 +117,16 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             GridView.builder(
                 shrinkWrap: true,
                 itemCount: _imgObjs.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 2,
-                    crossAxisSpacing: 2,
-                    childAspectRatio: 1),
+                    crossAxisCount: 4, mainAxisSpacing: 2, crossAxisSpacing: 2),
                 itemBuilder: (BuildContext context, int index) {
-                  var image = _imgObjs[index];
+                  final image = _imgObjs[index];
                   return Padding(
-                    padding: const EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.all(2),
                     child: Image.file(File(image.modifiedPath),
                         height: 80, fit: BoxFit.cover),
                   );
@@ -125,9 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          List<ImageObject>? objects = await Navigator.of(context)
+          final List<ImageObject>? objects = await Navigator.of(context)
               .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
-            return const ImagePicker(maxCount: 5, isCaptureFirst: true);
+            return const ImagePicker(maxCount: 5);
           }));
 
           if ((objects?.length ?? 0) > 0) {

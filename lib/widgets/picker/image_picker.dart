@@ -30,6 +30,15 @@ const int kBottomControlPanelHeight = 265;
 /// image library, **taking new pictures with the camera**, and **edit** them
 /// before using such as rotation, cropping, adding sticker/filters.
 class ImagePicker extends StatefulWidget {
+  /// Constructor for the ImagePicker.
+  const ImagePicker(
+      {final Key? key,
+      this.maxCount = 10,
+      this.isFullscreenImage = false,
+      this.isCaptureFirst = true,
+      this.configs})
+      : super(key: key);
+
   /// Max selecting count
   final int maxCount;
 
@@ -41,13 +50,6 @@ class ImagePicker extends StatefulWidget {
 
   /// Default mode for selecting image: capture new image or select image from album
   final bool isCaptureFirst;
-
-  /// Constructor
-  const ImagePicker(
-      {this.maxCount = 10,
-      this.isFullscreenImage = false,
-      this.isCaptureFirst = true,
-      this.configs});
 
   @override
   _ImagePickerState createState() => _ImagePickerState();
@@ -101,31 +103,31 @@ class _ImagePickerState extends State<ImagePicker>
   List<Uint8List?> _albumThumbnails = [];
 
   /// Key for current album object
-  GlobalKey<MediaAlbumState> _currentAlbumKey = GlobalKey();
+  final GlobalKey<MediaAlbumState> _currentAlbumKey = GlobalKey();
 
   /// Min available zoom ratio
-  double _minAvailableZoom = 1.0;
+  double _minAvailableZoom = 1;
 
   /// Max available zoom ratio
-  double _maxAvailableZoom = 1.0;
+  double _maxAvailableZoom = 1;
 
   /// Current scale ratio
-  double _currentScale = 1.0;
+  double _currentScale = 1;
 
   /// Base scale ratio
-  double _baseScale = 1.0;
+  double _baseScale = 1;
 
   /// Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
   /// Min available exposure offset
-  double _minAvailableExposureOffset = 0.0;
+  double _minAvailableExposureOffset = 0;
 
   /// Max available exposure offset
-  double _maxAvailableExposureOffset = 0.0;
+  double _maxAvailableExposureOffset = 0;
 
   /// Current exposure offset
-  double _currentExposureOffset = 0.0;
+  double _currentExposureOffset = 0;
 
   /// Exposure mode control controller
   late AnimationController _exposureModeControlRowAnimationController;
@@ -162,10 +164,11 @@ class _ImagePickerState extends State<ImagePicker>
 
     // Init camera or album
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      if (_mode == PickerMode.Camera)
+      if (_mode == PickerMode.Camera) {
         await _initPhotoCapture();
-      else
+      } else {
         await _initPhotoGallery();
+      }
     });
   }
 
@@ -209,8 +212,8 @@ class _ImagePickerState extends State<ImagePicker>
     _cameras = await availableCameras();
 
     // Select new camera for capturing
-    if (_cameras.length > 0) {
-      CameraDescription? newDescription = _getCamera(
+    if (_cameras.isNotEmpty) {
+      final CameraDescription? newDescription = _getCamera(
           _cameras, _getCameraDirection(_configs.cameraLensDirection));
       if (newDescription != null) _onNewCameraSelected(newDescription);
     }
@@ -218,21 +221,22 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Get camera direction
   CameraLensDirection? _getCameraDirection(int? direction) {
-    if (direction == null)
+    if (direction == null) {
       return null;
-    else if (direction == 0)
+    } else if (direction == 0) {
       return CameraLensDirection.front;
-    else
+    } else {
       return CameraLensDirection.back;
+    }
   }
 
   /// Get camera description
   CameraDescription? _getCamera(
       List<CameraDescription> cameras, CameraLensDirection? direction) {
-    if (direction == null)
+    if (direction == null) {
       return cameras.first;
-    else {
-      CameraDescription? newDescription = _cameras.firstWhere(
+    } else {
+      final CameraDescription? newDescription = _cameras.firstWhere(
           (description) => description.lensDirection == direction,
           orElse: () => cameras.first);
       return newDescription;
@@ -240,7 +244,7 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Select new camera for capturing
-  void _onNewCameraSelected(CameraDescription cameraDescription) async {
+  Future<void> _onNewCameraSelected(CameraDescription cameraDescription) async {
     LogUtils.log("[_onNewCameraSelected] start");
 
     // Dispose old then create new camera controller
@@ -270,7 +274,7 @@ class _ImagePickerState extends State<ImagePicker>
         LogUtils.log("[_onNewCameraSelected] cameraController inited.");
 
         // After initialized, setting zoom & exposure values
-        Future.wait([
+        await Future.wait([
           cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
           cameraController
               .getMinExposureOffset()
@@ -301,13 +305,12 @@ class _ImagePickerState extends State<ImagePicker>
     LogUtils.log("[_initPhotoGallery] start");
 
     // Request permission for image selecting
-    var result = await PhotoManager.requestPermission();
+    final result = await PhotoManager.requestPermission();
     if (result) {
       // Get albums then set first album as current album
-      _albums = await PhotoManager.getAssetPathList(
-          type: RequestType.image, onlyAll: false);
-      if (_albums.length > 0) {
-        var isAllAlbum = _albums.firstWhere((element) => element.isAll,
+      _albums = await PhotoManager.getAssetPathList(type: RequestType.image);
+      if (_albums.isNotEmpty) {
+        final isAllAlbum = _albums.firstWhere((element) => element.isAll,
             orElse: () => _albums.first);
         setState(() {
           _currentAlbum = isAllAlbum;
@@ -327,11 +330,11 @@ class _ImagePickerState extends State<ImagePicker>
           maxHeight: _configs.maxHeight,
           quality: _configs.compressQuality);
       if (croppingParams != null) {
-        file = (await ImageUtils.cropImage(file.path,
+        file = await ImageUtils.cropImage(file.path,
             originX: croppingParams["originX"] as int,
             originY: croppingParams["originY"] as int,
             widthPercent: croppingParams["widthPercent"] as double,
-            heightPercent: croppingParams["heightPercent"] as double));
+            heightPercent: croppingParams["heightPercent"] as double);
       }
 
       LogUtils.log("[_imagePreProcessing] end");
@@ -362,7 +365,7 @@ class _ImagePickerState extends State<ImagePicker>
   Future<bool> _onWillPop() async {
     if (!_configs.showNonSelectedAlert ||
         _isImageSelectedDone ||
-        this._selectedImages.length == 0) return true;
+        _selectedImages.isEmpty) return true;
 
     return (await showDialog<bool>(
             context: context,
@@ -374,9 +377,9 @@ class _ImagePickerState extends State<ImagePicker>
                       style: TextButton.styleFrom(
                         primary: Colors.black87,
                         minimumSize: const Size(88, 36),
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                       ),
                       onPressed: () => Navigator.of(context).pop(false),
@@ -386,9 +389,9 @@ class _ImagePickerState extends State<ImagePicker>
                       style: TextButton.styleFrom(
                         primary: Colors.black87,
                         minimumSize: const Size(88, 36),
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                       ),
                       onPressed: () => Navigator.of(context).pop(true),
@@ -408,20 +411,11 @@ class _ImagePickerState extends State<ImagePicker>
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
-    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
-    // The AppBar theme backwards compatibility will be deprecated in Flutter
-    // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
-    final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
-        : _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+    final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
+        appBarTheme.backgroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
         (colorScheme.brightness == Brightness.dark
@@ -490,48 +484,48 @@ class _ImagePickerState extends State<ImagePicker>
               }
             : null,
         child: _buildAlbumSelectButton(context,
-            isCameraMode: (_mode == PickerMode.Camera)));
+            isCameraMode: _mode == PickerMode.Camera));
   }
 
   /// Build done button
   Widget _buildDoneButton(BuildContext context, Color buttonColor) {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: OutlinedButton(
-          onPressed: (this._selectedImages.length > 0)
+          onPressed: (_selectedImages.isNotEmpty)
               ? () async {
                   setState(() {
                     _isOutputCreating = true;
                   });
 
                   // Compress selected images then return
-                  for (final f in this._selectedImages) {
+                  for (final f in _selectedImages) {
                     f.modifiedPath =
-                        (await this._imagePostProcessing(f.modifiedPath)).path;
+                        (await _imagePostProcessing(f.modifiedPath)).path;
                   }
 
                   _isImageSelectedDone = true;
-                  Navigator.of(context).pop(this._selectedImages);
+                  Navigator.of(context).pop(_selectedImages);
                 }
               : null,
           style: ButtonStyle(
             elevation: MaterialStateProperty.all(5),
             backgroundColor: MaterialStateProperty.all(
-                this._selectedImages.length > 0 ? buttonColor : Colors.grey),
+                _selectedImages.isNotEmpty ? buttonColor : Colors.grey),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0))),
+                borderRadius: BorderRadius.circular(10))),
           ),
           child: Row(children: [
             Text(_configs.textSelectButtonTitle,
                 style: TextStyle(
-                    color: this._selectedImages.length > 0
+                    color: _selectedImages.isNotEmpty
                         ? ((buttonColor == Colors.white)
                             ? Colors.black
                             : Colors.white)
                         : Colors.black)),
             if (_isOutputCreating)
               const Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: EdgeInsets.all(4),
                 child: CupertinoActivityIndicator(),
               )
           ]),
@@ -543,15 +537,16 @@ class _ImagePickerState extends State<ImagePicker>
     LogUtils.log("[_buildBodyView] start");
 
     final size = MediaQuery.of(context).size;
-    var bottomHeight = (widget.maxCount == 1)
+    final bottomHeight = (widget.maxCount == 1)
         ? (kBottomControlPanelHeight - 40)
         : kBottomControlPanelHeight;
 
     return Stack(children: [
-      Container(height: size.height, width: size.width),
-      (_mode == PickerMode.Camera)
-          ? Center(child: _buildCameraPreview(context))
-          : _buildAlbumPreview(context),
+      SizedBox(height: size.height, width: size.width),
+      if (_mode == PickerMode.Camera)
+        Center(child: _buildCameraPreview(context))
+      else
+        _buildAlbumPreview(context),
       if (_mode == PickerMode.Camera) ...[
         Positioned(
             bottom: bottomHeight.toDouble(),
@@ -582,15 +577,15 @@ class _ImagePickerState extends State<ImagePicker>
         style: TextButton.styleFrom(
           primary: Colors.black12,
           minimumSize: const Size(88, 36),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: const CircleBorder(),
         ),
         onPressed: null,
-        child: Container(
+        child: SizedBox(
           width: 48,
           height: 48,
           child: Center(
-            child: Text("${_currentScale.toStringAsFixed(1).toString()}x",
+            child: Text("${_currentScale.toStringAsFixed(1)}x",
                 style: const TextStyle(color: Colors.white)),
           ),
         ));
@@ -602,11 +597,11 @@ class _ImagePickerState extends State<ImagePicker>
       style: TextButton.styleFrom(
         primary: Colors.black12,
         minimumSize: const Size(88, 36),
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         shape: const CircleBorder(),
       ),
-      child: const Icon(Icons.exposure, color: Colors.white, size: 40),
       onPressed: _controller != null ? _onExposureModeButtonPressed : null,
+      child: const Icon(Icons.exposure, color: Colors.white, size: 40),
     );
   }
 
@@ -625,7 +620,7 @@ class _ImagePickerState extends State<ImagePicker>
       style: TextButton.styleFrom(
         primary: Colors.black12,
         minimumSize: const Size(88, 36),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         shape: const CircleBorder(),
       ),
       onPressed: () {
@@ -648,43 +643,40 @@ class _ImagePickerState extends State<ImagePicker>
       color: ((_mode == PickerMode.Camera) && _isFullscreenImage)
           ? _configs.bottomPanelColorInFullscreen
           : _configs.bottomPanelColor,
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (widget.maxCount > 1) ...[
-              Text(
-                  "${_configs.textSelectedImagesTitle}: ${this._selectedImages.length.toString()} / ${widget.maxCount.toString()}",
-                  style: const TextStyle(color: Colors.white, fontSize: 14)),
-              Text(_configs.textSelectedImagesGuide,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14))
-            ],
-            _buildReorderableSelectedImageList(context),
-            _buildCameraControls(context),
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buildPickerModeList(context))
-          ]),
+      padding: const EdgeInsets.all(8),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        if (widget.maxCount > 1) ...[
+          Text(
+              "${_configs.textSelectedImagesTitle}: ${_selectedImages.length.toString()} / ${widget.maxCount.toString()}",
+              style: const TextStyle(color: Colors.white, fontSize: 14)),
+          Text(_configs.textSelectedImagesGuide,
+              style: const TextStyle(color: Colors.grey, fontSize: 14))
+        ],
+        _buildReorderableSelectedImageList(context),
+        _buildCameraControls(context),
+        Padding(
+            padding: const EdgeInsets.all(8),
+            child: _buildPickerModeList(context))
+      ]),
     );
   }
 
   /// Build album select button
   Widget _buildAlbumSelectButton(BuildContext context,
       {bool isPop = false, bool isCameraMode = false}) {
-    if (isCameraMode)
+    if (isCameraMode) {
       return Text(_configs.textCameraTitle,
           style: TextStyle(color: _configs.appBarTextColor, fontSize: 16));
+    }
 
     final size = MediaQuery.of(context).size;
-    var container = Container(
+    final container = Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: Colors.black.withOpacity(0.1)),
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               constraints: BoxConstraints(maxWidth: size.width / 2.5),
@@ -694,7 +686,7 @@ class _ImagePickerState extends State<ImagePicker>
                       TextStyle(color: _configs.appBarTextColor, fontSize: 16)),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 4.0),
+              padding: const EdgeInsets.only(left: 4),
               child: Icon(
                   isPop
                       ? Icons.arrow_upward_outlined
@@ -719,11 +711,12 @@ class _ImagePickerState extends State<ImagePicker>
     LogUtils.log("[_buildCameraPreview] start");
 
     final size = MediaQuery.of(context).size;
-    if (_controller?.value == null || _isDisposed)
-      return Container(
+    if (_controller?.value == null || _isDisposed) {
+      return SizedBox(
           width: size.width,
           height: size.height,
           child: const Center(child: CircularProgressIndicator()));
+    }
 
     return FutureBuilder<void>(
         key: const ValueKey(-1),
@@ -731,7 +724,7 @@ class _ImagePickerState extends State<ImagePicker>
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return (_controller?.value.isInitialized ?? false)
-                ? Container(
+                ? SizedBox(
                     width: size.width,
                     height: size.height,
                     child: AspectRatio(
@@ -784,7 +777,7 @@ class _ImagePickerState extends State<ImagePicker>
       return;
     }
 
-    double scale = (_baseScale * details.scale)
+    final double scale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
     await _controller!.setZoomLevel(scale);
@@ -798,11 +791,11 @@ class _ImagePickerState extends State<ImagePicker>
   Widget _buildAlbumPreview(BuildContext context) {
     LogUtils.log("[_buildAlbumPreview] start");
 
-    var bottomHeight = (widget.maxCount == 1)
+    final bottomHeight = (widget.maxCount == 1)
         ? (kBottomControlPanelHeight - 40)
         : kBottomControlPanelHeight;
 
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height - bottomHeight,
       child: _currentAlbum != null
           ? MediaAlbum(
@@ -811,16 +804,16 @@ class _ImagePickerState extends State<ImagePicker>
               maxCount: widget.maxCount,
               album: _currentAlbum!,
               selectedImages: _selectedImages,
-              preProcessing: this._imagePreProcessing,
+              preProcessing: _imagePreProcessing,
               onImageSelected: (image) async {
                 LogUtils.log("[_buildAlbumPreview] onImageSelected start");
 
-                var idx = _selectedImages
+                final idx = _selectedImages
                     .indexWhere((element) => element.assetId == image.assetId);
                 setState(() {
-                  if (idx >= 0)
+                  if (idx >= 0) {
                     _selectedImages.removeAt(idx);
-                  else {
+                  } else {
                     _scrollController.animateTo(
                       ((_selectedImages.length - 1) * _configs.thumbWidth)
                           .toDouble(),
@@ -840,9 +833,9 @@ class _ImagePickerState extends State<ImagePicker>
     LogUtils.log("[_buildAlbumThumbnails] start");
 
     if (_albums.isNotEmpty && _albumThumbnails.isEmpty) {
-      List<Uint8List?> ret = [];
-      for (var a in _albums) {
-        var f = await (await a.getAssetListRange(start: 0, end: 1))
+      final List<Uint8List?> ret = [];
+      for (final a in _albums) {
+        final f = await (await a.getAssetListRange(start: 0, end: 1))
             .first
             .thumbDataWithSize(
                 _configs.albumThumbWidth, _configs.albumThumbHeight);
@@ -866,11 +859,11 @@ class _ImagePickerState extends State<ImagePicker>
           return ListView.builder(
               itemCount: _albums.length,
               itemBuilder: (context, i) {
-                var album = _albums[i];
-                var thumbnail = _albumThumbnails[i]!;
+                final album = _albums[i];
+                final thumbnail = _albumThumbnails[i]!;
                 return InkWell(
                   child: ListTile(
-                      leading: Container(
+                      leading: SizedBox(
                           width: 80,
                           height: 80,
                           child: Image.memory(thumbnail, fit: BoxFit.cover)),
@@ -883,11 +876,11 @@ class _ImagePickerState extends State<ImagePicker>
                       }),
                 );
               });
-        } else
-          return Container(
-              child: const Center(
+        } else {
+          return const Center(
             child: CupertinoActivityIndicator(),
-          ));
+          );
+        }
       },
     );
   }
@@ -896,8 +889,8 @@ class _ImagePickerState extends State<ImagePicker>
   bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     LogUtils.log("[_reorderSelectedImageList] start");
 
-    if (oldIndex >= this._selectedImages.length ||
-        newIndex > this._selectedImages.length ||
+    if (oldIndex >= _selectedImages.length ||
+        newIndex > _selectedImages.length ||
         oldIndex < 0 ||
         newIndex < 0) return false;
 
@@ -915,7 +908,7 @@ class _ImagePickerState extends State<ImagePicker>
   Widget _buildReorderableSelectedImageList(BuildContext context) {
     LogUtils.log("[_buildReorderableSelectedImageList] start");
 
-    var makeThumbnailImage = (String? path) {
+    final makeThumbnailImage = (String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
@@ -924,9 +917,10 @@ class _ImagePickerState extends State<ImagePicker>
               height: _configs.thumbHeight.toDouble()));
     };
 
-    var makeThumbnailWidget = (String? path, int index) {
-      if (!_configs.showDeleteButtonOnSelectedList)
+    final makeThumbnailWidget = (String? path, int index) {
+      if (!_configs.showDeleteButtonOnSelectedList) {
         return makeThumbnailImage(path);
+      }
 
       return Stack(fit: StackFit.passthrough, children: [
         makeThumbnailImage(path),
@@ -955,25 +949,25 @@ class _ImagePickerState extends State<ImagePicker>
                   builder: (BuildContext context) {
                     // return object of type Dialog
                     return AlertDialog(
-                      title: new Text(_configs.textConfirm),
-                      content: new Text(_configs.textConfirmDelete),
+                      title: Text(_configs.textConfirm),
+                      content: Text(_configs.textConfirmDelete),
                       actions: <Widget>[
                         TextButton(
-                          child: new Text(_configs.textNo),
+                          child: Text(_configs.textNo),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                         ),
                         TextButton(
-                          child: new Text(_configs.textYes),
+                          child: Text(_configs.textYes),
                           onPressed: () {
                             Navigator.of(context).pop();
                             setState(() {
-                              this._selectedImages.removeAt(index);
+                              _selectedImages.removeAt(index);
                             });
                             _currentAlbumKey.currentState
                                 ?.updateStateFromExternal(
-                                    selectedImages: this._selectedImages);
+                                    selectedImages: _selectedImages);
                           },
                         ),
                       ],
@@ -986,7 +980,7 @@ class _ImagePickerState extends State<ImagePicker>
     };
 
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
           data: ThemeData(
@@ -995,17 +989,18 @@ class _ImagePickerState extends State<ImagePicker>
               scrollController: _scrollController,
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
+              onReorder: _reorderSelectedImageList,
               children: <Widget>[
                 for (var i = 0; i < widget.maxCount; i++)
                   if (_selectedImages.length > i)
                     Container(
                         key: ValueKey(i.toString()),
-                        margin: const EdgeInsets.all(4.0),
+                        margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.grey,
-                          border: Border.all(color: Colors.white, width: 3.0),
+                          border: Border.all(color: Colors.white, width: 3),
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
+                              const BorderRadius.all(Radius.circular(10)),
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -1017,18 +1012,17 @@ class _ImagePickerState extends State<ImagePicker>
 
                               return ImageViewer(
                                   title: _configs.textPreviewTitle,
-                                  images: this._selectedImages,
+                                  images: _selectedImages,
                                   initialIndex: i,
                                   configs: _configs,
                                   onChanged: (dynamic value) {
                                     if (value is List<ImageObject>) {
                                       setState(() {
-                                        this._selectedImages = value;
+                                        _selectedImages = value;
                                       });
                                       _currentAlbumKey.currentState
                                           ?.updateStateFromExternal(
-                                              selectedImages:
-                                                  this._selectedImages);
+                                              selectedImages: _selectedImages);
                                     }
                                   });
                             }));
@@ -1041,34 +1035,34 @@ class _ImagePickerState extends State<ImagePicker>
                         key: ValueKey(i.toString()),
                         width: _configs.thumbWidth.toDouble(),
                         height: _configs.thumbHeight.toDouble(),
-                        margin: const EdgeInsets.all(4.0),
+                        margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.grey,
                           border: Border.all(
                               color: (i == _selectedImages.length)
                                   ? Colors.blue
                                   : Colors.white,
-                              width: 3.0),
+                              width: 3),
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
+                              const BorderRadius.all(Radius.circular(10)),
                         ))
-              ],
-              onReorder: _reorderSelectedImageList),
+              ]),
         ));
   }
 
   /// Build camera controls such as change flash mode, switch cameras, capture button, ...
   Widget _buildCameraControls(BuildContext context) {
-    var isMaxCount = this._selectedImages.length >= widget.maxCount;
+    final isMaxCount = _selectedImages.length >= widget.maxCount;
 
-    var flashMode = () {
-      var value = _controller?.value.flashMode ?? FlashMode.auto;
-      if (value == FlashMode.always)
+    final flashMode = () {
+      final value = _controller?.value.flashMode ?? FlashMode.auto;
+      if (value == FlashMode.always) {
         return [FlashMode.auto, Icons.flash_on];
-      else if (value == FlashMode.auto)
+      } else if (value == FlashMode.auto) {
         return [FlashMode.off, Icons.flash_auto];
-      else if (value == FlashMode.off)
+      } else if (value == FlashMode.off) {
         return [FlashMode.always, Icons.flash_off];
+      }
     }();
 
     final canSwitchCamera =
@@ -1077,7 +1071,7 @@ class _ImagePickerState extends State<ImagePicker>
     return _mode == PickerMode.Camera
         ? Container(
             height: 60,
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1088,7 +1082,7 @@ class _ImagePickerState extends State<ImagePicker>
                       // Ensure that the camera is initialized.
                       await _initializeControllerFuture;
 
-                      _controller!
+                      await _controller!
                           .setFlashMode(flashMode?[0] as FlashMode)
                           .then((value) => setState(() {}));
                     },
@@ -1108,9 +1102,6 @@ class _ImagePickerState extends State<ImagePicker>
                             });
                           }
                         : null,
-                    child: Icon(Icons.camera,
-                        size: (64 + (_isCapturing ? (-10) : 0)).toDouble(),
-                        color: !isMaxCount ? Colors.white : Colors.grey),
                     onTap: (!isMaxCount &&
                             !(_controller?.value.isTakingPicture ?? true))
                         ? () async {
@@ -1123,7 +1114,7 @@ class _ImagePickerState extends State<ImagePicker>
                             if (!(_controller?.value.isTakingPicture ?? true)) {
                               try {
                                 // Scroll to end of list
-                                _scrollController.animateTo(
+                                await _scrollController.animateTo(
                                   ((_selectedImages.length - 1) *
                                           _configs.thumbWidth)
                                       .toDouble(),
@@ -1132,7 +1123,7 @@ class _ImagePickerState extends State<ImagePicker>
                                 );
 
                                 // Take new picture
-                                var file = await _controller!.takePicture();
+                                final file = await _controller!.takePicture();
                                 LogUtils.log(
                                     "[_buildCameraControls] takePicture done");
 
@@ -1144,21 +1135,22 @@ class _ImagePickerState extends State<ImagePicker>
                                   croppingParams["originY"] = 0;
                                   croppingParams["widthPercent"] = 1.0;
                                   if (_configs.cameraPickerModeEnabled &&
-                                      _configs.albumPickerModeEnabled)
+                                      _configs.albumPickerModeEnabled) {
                                     croppingParams["heightPercent"] =
                                         (size.height -
                                                 kBottomControlPanelHeight) /
                                             size.height;
-                                  else
+                                  } else {
                                     croppingParams["heightPercent"] =
                                         (size.height -
                                                 kBottomControlPanelHeight +
                                                 32) /
                                             size.height;
+                                  }
                                 }
-                                var capturedFile = await this
-                                    ._imagePreProcessing(file.path,
-                                        croppingParams: croppingParams);
+                                final capturedFile = await _imagePreProcessing(
+                                    file.path,
+                                    croppingParams: croppingParams);
 
                                 setState(() {
                                   LogUtils.log(
@@ -1173,27 +1165,31 @@ class _ImagePickerState extends State<ImagePicker>
                             }
                           }
                         : null,
+                    child: Icon(Icons.camera,
+                        size: (64 + (_isCapturing ? (-10) : 0)).toDouble(),
+                        color: !isMaxCount ? Colors.white : Colors.grey),
                   ),
                   GestureDetector(
-                    child: Icon(Icons.switch_camera,
-                        size: 32,
-                        color: canSwitchCamera ? Colors.white : Colors.grey),
                     onTap: canSwitchCamera
                         ? () async {
                             final lensDirection =
                                 _controller!.description.lensDirection;
-                            CameraDescription? newDescription = _getCamera(
-                                _cameras,
-                                lensDirection == CameraLensDirection.front
-                                    ? CameraLensDirection.back
-                                    : CameraLensDirection.front);
+                            final CameraDescription? newDescription =
+                                _getCamera(
+                                    _cameras,
+                                    lensDirection == CameraLensDirection.front
+                                        ? CameraLensDirection.back
+                                        : CameraLensDirection.front);
                             if (newDescription != null) {
-                              print("Start new camera: " +
-                                  newDescription.toString());
+                              print("Start new camera: "
+                                  "${newDescription.toString()}");
                               _onNewCameraSelected(newDescription);
                             }
                           }
                         : null,
+                    child: Icon(Icons.switch_camera,
+                        size: 32,
+                        color: canSwitchCamera ? Colors.white : Colors.grey),
                   )
                 ]),
           )
@@ -1202,7 +1198,7 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build picker mode list
   Widget _buildPickerModeList(BuildContext context) {
-    if (_configs.albumPickerModeEnabled && _configs.cameraPickerModeEnabled)
+    if (_configs.albumPickerModeEnabled && _configs.cameraPickerModeEnabled) {
       return CupertinoSlidingSegmentedControl(
           backgroundColor: Colors.transparent,
           thumbColor: Colors.transparent,
@@ -1225,16 +1221,18 @@ class _ImagePickerState extends State<ImagePicker>
           groupValue: _mode,
           onValueChanged: (dynamic val) async {
             if (_mode != val) {
-              if (val == PickerMode.Camera && this._cameras.length == 0)
-                _initPhotoCapture();
-              else if (val == PickerMode.Album && this._albums.length == 0)
-                _initPhotoGallery();
+              if (val == PickerMode.Camera && _cameras.isEmpty) {
+                await _initPhotoCapture();
+              } else if (val == PickerMode.Album && _albums.isEmpty) {
+                await _initPhotoGallery();
+              }
 
               setState(() {
                 _mode = val as int;
               });
             }
           });
+    }
     return const SizedBox();
   }
 
@@ -1253,24 +1251,22 @@ class _ImagePickerState extends State<ImagePicker>
           : Colors.white,
     );
 
-    var textStyle = const TextStyle(color: Colors.white);
+    const textStyle = TextStyle(color: Colors.white);
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: Container(
           color: Colors.black.withOpacity(0.7),
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(12),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(_configs.textExposure, style: textStyle),
                   const SizedBox(width: 8),
                   TextButton(
-                    child: Text(_configs.textExposureAuto),
                     style: styleAuto,
                     onPressed: _controller != null
                         ? () =>
@@ -1281,20 +1277,20 @@ class _ImagePickerState extends State<ImagePicker>
                         _controller!.setExposurePoint(null);
                       }
                     },
+                    child: Text(_configs.textExposureAuto),
                   ),
                   TextButton(
-                    child: Text(_configs.textExposureLocked),
                     style: styleLocked,
                     onPressed: _controller != null
                         ? () =>
                             _onSetExposureModeButtonPressed(ExposureMode.locked)
                         : null,
+                    child: Text(_configs.textExposureLocked),
                   ),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(_minAvailableExposureOffset.toString(),
                       style: textStyle),

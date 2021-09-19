@@ -3,19 +3,20 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:advance_image_picker/configs/image_picker_configs.dart';
-import 'package:advance_image_picker/utils/image_utils.dart';
-import 'package:advance_image_picker/utils/time_utils.dart';
-import 'package:advance_image_picker/widgets/common/portrait_mode_mixin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor/image_editor.dart';
-import 'package:path_provider/path_provider.dart' as PathProvider;
+import 'package:path_provider/path_provider.dart' as path_provider;
+
+import '../../configs/image_picker_configs.dart';
+import '../../utils/image_utils.dart';
+import '../../utils/time_utils.dart';
+import '../common/portrait_mode_mixin.dart';
 
 /// Image filter widget
 class ImageFilter extends StatefulWidget {
-  ImageFilter(
+  const ImageFilter(
       {Key? key,
       required this.title,
       required this.file,
@@ -40,13 +41,13 @@ class ImageFilter extends StatefulWidget {
   final ImagePickerConfigs? configs;
 
   @override
-  State<StatefulWidget> createState() => new _ImageFilterState();
+  State<StatefulWidget> createState() => _ImageFilterState();
 }
 
 class _ImageFilterState extends State<ImageFilter>
     with PortraitStatefulModeMixin<ImageFilter> {
-  Map<String, List<int>?> _cachedFilters = {};
-  ListQueue<MapEntry<String, Future<List<int>?> Function()>>
+  final Map<String, List<int>?> _cachedFilters = {};
+  final ListQueue<MapEntry<String, Future<List<int>?> Function()>>
       _queuedApplyFilterFuncList =
       ListQueue<MapEntry<String, Future<List<int>?> Function()>>();
   int _runningCount = 0;
@@ -64,7 +65,7 @@ class _ImageFilterState extends State<ImageFilter>
 
     _loading = true;
     _filters = _getPresetFilters();
-    _filter = this._filters[0];
+    _filter = _filters[0];
 
     Future.delayed(const Duration(milliseconds: 500), () async {
       await _loadImageData();
@@ -93,27 +94,27 @@ class _ImageFilterState extends State<ImageFilter>
   }
 
   Future<List<int>?> _getFilteredData(String key) async {
-    if (_cachedFilters.containsKey(key))
+    if (_cachedFilters.containsKey(key)) {
       return _cachedFilters[key];
-    else {
+    } else {
       return await Future.delayed(
           const Duration(milliseconds: 500), () => _getFilteredData(key));
     }
   }
 
-  void _runApplyFilterProcess() async {
+  Future<void> _runApplyFilterProcess() async {
     while (_queuedApplyFilterFuncList.isNotEmpty) {
-      if (!this.mounted) break;
+      if (!mounted) break;
 
       if (_runningCount > 2) {
         await Future<void>.delayed(const Duration(milliseconds: 100));
         continue;
       }
-      print("_runningCount: " + _runningCount.toString());
+      print("_runningCount: ${_runningCount.toString()}");
 
-      var func = _queuedApplyFilterFuncList.removeFirst();
+      final func = _queuedApplyFilterFuncList.removeFirst();
       _runningCount++;
-      var ret = await func.value.call();
+      final ret = await func.value.call();
       _cachedFilters[func.key] = ret;
       _runningCount--;
     }
@@ -128,20 +129,11 @@ class _ImageFilterState extends State<ImageFilter>
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
-    // TODO: Track AppBar theme backwards compatibility in Flutter SDK.
-    // The AppBar theme backwards compatibility will be deprecated in Flutter
-    // SDK soon. When that happens it will be removed here too.
-    final bool backwardsCompatibility =
-        appBarTheme.backwardsCompatibility ?? false;
-    final Color _appBarBackgroundColor = backwardsCompatibility
-        ? _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            theme.primaryColor
-        : _configs.appBarBackgroundColor ??
-            appBarTheme.backgroundColor ??
-            (colorScheme.brightness == Brightness.dark
-                ? colorScheme.surface
-                : colorScheme.primary);
+    final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
+        appBarTheme.backgroundColor ??
+        (colorScheme.brightness == Brightness.dark
+            ? colorScheme.surface
+            : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
         (colorScheme.brightness == Brightness.dark
@@ -155,21 +147,22 @@ class _ImageFilterState extends State<ImageFilter>
         backgroundColor: _appBarBackgroundColor,
         foregroundColor: _appBarTextColor,
         actions: <Widget>[
-          _loading
-              ? Container()
-              : IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () async {
-                    setState(() {
-                      _loading = true;
-                    });
-                    var imageFile = await saveFilteredImage();
-                    Navigator.pop(context, imageFile);
-                  },
-                )
+          if (_loading)
+            Container()
+          else
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                setState(() {
+                  _loading = true;
+                });
+                final imageFile = await saveFilteredImage();
+                Navigator.pop(context, imageFile);
+              },
+            )
         ],
       ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: _loading
@@ -180,24 +173,23 @@ class _ImageFilterState extends State<ImageFilter>
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: _buildFilteredWidget(_filter, _imageBytes!),
                     ),
                   ),
                   Container(
                     height: 150,
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12),
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: _filters.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           child: Container(
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(5),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Container(
+                                SizedBox(
                                   width: 90,
                                   height: 75,
                                   child: _buildFilteredWidget(
@@ -205,7 +197,7 @@ class _ImageFilterState extends State<ImageFilter>
                                       isThumbnail: true),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(4.0),
+                                  padding: const EdgeInsets.all(4),
                                   child: Text(_filters[index].name,
                                       style:
                                           const TextStyle(color: Colors.white)),
@@ -227,50 +219,49 @@ class _ImageFilterState extends State<ImageFilter>
   }
 
   Future<File> saveFilteredImage() async {
-    final dir = await PathProvider.getTemporaryDirectory();
+    final dir = await path_provider.getTemporaryDirectory();
     final targetPath =
         "${dir.absolute.path}/temp_${TimeUtils.getTimeString(DateTime.now())}.jpg";
-    File imageFile = File(targetPath);
+    final File imageFile = File(targetPath);
 
     // Run selected filter on output image
-    var outputBytes = await this._filter.apply(_imageBytes!);
+    final outputBytes = await _filter.apply(_imageBytes!);
     await imageFile.writeAsBytes(outputBytes!);
     return imageFile;
   }
 
   Widget _buildFilteredWidget(Filter filter, Uint8List imgBytes,
       {bool isThumbnail = false}) {
-    var key = filter.name + (isThumbnail ? "thumbnail" : "");
-    var data =
-        this._cachedFilters.containsKey(key) ? this._cachedFilters[key] : null;
-    var isSelected = (filter.name == this._filter.name);
+    final key = filter.name + (isThumbnail ? "thumbnail" : "");
+    final data = _cachedFilters.containsKey(key) ? _cachedFilters[key] : null;
+    final isSelected = filter.name == _filter.name;
 
-    var createWidget = (Uint8List? bytes) {
+    final createWidget = (Uint8List? bytes) {
       if (isThumbnail) {
         return Container(
           decoration: BoxDecoration(
               color: Colors.grey,
               border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.white, width: 3.0),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+                  color: isSelected ? Colors.blue : Colors.white, width: 3),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.memory(bytes!, fit: BoxFit.cover)),
         );
-      } else
+      } else {
         return Image.memory(
           bytes!,
           fit: BoxFit.contain,
           gaplessPlayback: true,
         );
+      }
     };
 
     if (data == null) {
-      var calcFunc = () async {
+      final calcFunc = () async {
         return await filter.apply(imgBytes);
       };
-      this
-          ._queuedApplyFilterFuncList
+      _queuedApplyFilterFuncList
           .add(MapEntry<String, Future<List<int>?> Function()>(key, calcFunc));
       _runApplyFilterProcess();
 
@@ -279,8 +270,9 @@ class _ImageFilterState extends State<ImageFilter>
         builder: (BuildContext context, AsyncSnapshot<List<int>?> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              if (snapshot.hasError)
+              if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
+              }
               return createWidget(snapshot.data as Uint8List?);
             default:
               return const CupertinoActivityIndicator();
@@ -431,133 +423,133 @@ class _ImageFilterState extends State<ImageFilter>
         0.9,
         0.5,
         0.1,
-        0.0,
-        0.0,
+        0,
+        0,
         0.3,
         0.8,
         0.1,
-        0.0,
-        0.0,
+        0,
+        0,
         0.2,
         0.3,
         0.5,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
       ]),
       Filter(name: "filter 1", matrix: <double>[
         0.4,
         0.4,
         -0.3,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
         1.2,
-        0.0,
-        0.0,
+        0,
+        0,
         -1.2,
         0.6,
         0.7,
-        1.0,
-        0.0
+        1,
+        0
       ]),
       Filter(name: "filter 2", matrix: <double>[
-        1.0,
-        0.0,
+        1,
+        0,
         0.2,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
       ]),
       Filter(name: "filter 3", matrix: <double>[
         0.8,
         0.5,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        0,
+        0,
+        0,
+        0,
         1.1,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        0,
+        0,
+        0,
+        0,
         0.2,
         1.1,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
       ]),
       Filter(name: "filter 4", matrix: <double>[
         1.1,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        0,
+        0,
+        0,
+        0,
         0.2,
-        1.0,
+        1,
         -0.4,
-        0.0,
-        0.0,
+        0,
+        0,
         -0.1,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
       ]),
       Filter(name: "filter 5", matrix: <double>[
         1.2,
         0.1,
         0.5,
-        0.0,
-        0.0,
+        0,
+        0,
         0.1,
-        1.0,
+        1,
         0.05,
-        0.0,
-        0.0,
-        0.0,
+        0,
+        0,
+        0,
         0.1,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
       ]),
       Filter(name: "elim blue", matrix: <double>[
         1,
@@ -719,13 +711,13 @@ class _ImageFilterState extends State<ImageFilter>
 }
 
 class Filter extends Object {
+  Filter({required this.name, this.matrix = defaultColorMatrix});
   final String name;
   final List<double> matrix;
-  Filter({required this.name, this.matrix = defaultColorMatrix});
 
   Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();
-    option.addOption(ColorOption(matrix: this.matrix));
+    option.addOption(ColorOption(matrix: matrix));
     return await ImageEditor.editImage(
         image: pixels, imageEditorOption: option);
   }
