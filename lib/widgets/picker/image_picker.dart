@@ -68,6 +68,7 @@ class ImagePicker extends StatefulWidget {
 
 class _ImagePickerState extends State<ImagePicker>
     with
+        // ignore: prefer_mixin
         WidgetsBindingObserver,
         TickerProviderStateMixin,
         PortraitStatefulModeMixin<ImagePicker> {
@@ -80,73 +81,73 @@ class _ImagePickerState extends State<ImagePicker>
   /// Camera controller
   CameraController? _controller;
 
-  /// Scroll controller for selecting images screen
+  /// Scroll controller for selecting images screen.
   final _scrollController = ScrollController();
 
-  /// Future object for initilizing camera controller
+  /// Future object for initializing camera controller.
   Future<void>? _initializeControllerFuture;
 
   /// Selecting images
   List<ImageObject> _selectedImages = [];
 
-  /// Flag indicating state of camera, which capturing or not
+  /// Flag indicating state of camera, which capturing or not.
   bool _isCapturing = false;
 
-  /// Flag indicating state of plugin, which creating output or not
+  /// Flag indicating state of plugin, which creating output or not.
   bool _isOutputCreating = false;
 
-  /// Current camera preview mode
+  /// Current camera preview mode.
   bool _isFullscreenImage = false;
 
-  /// Flag indicating state of image selecting
+  /// Flag indicating state of image selecting.
   bool _isImageSelectedDone = false;
 
-  /// Image configuration
+  /// Image configuration.
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
-  /// Photo album list
+  /// Photo album list.
   List<AssetPathEntity> _albums = [];
 
-  /// Currently viewing album
+  /// Currently viewing album.
   AssetPathEntity? _currentAlbum;
 
-  /// Album thumbnail cache
+  /// Album thumbnail cache.
   List<Uint8List?> _albumThumbnails = [];
 
-  /// Key for current album object
+  /// Key for current album object.
   final GlobalKey<MediaAlbumState> _currentAlbumKey = GlobalKey();
 
-  /// Min available zoom ratio
+  /// Min available zoom ratio.
   double _minAvailableZoom = 1;
 
-  /// Max available zoom ratio
+  /// Max available zoom ratio.
   double _maxAvailableZoom = 1;
 
-  /// Current scale ratio
+  /// Current scale ratio.
   double _currentScale = 1;
 
-  /// Base scale ratio
+  /// Base scale ratio.
   double _baseScale = 1;
 
-  /// Counting pointers (number of user fingers on screen)
+  /// Counting pointers (number of user fingers on screen).
   int _pointers = 0;
 
-  /// Min available exposure offset
+  /// Min available exposure offset.
   double _minAvailableExposureOffset = 0;
 
-  /// Max available exposure offset
+  /// Max available exposure offset.
   double _maxAvailableExposureOffset = 0;
 
-  /// Current exposure offset
+  /// Current exposure offset.
   double _currentExposureOffset = 0;
 
-  /// Exposure mode control controller
+  /// Exposure mode control controller.
   late AnimationController _exposureModeControlRowAnimationController;
 
-  /// Exposure mode control
+  /// Exposure mode control.
   late Animation<double> _exposureModeControlRowAnimation;
 
-  /// Global key for this screen
+  /// Global key for this screen.
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _isDisposed = false;
