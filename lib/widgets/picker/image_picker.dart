@@ -277,11 +277,11 @@ class _ImagePickerState extends State<ImagePicker>
     cameraController.addListener(() {
       if (mounted) setState(() {});
       if (cameraController.value.hasError) {
-        print('Camera error ${cameraController.value.errorDescription}');
+        LogUtils.log('Camera error ${cameraController.value.errorDescription}');
       }
     });
 
-    // Create future object for initilizing new camera controller
+    // Create future object for initializing new camera controller.
     try {
       _initializeControllerFuture =
           cameraController.initialize().then((value) async {
@@ -310,7 +310,7 @@ class _ImagePickerState extends State<ImagePicker>
         }
       });
     } on CameraException catch (e) {
-      print('Camera error ${e.code}, ${e.description}');
+      LogUtils.log('Camera error ${e.code}, ${e.description}');
     }
   }
 
@@ -1176,7 +1176,7 @@ class _ImagePickerState extends State<ImagePicker>
                                       modifiedPath: capturedFile.path));
                                 });
                               } on CameraException catch (e) {
-                                print(e.description);
+                                LogUtils.log('${e.description}');
                               }
                             }
                           }
@@ -1197,7 +1197,7 @@ class _ImagePickerState extends State<ImagePicker>
                                         ? CameraLensDirection.back
                                         : CameraLensDirection.front);
                             if (newDescription != null) {
-                              print("Start new camera: "
+                              LogUtils.log("Start new camera: "
                                   "${newDescription.toString()}");
                               await _onNewCameraSelected(newDescription);
                             }

@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../../configs/image_picker_configs.dart';
 import '../../utils/image_utils.dart';
+import '../../utils/log_utils.dart';
 import '../../utils/time_utils.dart';
 import '../common/portrait_mode_mixin.dart';
 
@@ -111,7 +112,7 @@ class _ImageFilterState extends State<ImageFilter>
         await Future<void>.delayed(const Duration(milliseconds: 100));
         continue;
       }
-      print("_runningCount: ${_runningCount.toString()}");
+      LogUtils.log("_runningCount: ${_runningCount.toString()}");
 
       final func = _queuedApplyFilterFuncList.removeFirst();
       _runningCount++;
