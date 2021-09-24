@@ -377,7 +377,7 @@ class StickerView extends StatefulWidget {
   bool isFocus;
 
   /// Callback called when the sticker is removed.
-  final Function? onTapRemove;
+  final Function(StickerView sticker)? onTapRemove;
 
   @override
   _StickerViewState createState() => _StickerViewState();
