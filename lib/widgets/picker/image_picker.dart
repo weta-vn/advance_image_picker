@@ -250,7 +250,7 @@ class _ImagePickerState extends State<ImagePicker>
     if (direction == null) {
       return cameras.first;
     } else {
-      final CameraDescription? newDescription = _cameras.firstWhere(
+      final CameraDescription newDescription = _cameras.firstWhere(
           (description) => description.lensDirection == direction,
           orElse: () => cameras.first);
       return newDescription;
