@@ -227,7 +227,9 @@ class _ImagePickerState extends State<ImagePicker>
     if (_cameras.isNotEmpty) {
       final CameraDescription? newDescription = _getCamera(
           _cameras, _getCameraDirection(_configs.cameraLensDirection));
-      if (newDescription != null) _onNewCameraSelected(newDescription);
+      if (newDescription != null) {
+        await _onNewCameraSelected(newDescription);
+      }
     }
   }
 
@@ -1197,7 +1199,7 @@ class _ImagePickerState extends State<ImagePicker>
                             if (newDescription != null) {
                               print("Start new camera: "
                                   "${newDescription.toString()}");
-                              _onNewCameraSelected(newDescription);
+                              await _onNewCameraSelected(newDescription);
                             }
                           }
                         : null,
