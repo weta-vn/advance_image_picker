@@ -925,20 +925,22 @@ class _ImagePickerState extends State<ImagePicker>
   Widget _buildReorderableSelectedImageList(BuildContext context) {
     LogUtils.log("[_buildReorderableSelectedImageList] start");
 
-    final makeThumbnailImage = (String? path) {
+    Widget makeThumbnailImage(String? path) {
       return ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.file(File(path!),
-              fit: BoxFit.cover,
-              width: _configs.thumbWidth.toDouble(),
-              height: _configs.thumbHeight.toDouble()));
-    };
+        borderRadius: BorderRadius.circular(10),
+        child: Image.file(
+          File(path!),
+          fit: BoxFit.cover,
+          width: _configs.thumbWidth.toDouble(),
+          height: _configs.thumbHeight.toDouble(),
+        ),
+      );
+    }
 
-    final makeThumbnailWidget = (String? path, int index) {
+    Widget makeThumbnailWidget(String? path, int index) {
       if (!_configs.showDeleteButtonOnSelectedList) {
         return makeThumbnailImage(path);
       }
-
       return Stack(fit: StackFit.passthrough, children: [
         makeThumbnailImage(path),
         Positioned(
@@ -994,7 +996,7 @@ class _ImagePickerState extends State<ImagePicker>
               }),
         )
       ]);
-    };
+    }
 
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),

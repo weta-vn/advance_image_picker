@@ -378,14 +378,14 @@ class _ImageViewerState extends State<ImageViewer>
 
   /// Build reorderable selected image list
   Widget _buildReorderableSelectedImageList(BuildContext context) {
-    final makeThumbnail = (String? path) {
+    Widget makeThumbnail(String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
               fit: BoxFit.cover,
               width: _configs.thumbWidth.toDouble(),
               height: _configs.thumbHeight.toDouble()));
-    };
+    }
 
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),

@@ -184,21 +184,22 @@ class _ImageEditState extends State<ImageEdit>
   }
 
   Widget _buildImageViewer(BuildContext context) {
-    final view = () => Container(
-        padding: const EdgeInsets.all(12),
-        color: Colors.black,
-        child: Image.memory(
-          _imageBytes!,
-          fit: BoxFit.contain,
-          gaplessPlayback: true,
-        ));
+    Widget imageView() => Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.black,
+          child: Image.memory(
+            _imageBytes!,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+          ),
+        );
 
     if (_imageBytes == null) {
       return FutureBuilder(
           future: _readImage(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return view();
+              return imageView();
             } else {
               return const Center(
                 child: CupertinoActivityIndicator(),
@@ -206,7 +207,7 @@ class _ImageEditState extends State<ImageEdit>
             }
           });
     } else {
-      return view();
+      return imageView();
     }
   }
 

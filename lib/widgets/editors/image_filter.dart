@@ -239,7 +239,7 @@ class _ImageFilterState extends State<ImageFilter>
     final data = _cachedFilters.containsKey(key) ? _cachedFilters[key] : null;
     final isSelected = filter.name == _filter.name;
 
-    final createWidget = (Uint8List? bytes) {
+    Widget createWidget(Uint8List? bytes) {
       if (isThumbnail) {
         return Container(
           decoration: BoxDecoration(
@@ -258,14 +258,15 @@ class _ImageFilterState extends State<ImageFilter>
           gaplessPlayback: true,
         );
       }
-    };
+    }
 
     if (data == null) {
-      final calcFunc = () async {
+      Future<Uint8List?> calcFunc() async {
         return filter.apply(imgBytes);
-      };
+      }
+
       _queuedApplyFilterFuncList
-          .add(MapEntry<String, Future<List<int>?> Function()>(key, calcFunc));
+          .add(MapEntry<String, Future<Uint8List?> Function()>(key, calcFunc));
       _runApplyFilterProcess();
 
       return FutureBuilder<List<int>?>(
