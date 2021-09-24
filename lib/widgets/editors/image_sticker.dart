@@ -389,9 +389,7 @@ class _StickerViewState extends State<StickerView> {
     return GestureDetector(
       onDoubleTap: () {
         setState(() {
-          if (widget.onTapRemove != null) {
-            widget.onTapRemove!(widget);
-          }
+          widget.onTapRemove?.call(widget);
         });
       },
       child: Container(
