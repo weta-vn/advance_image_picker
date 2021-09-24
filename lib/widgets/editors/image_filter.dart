@@ -287,7 +287,7 @@ class _ImageFilterState extends State<ImageFilter>
   }
 
   List<Filter> _getPresetFilters() {
-    return <Filter>[
+    return const <Filter>[
       Filter(name: "no filter"),
       Filter(name: "lighten", matrix: <double>[
         1.5,
@@ -716,7 +716,7 @@ class _ImageFilterState extends State<ImageFilter>
 /// Hold the name of an image filter and its Filter Matrix values.
 class Filter extends Object {
   /// Default constructor for Filter.
-  Filter({required this.name, this.matrix = defaultColorMatrix});
+  const Filter({required this.name, this.matrix = defaultColorMatrix});
 
   /// Name of the filter.
   final String name;
