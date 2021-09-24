@@ -364,13 +364,13 @@ class _ImageViewerState extends State<ImageViewer>
   /// Reorder selected image list
   bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex < 0 || newIndex < 0) return false;
-
+    int _newIndex = newIndex;
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+      if (_newIndex > oldIndex) {
+        _newIndex -= 1;
       }
       final items = _images.removeAt(oldIndex);
-      _images.insert(newIndex, items);
+      _images.insert(_newIndex, items);
       widget.onChanged?.call(_images);
       return;
     });

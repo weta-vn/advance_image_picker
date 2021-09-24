@@ -910,12 +910,13 @@ class _ImagePickerState extends State<ImagePicker>
         oldIndex < 0 ||
         newIndex < 0) return false;
 
+    int _newIndex = newIndex;
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+      if (_newIndex > oldIndex) {
+        _newIndex -= 1;
       }
       final items = _selectedImages.removeAt(oldIndex);
-      _selectedImages.insert(newIndex, items);
+      _selectedImages.insert(_newIndex, items);
       return;
     });
   }
@@ -1369,7 +1370,8 @@ class _ImagePickerState extends State<ImagePicker>
       _currentExposureOffset = offset;
     });
     try {
-      offset = await _controller!.setExposureOffset(offset);
+      // The return value is not used or needed, let's no assign it to offset.
+      await _controller!.setExposureOffset(offset);
     } on CameraException catch (_) {
       rethrow;
     }
