@@ -16,6 +16,19 @@ import '../widgets/editors/editor_params.dart';
 /// configs.translateFunc = (name, value) => Intl.message(value, name: name);
 /// ```
 class ImagePickerConfigs {
+  /// The default constructor is a factory that returns the configuration
+  /// singleton of the picker configuration.
+  ///
+  /// Global configuration for flutter app using advance_image_picker plugin
+  /// Call once inside application before using image picker functions
+  ///
+  /// Sample usage
+  /// Calling in build function of app widget at main.dart
+  /// ```dart
+  /// var configs = ImagePickerConfigs();
+  /// configs.appBarTextColor = Colors.black;
+  /// configs.translateFunc = (name, value) => Intl.message(value, name: name);
+  /// ```
   factory ImagePickerConfigs() {
     return _singleton;
   }
@@ -24,8 +37,8 @@ class ImagePickerConfigs {
   /// Singleton object of config
   static final ImagePickerConfigs _singleton = ImagePickerConfigs._internal();
 
-  /// UI labels translated function with 2 parameters [name] and [defaultValue]
-  /// Declare [name] for what label needs to be translated in localization file,
+  /// UI labels translated function with 2 parameters `name` and `defaultValue`
+  /// Declare `name` for what label needs to be translated in localization file,
   /// such as image_picker_select_images_title. Confirm "UI label strings
   /// (for localization)" section below for understanding usage.
   ///

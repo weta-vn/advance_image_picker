@@ -19,7 +19,16 @@ import 'media_album.dart';
 
 /// Picker mode definition: Camera or Album (Photo gallery of device)
 class PickerMode {
+  /// Camera picker.
+  // TODO(rydmike): This const property name does not conform to Dart standards
+  //   but fixing it might be a breaking change.
+  // ignore: constant_identifier_names
   static const int Camera = 0;
+
+  /// Album picker.
+  // TODO(rydmike): This const property name does not conform to Dart standards
+  //   but fixing it might be a breaking change.
+  // ignore: constant_identifier_names
   static const int Album = 1;
 }
 

@@ -14,8 +14,9 @@ import '../../utils/image_utils.dart';
 import '../../utils/time_utils.dart';
 import '../common/portrait_mode_mixin.dart';
 
-/// Image filter widget
+/// Image filter widget.
 class ImageFilter extends StatefulWidget {
+  /// Default constructor for the image filter widget.
   const ImageFilter(
       {Key? key,
       required this.title,
@@ -705,16 +706,24 @@ class _ImageFilterState extends State<ImageFilter>
         1,
         .2
       ]),
-      // Filter(name: "invert", matrix: <double>[-1, 0, 0, 0, 255, 0, -1, 0, 0, 255, 0, 0, -1, 0, 255, 0, 0, 0, 1, 0]),
+      // Filter(name: "invert", matrix: <double>[-1, 0, 0, 0,
+      // 255, 0, -1, 0, 0, 255, 0, 0, -1, 0, 255, 0, 0, 0, 1, 0]),
     ];
   }
 }
 
+/// Hold the name of an image filter and its Filter Matrix values.
 class Filter extends Object {
+  /// Default constructor for Filter.
   Filter({required this.name, this.matrix = defaultColorMatrix});
+
+  /// Name of the filter.
   final String name;
+
+  /// Image filter matrix values.
   final List<double> matrix;
 
+  /// Apply this filter to the image.
   Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption(matrix: matrix));

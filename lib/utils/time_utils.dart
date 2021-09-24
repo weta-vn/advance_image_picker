@@ -1,5 +1,6 @@
 /// Simple utilities to work with time
 class TimeUtils {
+  /// Returns a nicely formatted date time string.
   static String getTimeString(DateTime time,
       {String s1 = "", String s2 = "_", String s3 = ""}) {
     final month = time.month.toString().padLeft(2, '0');
@@ -7,6 +8,10 @@ class TimeUtils {
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');
     final second = time.second.toString().padLeft(2, '0');
+
+    // TODO(rydmike): This property has a typo, it should be corrected.
+    //  Not yet updated, as I did not look into how breaking API wise it
+    //  will be correcting the typo.
     final milisecond = time.millisecond.toString().padLeft(3, '0');
     final text =
         '${time.year}$s1$month$s1$day$s2$hour$s3$minute$s3$second$s3$milisecond';

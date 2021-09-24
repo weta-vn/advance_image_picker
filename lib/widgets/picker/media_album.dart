@@ -10,8 +10,9 @@ import '../../models/image_object.dart';
 import '../../utils/image_utils.dart';
 import '../../utils/log_utils.dart';
 
-/// Photo album widget
+/// MediaAlbum or photo album widget.
 class MediaAlbum extends StatefulWidget {
+  /// Default constructor for photo album widget.
   const MediaAlbum(
       {Key? key,
       this.gridCount = 4,
@@ -60,6 +61,7 @@ class MediaAlbum extends StatefulWidget {
   MediaAlbumState createState() => MediaAlbumState();
 }
 
+/// State holding class of the MediaAlbum.
 class MediaAlbumState extends State<MediaAlbum> {
   /// Current selected images
   List<ImageObject> _selectedImages = [];

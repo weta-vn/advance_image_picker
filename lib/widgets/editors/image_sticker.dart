@@ -343,6 +343,7 @@ class _ImageStickerState extends State<ImageSticker>
 /// Sticker view
 // ignore: must_be_immutable
 class StickerView extends StatefulWidget {
+  /// Default constructor for StickerView.
   StickerView(this.image,
       {Key? key,
       required this.width,
@@ -354,15 +355,28 @@ class StickerView extends StatefulWidget {
       this.onTapRemove})
       : super(key: key);
 
+  /// The sticker image.
   final Image image;
+
+  /// Sticker width.
   final double width;
+
+  /// Sticker height.
   final double height;
 
+  /// Sticker top location.
   double top;
+
+  /// Sticker left location.
   double left;
+
+  /// Sticker scale.
   double currentScale;
+
+  /// Sticker has focus.
   bool isFocus;
 
+  /// Callback called when the sticker is removed.
   final Function? onTapRemove;
 
   @override
