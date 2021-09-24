@@ -331,7 +331,7 @@ class _ImageStickerState extends State<ImageSticker>
   /// Export image & sticker stack to image bytes
   Future<Uint8List?>? _exportWidgetToImage(GlobalKey key) async {
     final RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3);
     final byteData = await image.toByteData(format: ImageByteFormat.png);
     final pngBytes = byteData?.buffer.asUint8List();

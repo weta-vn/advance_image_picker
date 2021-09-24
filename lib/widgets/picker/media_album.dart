@@ -197,7 +197,7 @@ class MediaAlbumState extends State<MediaAlbum> {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
                               return Image.memory(
-                                snapshot.data as Uint8List,
+                                snapshot.data! as Uint8List,
                                 fit: BoxFit.cover,
                               );
                             }
