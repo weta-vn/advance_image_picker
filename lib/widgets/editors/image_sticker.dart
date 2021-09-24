@@ -83,8 +83,7 @@ class _ImageStickerState extends State<ImageSticker>
 
   /// Read image bytes from file
   Future<Uint8List?>? _readImage() async {
-    _imageBytes ??= await widget.file.readAsBytes();
-    return _imageBytes;
+    return _imageBytes ??= await widget.file.readAsBytes();
   }
 
   @override

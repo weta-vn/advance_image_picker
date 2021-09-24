@@ -74,8 +74,7 @@ class _ImageEditState extends State<ImageEdit>
 
   Future<Uint8List?>? _readImage() async {
     _orgImageBytes ??= await widget.file.readAsBytes();
-    _imageBytes ??= Uint8List.fromList(_orgImageBytes!);
-    return _imageBytes;
+    return _imageBytes ??= Uint8List.fromList(_orgImageBytes!);
   }
 
   @override
