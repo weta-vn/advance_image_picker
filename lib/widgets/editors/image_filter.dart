@@ -159,6 +159,7 @@ class _ImageFilterState extends State<ImageFilter>
                   _loading = true;
                 });
                 final imageFile = await saveFilteredImage();
+                if (!mounted) return;
                 Navigator.pop(context, imageFile);
               },
             )

@@ -177,6 +177,7 @@ class _ImageEditState extends State<ImageEdit>
             "${TimeUtils.getTimeString(DateTime.now())}.jpg";
         final File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
+        if (!mounted) return;
         Navigator.of(context).pop(file);
       },
     );

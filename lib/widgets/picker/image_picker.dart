@@ -520,6 +520,7 @@ class _ImagePickerState extends State<ImagePicker>
                   }
 
                   _isImageSelectedDone = true;
+                  if (!mounted) return;
                   Navigator.of(context).pop(_selectedImages);
                 }
               : null,
@@ -1146,36 +1147,39 @@ class _ImagePickerState extends State<ImagePicker>
                                 Map<String, dynamic>? croppingParams;
                                 if (!_isFullscreenImage) {
                                   croppingParams = <String, dynamic>{};
-                                  final size = MediaQuery.of(context).size;
-                                  croppingParams["originX"] = 0;
-                                  croppingParams["originY"] = 0;
-                                  croppingParams["widthPercent"] = 1.0;
-                                  if (_configs.cameraPickerModeEnabled &&
-                                      _configs.albumPickerModeEnabled) {
-                                    croppingParams["heightPercent"] =
-                                        (size.height -
-                                                kBottomControlPanelHeight) /
-                                            size.height;
-                                  } else {
-                                    croppingParams["heightPercent"] =
-                                        (size.height -
-                                                kBottomControlPanelHeight +
-                                                32) /
-                                            size.height;
+                                  if (mounted) {
+                                    final size = MediaQuery.of(context).size;
+                                    croppingParams["originX"] = 0;
+                                    croppingParams["originY"] = 0;
+                                    croppingParams["widthPercent"] = 1.0;
+                                    if (_configs.cameraPickerModeEnabled &&
+                                        _configs.albumPickerModeEnabled) {
+                                      croppingParams["heightPercent"] =
+                                          (size.height -
+                                                  kBottomControlPanelHeight) /
+                                              size.height;
+                                    } else {
+                                      croppingParams["heightPercent"] =
+                                          (size.height -
+                                                  kBottomControlPanelHeight +
+                                                  32) /
+                                              size.height;
+                                    }
+
+                                    final capturedFile =
+                                        await _imagePreProcessing(file.path,
+                                            croppingParams: croppingParams);
+
+                                    setState(() {
+                                      LogUtils.log(
+                                          "[_buildCameraControls] update image "
+                                          "list after capturing");
+                                      _selectedImages.add(ImageObject(
+                                          originalPath: capturedFile.path,
+                                          modifiedPath: capturedFile.path));
+                                    });
                                   }
                                 }
-                                final capturedFile = await _imagePreProcessing(
-                                    file.path,
-                                    croppingParams: croppingParams);
-
-                                setState(() {
-                                  LogUtils.log(
-                                      "[_buildCameraControls] update image "
-                                      "list after capturing");
-                                  _selectedImages.add(ImageObject(
-                                      originalPath: capturedFile.path,
-                                      modifiedPath: capturedFile.path));
-                                });
                               } on CameraException catch (e) {
                                 LogUtils.log('${e.description}');
                               }

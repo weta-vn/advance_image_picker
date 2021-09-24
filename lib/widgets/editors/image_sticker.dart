@@ -177,6 +177,7 @@ class _ImageStickerState extends State<ImageSticker>
                 // Compress & resize result image
                 file = await ImageUtils.compressResizeImage(targetPath,
                     maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
+                if (!mounted) return;
                 Navigator.of(context).pop(file);
               }
             }
