@@ -1,3 +1,9 @@
+## [0.1.4]
+
+* Upgrade all dependencies, most notably image_editor to version 1.0.1 
+  that uses Android embedding V2.
+* Clean up lint warnings. 
+
 ## [0.1.3]
 
 * Improve code lintings
