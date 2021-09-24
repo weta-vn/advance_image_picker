@@ -365,7 +365,7 @@ class _ImagePickerState extends State<ImagePicker>
 
     if (!_configs.imagePreProcessingEnabled) {
       LogUtils.log("[_imagePostProcessing] end");
-      return await ImageUtils.compressResizeImage(path,
+      return ImageUtils.compressResizeImage(path,
           maxWidth: _configs.maxWidth,
           maxHeight: _configs.maxHeight,
           quality: _configs.compressQuality);

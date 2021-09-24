@@ -12,7 +12,7 @@ import '../models/image_object.dart';
 class ImageUtils {
   /// Get image properties from image file in [path], such as width, height
   static Future<ImageProperties> getImageProperties(String path) async {
-    return await FlutterNativeImage.getImageProperties(path);
+    return FlutterNativeImage.getImageProperties(path);
   }
 
   /// Compare & resize image file in [path]
@@ -87,7 +87,7 @@ class ImageUtils {
       x = ((1.0 - wPercent) * width).toInt();
       y = ((1.0 - hPercent) * height).toInt();
     }
-    return await FlutterNativeImage.cropImage(
+    return FlutterNativeImage.cropImage(
         path, x, y, (wPercent * width).toInt(), (hPercent * height).toInt());
   }
 

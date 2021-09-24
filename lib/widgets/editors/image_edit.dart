@@ -254,7 +254,7 @@ class _ImageEditState extends State<ImageEdit>
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
-    return await ImageEditor.editImage(
+    return ImageEditor.editImage(
         image: _orgImageBytes!, imageEditorOption: option);
   }
 

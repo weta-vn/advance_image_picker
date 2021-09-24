@@ -95,7 +95,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await ImageCropper.cropImage(
+              ImageCropper.cropImage(
                   sourcePath: file.path,
                   compressQuality: compressQuality,
                   maxWidth: maxWidth,
@@ -129,7 +129,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageEdit(
                       file: file,
@@ -150,7 +150,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageFilter(
                       file: file,
@@ -171,7 +171,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageSticker(
                       file: file,
@@ -212,7 +212,7 @@ class _ImageViewerState extends State<ImageViewer>
   /// Pre-processing function
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled) {
-      return await ImageUtils.compressResizeImage(path!,
+      return ImageUtils.compressResizeImage(path!,
           maxWidth: _configs.maxWidth,
           maxHeight: _configs.maxHeight,
           quality: _configs.compressQuality);

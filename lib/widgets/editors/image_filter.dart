@@ -99,7 +99,7 @@ class _ImageFilterState extends State<ImageFilter>
     if (_cachedFilters.containsKey(key)) {
       return _cachedFilters[key];
     } else {
-      return await Future.delayed(
+      return Future.delayed(
           const Duration(milliseconds: 500), () => _getFilteredData(key));
     }
   }
@@ -261,7 +261,7 @@ class _ImageFilterState extends State<ImageFilter>
 
     if (data == null) {
       final calcFunc = () async {
-        return await filter.apply(imgBytes);
+        return filter.apply(imgBytes);
       };
       _queuedApplyFilterFuncList
           .add(MapEntry<String, Future<List<int>?> Function()>(key, calcFunc));
@@ -728,7 +728,6 @@ class Filter extends Object {
   Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption(matrix: matrix));
-    return await ImageEditor.editImage(
-        image: pixels, imageEditorOption: option);
+    return ImageEditor.editImage(image: pixels, imageEditorOption: option);
   }
 }
