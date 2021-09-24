@@ -208,9 +208,11 @@ class ImagePickerConfigs {
   ///       required String title,
   ///       int maxWidth = 1080,
   ///       int maxHeight = 1920,
-  ///       ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+  ///       ImagePickerConfigs? configs}) async => await
+  ///         Navigator.of(context).push(MaterialPageRoute<File>(
   ///       fullscreenDialog: true,
-  ///       builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
+  ///       builder: (context) => ImageEdit(file: file, title: title,
+  ///         maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
   Map<String, EditorParams> externalImageEditors = {};
 
   // UI label strings (for localization)
@@ -346,7 +348,8 @@ class ImagePickerConfigs {
   /// click to remove it from image".
   String get textImageStickerGuide => getTranslatedString(
       "image_picker_image_sticker_guide",
-      "You can click on sticker icons to scale it or double click to remove it from image");
+      "You can click on sticker icons to scale it or double click to "
+          "remove it from image");
 
   /// Get localized text for label "image_picker_exposure_title".
   ///

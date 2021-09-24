@@ -54,10 +54,12 @@ class ImagePicker extends StatefulWidget {
   /// Default for capturing new image in fullscreen mode or preview mode
   final bool isFullscreenImage;
 
-  /// Custom configuration, if not provided, plugin will use default configuration
+  /// Custom configuration, if not provided, plugin will use
+  /// default configuration.
   final ImagePickerConfigs? configs;
 
-  /// Default mode for selecting image: capture new image or select image from album
+  /// Default mode for selecting image: capture new image or select
+  /// image from album.
   final bool isCaptureFirst;
 
   @override
@@ -193,7 +195,8 @@ class _ImagePickerState extends State<ImagePicker>
     super.dispose();
   }
 
-  /// Called when the system puts the app in the background or returns the app to the foreground.
+  /// Called when the system puts the app in the background or
+  /// returns the app to the foreground.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = _controller;
@@ -1059,7 +1062,8 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
-  /// Build camera controls such as change flash mode, switch cameras, capture button, ...
+  /// Build camera controls such as change flash mode, switch cameras,
+  /// capture button, etc.
   Widget _buildCameraControls(BuildContext context) {
     final isMaxCount = _selectedImages.length >= widget.maxCount;
 
@@ -1163,7 +1167,8 @@ class _ImagePickerState extends State<ImagePicker>
 
                                 setState(() {
                                   LogUtils.log(
-                                      "[_buildCameraControls] update image list after capturing");
+                                      "[_buildCameraControls] update image "
+                                      "list after capturing");
                                   _selectedImages.add(ImageObject(
                                       originalPath: capturedFile.path,
                                       modifiedPath: capturedFile.path));
