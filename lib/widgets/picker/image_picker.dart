@@ -1168,21 +1168,20 @@ class _ImagePickerState extends State<ImagePicker>
                                                   32) /
                                               size.height;
                                     }
-
-                                    final capturedFile =
-                                        await _imagePreProcessing(file.path,
-                                            croppingParams: croppingParams);
-
-                                    setState(() {
-                                      LogUtils.log(
-                                          "[_buildCameraControls] update image "
-                                          "list after capturing");
-                                      _selectedImages.add(ImageObject(
-                                          originalPath: capturedFile.path,
-                                          modifiedPath: capturedFile.path));
-                                    });
                                   }
                                 }
+                                final capturedFile = await _imagePreProcessing(
+                                    file.path,
+                                    croppingParams: croppingParams);
+
+                                setState(() {
+                                  LogUtils.log(
+                                      "[_buildCameraControls] update image "
+                                      "list after capturing");
+                                  _selectedImages.add(ImageObject(
+                                      originalPath: capturedFile.path,
+                                      modifiedPath: capturedFile.path));
+                                });
                               } on CameraException catch (e) {
                                 LogUtils.log('${e.description}');
                               }
