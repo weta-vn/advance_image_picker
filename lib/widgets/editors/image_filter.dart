@@ -55,8 +55,8 @@ class _ImageFilterState extends State<ImageFilter>
   int _runningCount = 0;
   late Filter _filter;
   late List<Filter> _filters;
-  Uint8List? _imageBytes;
-  Uint8List? _thumbnailImageBytes;
+  late Uint8List? _imageBytes;
+  late Uint8List? _thumbnailImageBytes;
   late bool _loading;
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
