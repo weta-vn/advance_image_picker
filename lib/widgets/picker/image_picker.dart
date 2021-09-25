@@ -669,6 +669,12 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build bottom panel.
   Widget _buildBottomPanel(BuildContext context) {
+    // Add leading text and colon+blank, only if 'textSelectedImagesTitle' is
+    // not blank in a none breaking way to previous version.
+    final String _textSelectedImagesTitle =
+        _configs.textSelectedImagesTitle == ''
+            ? _configs.textSelectedImagesTitle
+            : '${_configs.textSelectedImagesTitle}: ';
     return Container(
       color: ((_mode == PickerMode.Camera) && _isFullscreenImage)
           ? _configs.bottomPanelColorInFullscreen
@@ -677,7 +683,9 @@ class _ImagePickerState extends State<ImagePicker>
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         if (widget.maxCount > 1) ...[
           Text(
-              "${_configs.textSelectedImagesTitle}: ${_selectedImages.length.toString()} / ${widget.maxCount.toString()}",
+              '$_textSelectedImagesTitle'
+              '${_selectedImages.length.toString()}'
+              ' / ${widget.maxCount.toString()}',
               style: const TextStyle(color: Colors.white, fontSize: 14)),
           if (_configs.textSelectedImagesGuide != '')
             Text(_configs.textSelectedImagesGuide,
