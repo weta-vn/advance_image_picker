@@ -981,6 +981,16 @@ class _ImagePickerState extends State<ImagePicker>
       );
     }
 
+    /// Remove image in the list at index.
+    void _removeImage(final int index) {
+      setState(() {
+        _selectedImages.removeAt(index);
+      });
+      _currentAlbumKey.currentState
+          ?.updateStateFromExternal(selectedImages: _selectedImages);
+    }
+
+    /// Make an image thumbnail widget.
     Widget makeThumbnailWidget(String? path, int index) {
       if (!_configs.showDeleteButtonOnSelectedList) {
         return makeThumbnailImage(path);
@@ -1007,36 +1017,35 @@ class _ImagePickerState extends State<ImagePicker>
                 ),
               ),
               onTap: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    // return object of type Dialog
-                    return AlertDialog(
-                      title: Text(_configs.textConfirm),
-                      content: Text(_configs.textConfirmDelete),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text(_configs.textNo),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: Text(_configs.textYes),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              _selectedImages.removeAt(index);
-                            });
-                            _currentAlbumKey.currentState
-                                ?.updateStateFromExternal(
-                                    selectedImages: _selectedImages);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
+                if (_configs.showRemoveImageAlert) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      // return object of type Dialog
+                      return AlertDialog(
+                        title: Text(_configs.textConfirm),
+                        content: Text(_configs.textConfirmDelete),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text(_configs.textNo),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text(_configs.textYes),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _removeImage(index);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  _removeImage(index);
+                }
               }),
         )
       ]);

@@ -133,6 +133,11 @@ class ImagePickerConfigs {
   /// Defaults to true.
   bool showDeleteButtonOnSelectedList = true;
 
+  /// Show confirm alert if removing an already selected image.
+  ///
+  /// Defaults to true.
+  bool showRemoveImageAlert = true;
+
   /// Show confirm alert if exiting with selected image.
   ///
   /// Defaults to true.
