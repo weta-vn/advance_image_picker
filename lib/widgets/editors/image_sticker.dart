@@ -295,14 +295,15 @@ class _ImageStickerState extends State<ImageSticker>
     final result = BoxHitTestResult();
 
     for (final StickerView s in _attachedList) {
-      final RenderBox box =
-          (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
+      final RenderBox? box = (s.key! as GlobalKey)
+          .currentContext
+          ?.findRenderObject() as RenderBox?;
+      if (box == null) return null;
       final Offset localBox = box.globalToLocal(event.position);
       if (box.hitTest(result, position: localBox)) {
         return s;
       }
     }
-
     return null;
   }
 
