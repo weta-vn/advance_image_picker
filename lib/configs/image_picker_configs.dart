@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../widgets/editors/editor_params.dart';
 
+export 'package:camera/camera.dart' show FlashMode;
+
 /// Global configuration for flutter app using advance_image_picker plugin
 /// Call once inside application before using image picker functions
 ///
@@ -157,6 +159,26 @@ class ImagePickerConfigs {
   /// * 0: only use front camera
   /// * 1: only use back camera
   int? cameraLensDirection;
+
+  /// Set the default flash mode.
+  ///
+  /// Options:
+  /// * off: Do not use the flash when taking a picture.
+  /// * auto: Device decide whether to flash the camera when taking a picture.
+  /// * always: Always use the flash when taking a picture.
+  /// * torch: In this app treated as using always.
+  ///
+  /// Default to FlashMode.auto;
+  FlashMode flashMode = FlashMode.auto;
+
+  /// Show the flash mode icon button.
+  ///
+  /// If you want to set the FlashMode to a certain mode, typically
+  /// [FlashMode.off], and also hide the button than enables users to
+  /// change it, then set [showFlashMode] to false.
+  ///
+  /// Defaults to true.
+  bool showFlashMode = true;
 
   // UI style settings.
 

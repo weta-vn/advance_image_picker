@@ -90,6 +90,9 @@ class _ImagePickerState extends State<ImagePicker>
   /// Selecting images
   List<ImageObject> _selectedImages = [];
 
+  /// Flag indicating current used flashMode
+  FlashMode _flashMode = FlashMode.auto;
+
   /// Flag indicating state of camera, which capturing or not.
   bool _isCapturing = false;
 
@@ -159,6 +162,7 @@ class _ImagePickerState extends State<ImagePicker>
 
     // Setting preview screen mode from configuration
     if (widget.configs != null) _configs = widget.configs!;
+    _flashMode = _configs.flashMode;
     _isFullscreenImage = widget.isFullscreenImage;
     _mode = (widget.isCaptureFirst && _configs.cameraPickerModeEnabled)
         ? PickerMode.Camera
@@ -291,6 +295,7 @@ class _ImagePickerState extends State<ImagePicker>
         // After initialized, setting zoom & exposure values
         await Future.wait([
           cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
+          cameraController.setFlashMode(_configs.flashMode),
           cameraController
               .getMinExposureOffset()
               .then((value) => _minAvailableExposureOffset = value),
@@ -1069,21 +1074,45 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
+  /// Return used IconData for corresponding FlashMode.
+  ///
+  /// [FlashMode.torch], is treated a always using the flash in this app.
+  IconData _flashModeIcon(final FlashMode flashMode) {
+    switch (flashMode) {
+      case FlashMode.auto:
+        return Icons.flash_auto;
+      case FlashMode.off:
+        return Icons.flash_off;
+      case FlashMode.torch:
+      case FlashMode.always:
+        return Icons.flash_on;
+    }
+  }
+
+  /// Cycle through FlashMode, called when users taps on FlashMode.
+  ///
+  /// This function just updates the local state _flashMode variable, but does
+  /// not call setState, it is upp to caller to set state when needed.
+  ///
+  /// [FlashMode.torch], is treated a always using the flash in this app.
+  void _cycleFlashMode() {
+    switch (_flashMode) {
+      case FlashMode.auto:
+        _flashMode = FlashMode.off;
+        break;
+      case FlashMode.off:
+        _flashMode = FlashMode.always;
+        break;
+      case FlashMode.torch:
+      case FlashMode.always:
+        _flashMode = FlashMode.auto;
+    }
+  }
+
   /// Build camera controls such as change flash mode, switch cameras,
   /// capture button, etc.
   Widget _buildCameraControls(BuildContext context) {
     final isMaxCount = _selectedImages.length >= widget.maxCount;
-
-    final flashMode = () {
-      final value = _controller?.value.flashMode ?? FlashMode.auto;
-      if (value == FlashMode.always) {
-        return [FlashMode.auto, Icons.flash_on];
-      } else if (value == FlashMode.auto) {
-        return [FlashMode.off, Icons.flash_auto];
-      } else if (value == FlashMode.off) {
-        return [FlashMode.always, Icons.flash_off];
-      }
-    }();
 
     final canSwitchCamera =
         _cameras.length > 1 && _configs.cameraLensDirection == null;
@@ -1095,18 +1124,27 @@ class _ImagePickerState extends State<ImagePicker>
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    child: Icon(flashMode?[1] as IconData?,
-                        size: 32, color: Colors.white),
-                    onTap: () async {
-                      // Ensure that the camera is initialized.
-                      await _initializeControllerFuture;
-
-                      await _controller!
-                          .setFlashMode(flashMode?[0] as FlashMode)
-                          .then((value) => setState(() {}));
-                    },
-                  ),
+                  if (_configs.showFlashMode)
+                    GestureDetector(
+                      child: Icon(_flashModeIcon(_flashMode),
+                          size: 32, color: Colors.white),
+                      onTap: () async {
+                        // Ensure that the camera is initialized.
+                        await _initializeControllerFuture;
+                        // Cycle to next flash mode.
+                        _cycleFlashMode();
+                        // Update camera to new flash mode.
+                        await _controller!
+                            .setFlashMode(_flashMode)
+                            .then((value) => setState(() {}));
+                      },
+                    )
+                  else
+                    // We use a transparent icon with no tap, to ensure
+                    // it takes up same space as when it is there, to ensure
+                    // identical layout as when it is shown.
+                    Icon(_flashModeIcon(_flashMode),
+                        size: 32, color: Colors.transparent),
                   GestureDetector(
                     onTapDown: !isMaxCount
                         ? (td) {
