@@ -679,8 +679,9 @@ class _ImagePickerState extends State<ImagePicker>
           Text(
               "${_configs.textSelectedImagesTitle}: ${_selectedImages.length.toString()} / ${widget.maxCount.toString()}",
               style: const TextStyle(color: Colors.white, fontSize: 14)),
-          Text(_configs.textSelectedImagesGuide,
-              style: const TextStyle(color: Colors.grey, fontSize: 14))
+          if (_configs.textSelectedImagesGuide != '')
+            Text(_configs.textSelectedImagesGuide,
+                style: const TextStyle(color: Colors.grey, fontSize: 14))
         ],
         _buildReorderableSelectedImageList(context),
         _buildCameraControls(context),
