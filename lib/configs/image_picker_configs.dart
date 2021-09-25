@@ -191,7 +191,7 @@ class ImagePickerConfigs {
   /// to false.
   ///
   /// If you show just one [cameraLensDirection] and [showLensDirection] is
-  /// true, the the lens direction button is still shown, but disabled.
+  /// true, then the lens direction button is still shown, but disabled.
   ///
   /// Defaults to true.
   bool showLensDirection = true;
@@ -260,7 +260,8 @@ class ImagePickerConfigs {
   ///
   /// The default is [DoneButtonStyle.outlinedButton].
   ///
-  /// The alternate style is a normal Icon.button.
+  /// The alternate style [DoneButtonStyle.iconButton] uses an [IconButton] that
+  /// is typically used in [AppBar] actions.
   DoneButtonStyle doneButtonStyle = DoneButtonStyle.outlinedButton;
 
   /// IconData used by the done button when [doneButtonStyle] is
