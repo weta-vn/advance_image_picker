@@ -7,6 +7,25 @@ import '../widgets/editors/editor_params.dart';
 
 export 'package:camera/camera.dart' show FlashMode;
 
+/// Enum used to define the type of used done button by the image picker.
+enum DoneButtonStyle {
+  /// Use an [OutlinedButton].
+  outlinedButton,
+
+  /// Use an [IconButton].
+  iconButton,
+}
+
+/// Enum used to define the type of of behavior the done button has when
+/// no images have been selected that will be returned.
+enum DoneButtonDisabledBehavior {
+  /// Done button is disabled
+  disabled,
+
+  /// Done button is hidden and not shown at all.
+  hidden,
+}
+
 /// Global configuration for flutter app using advance_image_picker plugin
 /// Call once inside application before using image picker functions
 ///
@@ -222,11 +241,35 @@ class ImagePickerConfigs {
   /// This results in an AppBar text color that follows current theme.
   Color? appBarTextColor;
 
-  /// The background color of the images selection completed button.
+  /// The background color of the image selection completed button.
+  ///
+  /// This color only applies to the [doneButtonStyle] of style
+  /// [DoneButtonStyle.outlinedButton].
   ///
   /// Defaults to null.
   /// This results in [appBarBackgroundColor] being used.
   Color? appBarDoneButtonColor;
+
+  /// The type of button used on the image picker to select images and close
+  /// the image picker.
+  ///
+  /// The default is [DoneButtonStyle.outlinedButton].
+  ///
+  /// The alternate style is a normal Icon.button.
+  DoneButtonStyle doneButtonStyle = DoneButtonStyle.outlinedButton;
+
+  /// IconData used by the done button when [doneButtonStyle] is
+  /// [DoneButtonStyle.iconButton].
+  ///
+  /// Defaults to Icon.check.
+  IconData doneButtonIcon = Icons.check;
+
+  /// Used to define the type of of behavior the done button has when
+  /// no images have been selected that will be returned.
+  ///
+  /// Defaults to [DoneButtonDisabledBehavior.disabled].
+  DoneButtonDisabledBehavior doneButtonDisabledBehavior =
+      DoneButtonDisabledBehavior.disabled;
 
   /// Allow add custom image editors from external call.
   ///

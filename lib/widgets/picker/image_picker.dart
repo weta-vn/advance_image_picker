@@ -510,56 +510,77 @@ class _ImagePickerState extends State<ImagePicker>
             isCameraMode: _mode == PickerMode.Camera));
   }
 
+  /// Function used to select the images and close the image picker.
+  Future<void> _doneButtonPressed() async {
+    setState(() {
+      _isOutputCreating = true;
+    });
+    // Compress selected images then return.
+    for (final f in _selectedImages) {
+      f.modifiedPath = (await _imagePostProcessing(f.modifiedPath)).path;
+    }
+    _isImageSelectedDone = true;
+    if (!mounted) return;
+    Navigator.of(context).pop(_selectedImages);
+  }
+
   // TODO(rydmike): The image picker uses a lot of Widget build functions.
   //   This may sometimes be inefficient and even an anti-pattern in Flutter.
   //   It is not always a bad thing though. Still we should review it later
   //   and see if there are critical ones that it would be better to replace
   //   with StatelessWidgets or StatefulWidgets.
 
-  /// Build done button
+  /// Build done button.
   Widget _buildDoneButton(BuildContext context, Color buttonColor) {
-    return Padding(
-        padding: const EdgeInsets.all(8),
-        child: OutlinedButton(
+    if (_selectedImages.isEmpty &&
+        _configs.doneButtonDisabledBehavior ==
+            DoneButtonDisabledBehavior.hidden) {
+      return const SizedBox.shrink();
+    }
+    switch (_configs.doneButtonStyle) {
+      case DoneButtonStyle.outlinedButton:
+        return Padding(
+            padding: const EdgeInsets.all(8),
+            child: OutlinedButton(
+              onPressed: (_selectedImages.isNotEmpty)
+                  ? () async {
+                      await _doneButtonPressed();
+                    }
+                  : null,
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(5),
+                backgroundColor: MaterialStateProperty.all(
+                    _selectedImages.isNotEmpty ? buttonColor : Colors.grey),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10))),
+              ),
+              child: Row(children: [
+                Text(_configs.textSelectButtonTitle,
+                    style: TextStyle(
+                        color: _selectedImages.isNotEmpty
+                            ? ((buttonColor == Colors.white)
+                                ? Colors.black
+                                : Colors.white)
+                            : Colors.black)),
+                if (_isOutputCreating)
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: CupertinoActivityIndicator(),
+                  )
+              ]),
+            ));
+      case DoneButtonStyle.iconButton:
+        return IconButton(
+          icon: _isOutputCreating
+              ? const CupertinoActivityIndicator()
+              : Icon(_configs.doneButtonIcon),
           onPressed: (_selectedImages.isNotEmpty)
               ? () async {
-                  setState(() {
-                    _isOutputCreating = true;
-                  });
-
-                  // Compress selected images then return.
-                  for (final f in _selectedImages) {
-                    f.modifiedPath =
-                        (await _imagePostProcessing(f.modifiedPath)).path;
-                  }
-
-                  _isImageSelectedDone = true;
-                  if (!mounted) return;
-                  Navigator.of(context).pop(_selectedImages);
+                  await _doneButtonPressed();
                 }
               : null,
-          style: ButtonStyle(
-            elevation: MaterialStateProperty.all(5),
-            backgroundColor: MaterialStateProperty.all(
-                _selectedImages.isNotEmpty ? buttonColor : Colors.grey),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10))),
-          ),
-          child: Row(children: [
-            Text(_configs.textSelectButtonTitle,
-                style: TextStyle(
-                    color: _selectedImages.isNotEmpty
-                        ? ((buttonColor == Colors.white)
-                            ? Colors.black
-                            : Colors.white)
-                        : Colors.black)),
-            if (_isOutputCreating)
-              const Padding(
-                padding: EdgeInsets.all(4),
-                child: CupertinoActivityIndicator(),
-              )
-          ]),
-        ));
+        );
+    }
   }
 
   /// Build body view.
