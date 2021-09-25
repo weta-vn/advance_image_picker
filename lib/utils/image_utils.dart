@@ -8,26 +8,26 @@ import 'package:photo_manager/photo_manager.dart';
 
 import '../models/image_object.dart';
 
-/// Image utilities class
+/// Image utilities class.
 class ImageUtils {
   /// Get image properties from image file in [path], such as width, height
   static Future<ImageProperties> getImageProperties(String path) async {
     return FlutterNativeImage.getImageProperties(path);
   }
 
-  /// Compare & resize image file in [path]
-  /// Pass [quality], [maxWidth], [maxHeight] for output image file
+  /// Compare & resize image file in [path].
+  /// Pass [quality], [maxWidth], [maxHeight] for output image file.
   static Future<File> compressResizeImage(String path,
       {int quality = 90, int maxWidth = 1080, int maxHeight = 1920}) async {
     // Get image properties
     final ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
-    // Create output width & height
+    // Create output width & height.
     int outputWidth = properties.width!;
     int outputHeight = properties.height!;
 
-    // Re-calculate max width, max height with orientation info
+    // Re-calculate max width, max height with orientation info.
     int mWidth = maxWidth;
     int mHeight = maxHeight;
     if (properties.orientation == ImageOrientation.rotate90 ||
@@ -36,7 +36,7 @@ class ImageUtils {
       mHeight = maxWidth;
     }
 
-    // Re-calculate output width & height by comparing with original size
+    // Re-calculate output width & height by comparing with original size.
     if (outputWidth > mWidth || outputHeight > mHeight) {
       final ratio = outputWidth / outputHeight;
       outputWidth = min(outputWidth, mWidth);
@@ -46,7 +46,7 @@ class ImageUtils {
         outputWidth = (outputHeight * ratio).toInt();
       }
 
-      // Compress output file
+      // Compress output file.
       final File compressedFile = await FlutterNativeImage.compressImage(path,
           quality: quality,
           targetWidth: outputWidth,
@@ -57,21 +57,21 @@ class ImageUtils {
     return File(path);
   }
 
-  /// Crop image file in [path]
+  /// Crop image file in [path].
   static Future<File> cropImage(String path,
       {int originX = 0,
       int originY = 0,
       required double widthPercent,
       required double heightPercent}) async {
-    // Get image properties
+    // Get image properties.
     final ImageProperties properties =
         await FlutterNativeImage.getImageProperties(path);
 
-    // Get exact image size from properties
+    // Get exact image size from properties.
     final int width = properties.width!;
     final int height = properties.height!;
 
-    // Re-calculate crop params with orientation info
+    // Re-calculate crop params with orientation info.
     double wPercent = widthPercent;
     double hPercent = heightPercent;
     if (properties.orientation == ImageOrientation.rotate90 ||
@@ -80,7 +80,7 @@ class ImageUtils {
       hPercent = widthPercent;
     }
 
-    // Crop image
+    // Crop image.
     int x = originX;
     int y = originY;
     if (properties.orientation == ImageOrientation.rotate270) {
@@ -91,18 +91,18 @@ class ImageUtils {
         path, x, y, (wPercent * width).toInt(), (hPercent * height).toInt());
   }
 
-  /// Get temp file created in temporary directory of device
+  /// Get temp file created in temporary directory of device.
   static Future<File> getTempFile(String filename) async {
     final dir = await getTemporaryDirectory();
     return File('$dir/$filename');
   }
 
-  /// Check [asset] & [image] file is the same asset or not
+  /// Check [asset] & [image] file is the same asset or not.
   static bool isTheSameAsset(AssetEntity asset, ImageObject image) {
     return asset.id == image.assetId;
   }
 
-  /// Get image information of image object [img]
+  /// Get image information of image object [img].
   static Future<ImageObject> getImageInfo(ImageObject img) async {
     // Get image width/height
     if (img.modifiedWidth == null || img.modifiedHeight == null) {

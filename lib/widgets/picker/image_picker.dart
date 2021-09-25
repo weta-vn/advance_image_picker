@@ -20,26 +20,29 @@ import 'media_album.dart';
 /// Picker mode definition: Camera or Album (Photo gallery of device)
 class PickerMode {
   /// Camera picker.
-  // TODO(rydmike): This const property name does not conform to Dart standards
-  //   but fixing it might be a breaking change.
+  // TODO(rydmike): This const property name does not conform to Dart standards,
+  //   but fixing it is a breaking change, thus not changed yet.
   // ignore: constant_identifier_names
   static const int Camera = 0;
 
   /// Album picker.
-  // TODO(rydmike): This const property name does not conform to Dart standards
-  //   but fixing it might be a breaking change.
+  // TODO(rydmike): This const property name does not conform to Dart standards,
+  //   but fixing it is a breaking change, thus not changed yet.
   // ignore: constant_identifier_names
   static const int Album = 1;
 }
 
-/// Default height of bottom control panel
+/// Default height of bottom control panel.
 const int kBottomControlPanelHeight = 265;
 
-/// Image picker for selecting **multiple images** from the Android and iOS
-/// image library, **taking new pictures with the camera**, and **edit** them
-/// before using such as rotation, cropping, adding sticker/filters.
+/// Image picker that can use the camera and/or the device photo library.
+///
+/// It can be used to select **multiple images** from the Android and iOS
+/// image library. It can also **take multiple new pictures with the camera**,
+/// and allow the user to **edit** them before using them. Edits include
+/// rotation, cropping, and adding sticker as well as filters.
 class ImagePicker extends StatefulWidget {
-  /// Constructor for the ImagePicker.
+  /// Default constructor for the photo and media image picker.
   const ImagePicker(
       {final Key? key,
       this.maxCount = 10,
@@ -75,7 +78,7 @@ class _ImagePickerState extends State<ImagePicker>
   /// List of camera detected in device
   List<CameraDescription> _cameras = [];
 
-  /// Default mode for selecting images
+  /// Default mode for selecting images.
   int _mode = PickerMode.Camera;
 
   /// Camera controller
@@ -90,7 +93,7 @@ class _ImagePickerState extends State<ImagePicker>
   /// Selecting images
   List<ImageObject> _selectedImages = [];
 
-  /// Flag indicating current used flashMode
+  /// Flag indicating current used flashMode.
   FlashMode _flashMode = FlashMode.auto;
 
   /// Flag indicating state of camera, which capturing or not.
@@ -225,10 +228,10 @@ class _ImagePickerState extends State<ImagePicker>
   Future<void> _initPhotoCapture() async {
     LogUtils.log("[_initPhotoCapture] start");
 
-    // Listup all cameras in current device
+    // List all cameras in current device.
     _cameras = await availableCameras();
 
-    // Select new camera for capturing
+    // Select new camera for capturing.
     if (_cameras.isNotEmpty) {
       final CameraDescription? newDescription = _getCamera(
           _cameras, _getCameraDirection(_configs.cameraLensDirection));
@@ -238,7 +241,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
-  /// Get camera direction
+  /// Get camera direction.
   CameraLensDirection? _getCameraDirection(int? direction) {
     if (direction == null) {
       return null;
@@ -249,7 +252,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
-  /// Get camera description
+  /// Get camera description.
   CameraDescription? _getCamera(
       List<CameraDescription> cameras, CameraLensDirection? direction) {
     if (direction == null) {
@@ -290,7 +293,7 @@ class _ImagePickerState extends State<ImagePicker>
     try {
       _initializeControllerFuture =
           cameraController.initialize().then((value) async {
-        LogUtils.log("[_onNewCameraSelected] cameraController inited.");
+        LogUtils.log("[_onNewCameraSelected] cameraController initialized.");
 
         // After initialized, setting zoom & exposure values
         await Future.wait([
@@ -507,6 +510,12 @@ class _ImagePickerState extends State<ImagePicker>
             isCameraMode: _mode == PickerMode.Camera));
   }
 
+  // TODO(rydmike): The image picker uses a lot of Widget build functions.
+  //   This may sometimes be inefficient and even an anti-pattern in Flutter.
+  //   It is not always a bad thing though. Still we should review it later
+  //   and see if there are critical ones that it would be better to replace
+  //   with StatelessWidgets or StatefulWidgets.
+
   /// Build done button
   Widget _buildDoneButton(BuildContext context, Color buttonColor) {
     return Padding(
@@ -518,7 +527,7 @@ class _ImagePickerState extends State<ImagePicker>
                     _isOutputCreating = true;
                   });
 
-                  // Compress selected images then return
+                  // Compress selected images then return.
                   for (final f in _selectedImages) {
                     f.modifiedPath =
                         (await _imagePostProcessing(f.modifiedPath)).path;
@@ -553,7 +562,7 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
-  /// Build body view
+  /// Build body view.
   Widget _buildBodyView(BuildContext context) {
     LogUtils.log("[_buildBodyView] start");
 
@@ -592,7 +601,7 @@ class _ImagePickerState extends State<ImagePicker>
     ]);
   }
 
-  /// Build zoom ratio button
+  /// Build zoom ratio button.
   Widget _buildZoomRatioButton(BuildContext context) {
     return TextButton(
         style: TextButton.styleFrom(
@@ -612,7 +621,7 @@ class _ImagePickerState extends State<ImagePicker>
         ));
   }
 
-  /// Build exposure adjusting button
+  /// Build exposure adjusting button.
   Widget _buildExposureButton(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
@@ -626,7 +635,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Exposure change mode button event
+  /// Exposure change mode button event.
   void _onExposureModeButtonPressed() {
     if (_exposureModeControlRowAnimationController.value == 1) {
       _exposureModeControlRowAnimationController.reverse();
@@ -635,7 +644,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
-  /// Build image full option
+  /// Build image full option.
   Widget _buildImageFullOption(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
@@ -658,7 +667,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Build bottom panel
+  /// Build bottom panel.
   Widget _buildBottomPanel(BuildContext context) {
     return Container(
       color: ((_mode == PickerMode.Camera) && _isFullscreenImage)
@@ -682,7 +691,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Build album select button
+  /// Build album select button.
   Widget _buildAlbumSelectButton(BuildContext context,
       {bool isPop = false, bool isCameraMode = false}) {
     if (isCameraMode) {
@@ -727,7 +736,7 @@ class _ImagePickerState extends State<ImagePicker>
         : container;
   }
 
-  /// Build camera preview widget
+  /// Build camera preview widget.
   Widget _buildCameraPreview(BuildContext context) {
     LogUtils.log("[_buildCameraPreview] start");
 
@@ -770,7 +779,7 @@ class _ImagePickerState extends State<ImagePicker>
         });
   }
 
-  /// Tap event on camera preview
+  /// Tap event on camera preview.
   void _onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
     if (_controller == null) {
       return;
@@ -786,14 +795,14 @@ class _ImagePickerState extends State<ImagePicker>
     cameraController.setFocusPoint(offset);
   }
 
-  /// Handle scale start event
+  /// Handle scale start event.
   void _handleScaleStart(ScaleStartDetails details) {
     _baseScale = _currentScale;
   }
 
-  /// Handle scale updated event
+  /// Handle scale updated event.
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
-    // When there are not exactly two fingers on screen don't scale
+    // When there are not exactly two fingers on screen don't scale.
     if (_controller == null || _pointers != 2) {
       return;
     }
@@ -808,7 +817,7 @@ class _ImagePickerState extends State<ImagePicker>
     });
   }
 
-  /// Build album preview widget
+  /// Build album preview widget.
   Widget _buildAlbumPreview(BuildContext context) {
     LogUtils.log("[_buildAlbumPreview] start");
 
@@ -849,7 +858,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Build album thumbnail preview
+  /// Build album thumbnail preview.
   Future<List<Uint8List?>> _buildAlbumThumbnails() async {
     LogUtils.log("[_buildAlbumThumbnails] start");
 
@@ -868,7 +877,7 @@ class _ImagePickerState extends State<ImagePicker>
     return _albumThumbnails;
   }
 
-  /// Build album list screen
+  /// Build album list screen.
   Widget _buildAlbumList(List<AssetPathEntity> albums, BuildContext context,
       Function(AssetPathEntity newValue) callback) {
     LogUtils.log("[_buildAlbumList] start");
@@ -906,7 +915,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Reorder selected image list event
+  /// Reorder selected image list event.
   bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     LogUtils.log("[_reorderSelectedImageList] start");
 
@@ -926,7 +935,7 @@ class _ImagePickerState extends State<ImagePicker>
     });
   }
 
-  /// Build reorderable selected image list
+  /// Build reorderable selected image list.
   Widget _buildReorderableSelectedImageList(BuildContext context) {
     LogUtils.log("[_buildReorderableSelectedImageList] start");
 
@@ -1140,8 +1149,8 @@ class _ImagePickerState extends State<ImagePicker>
                       },
                     )
                   else
-                    // We use a transparent icon with no tap, to ensure
-                    // it takes up same space as when it is there, to ensure
+                    // We use a transparent icon with no tap, to make
+                    // it take up same space as when it is there, to ensure
                     // identical layout as when it is shown.
                     Icon(_flashModeIcon(_flashMode),
                         size: 32, color: Colors.transparent),
@@ -1171,7 +1180,7 @@ class _ImagePickerState extends State<ImagePicker>
 
                             if (!(_controller?.value.isTakingPicture ?? true)) {
                               try {
-                                // Scroll to end of list
+                                // Scroll to end of list.
                                 await _scrollController.animateTo(
                                   ((_selectedImages.length - 1) *
                                           _configs.thumbWidth)
@@ -1180,7 +1189,7 @@ class _ImagePickerState extends State<ImagePicker>
                                   curve: Curves.fastOutSlowIn,
                                 );
 
-                                // Take new picture
+                                // Take new picture.
                                 final file = await _controller!.takePicture();
                                 LogUtils.log(
                                     "[_buildCameraControls] takePicture done");
@@ -1257,7 +1266,7 @@ class _ImagePickerState extends State<ImagePicker>
         : const SizedBox();
   }
 
-  /// Build picker mode list
+  /// Build picker mode list.
   Widget _buildPickerModeList(BuildContext context) {
     if (_configs.albumPickerModeEnabled && _configs.cameraPickerModeEnabled) {
       return CupertinoSlidingSegmentedControl(
@@ -1297,7 +1306,7 @@ class _ImagePickerState extends State<ImagePicker>
     return const SizedBox();
   }
 
-  /// Build exposure mode control widget
+  /// Build exposure mode control widget.
   Widget _exposureModeControlRowWidget() {
     if (_controller?.value == null) return const SizedBox();
 
@@ -1379,14 +1388,14 @@ class _ImagePickerState extends State<ImagePicker>
     );
   }
 
-  /// Set exposure mode button
+  /// Set exposure mode button.
   void _onSetExposureModeButtonPressed(ExposureMode mode) {
     _setExposureMode(mode).then((_) {
       if (mounted) setState(() {});
     });
   }
 
-  /// Set exposure mode button
+  /// Set exposure mode button.
   Future<void> _setExposureMode(ExposureMode mode) async {
     if (_controller == null) {
       return;
@@ -1399,7 +1408,7 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
-  /// Set exposure offset
+  /// Set exposure offset.
   Future<void> _setExposureOffset(double offset) async {
     if (_controller == null) {
       return;

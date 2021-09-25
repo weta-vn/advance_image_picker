@@ -27,19 +27,19 @@ class ImageFilter extends StatefulWidget {
       this.maxHeight = 720})
       : super(key: key);
 
-  /// Input file object
+  /// Input file object.
   final File file;
 
-  /// Title for image edit widget
+  /// Title for image edit widget.
   final String title;
 
-  /// Max width
+  /// Max width.
   final int maxWidth;
 
-  /// Max height
+  /// Max height.
   final int maxHeight;
 
-  /// Configuration
+  /// Configuration.
   final ImagePickerConfigs? configs;
 
   @override
@@ -66,7 +66,6 @@ class _ImageFilterState extends State<ImageFilter>
     if (widget.configs != null) _configs = widget.configs!;
 
     _loading = true;
-    // _filters = _presetFilters();
     _filter = _presetFilters[0];
 
     Future.delayed(const Duration(milliseconds: 500), () async {
@@ -76,7 +75,6 @@ class _ImageFilterState extends State<ImageFilter>
 
   @override
   void dispose() {
-    // _filters.clear();
     _cachedFilters.clear();
     _queuedApplyFilterFuncList.clear();
     super.dispose();

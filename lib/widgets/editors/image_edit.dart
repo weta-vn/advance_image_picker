@@ -13,9 +13,9 @@ import '../../utils/time_utils.dart';
 import '../common/custom_track_shape.dart';
 import '../common/portrait_mode_mixin.dart';
 
-/// Image editing widget, such as cropping, rotating, scaling, ...
+/// Image editing widget, such as cropping, rotating and scaling.
 class ImageEdit extends StatefulWidget {
-  /// Image editing widget, such as cropping, rotating, scaling, ...
+  /// Default constructor for the image editing widget.
   const ImageEdit(
       {final Key? key,
       required this.file,
@@ -28,19 +28,19 @@ class ImageEdit extends StatefulWidget {
   @override
   _ImageEditState createState() => _ImageEditState();
 
-  /// Input file object
+  /// Input file object.
   final File file;
 
-  /// Title for image edit widget
+  /// Title for image edit widget.
   final String title;
 
-  /// Max width
+  /// Max width.
   final int maxWidth;
 
-  /// Max height
+  /// Max height.
   final int maxHeight;
 
-  /// Configuration
+  /// Configuration.
   final ImagePickerConfigs? configs;
 }
 

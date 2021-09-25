@@ -36,7 +36,7 @@ class ImagePickerConfigs {
   }
   ImagePickerConfigs._internal();
 
-  /// Singleton object of config
+  /// Singleton object for holding the image picker configuration settings.
   static final ImagePickerConfigs _singleton = ImagePickerConfigs._internal();
 
   /// UI labels translated function with 2 parameters `name` and `defaultValue`
@@ -62,17 +62,17 @@ class ImagePickerConfigs {
   /// Defaults to 80.
   int thumbWidth = 80;
 
-  /// Thumbnail image height
+  /// Thumbnail image height.
   ///
   /// Defaults to 80.
   int thumbHeight = 80;
 
-  /// Thumbnail image width inside album grid view
+  /// Thumbnail image width inside album grid view.
   ///
   /// Defaults to 200.
   int albumThumbWidth = 200;
 
-  /// Thumbnail image height inside album grid view
+  /// Thumbnail image height inside album grid view.
   ///
   /// Defaults to 200.
   int albumThumbHeight = 200;
@@ -87,12 +87,12 @@ class ImagePickerConfigs {
   /// Defaults to 1920.
   int maxHeight = 1920;
 
-  /// Quality for output
+  /// Quality for output.
   ///
   /// Defaults to 90%.
   int compressQuality = 90;
 
-  /// Resolution setting for camera, such as high, max, medium, low
+  /// Resolution setting for camera, such as high, max, medium, low.
   ///
   /// Defaults to [ResolutionPreset.high].
   ResolutionPreset resolutionPreset = ResolutionPreset.high;
@@ -103,38 +103,38 @@ class ImagePickerConfigs {
   /// Defaults to true.
   bool imagePreProcessingEnabled = true;
 
-  /// Enable this option allow image pre-processing, such as cropping,
-  /// ... after editing
+  /// Enable this option to allow image pre-processing, such as cropping,
+  /// after editing.
   ///
   /// Defaults to true.
   bool imagePreProcessingBeforeEditingEnabled = true;
 
-  /// Show delete button on selected list
+  /// Show delete button on selected list.
   ///
   /// Defaults to true.
   bool showDeleteButtonOnSelectedList = true;
 
-  /// Show confirm alert if exiting with selected image
+  /// Show confirm alert if exiting with selected image.
   ///
   /// Defaults to true.
   bool showNonSelectedAlert = true;
 
-  /// Enable image crop/rotation/scale function
+  /// Enable image crop/rotation/scale function.
   ///
   /// Defaults to true.
   bool cropFeatureEnabled = true;
 
-  /// Enable image filter function
+  /// Enable image filter function.
   ///
   /// Defaults to true.
   bool filterFeatureEnabled = true;
 
-  /// Enable image adjusting function
+  /// Enable image adjusting function.
   ///
   /// Defaults to true.
   bool adjustFeatureEnabled = true;
 
-  /// Enable sticker adding function
+  /// Enable sticker adding function.
   ///
   /// Defaults to true.
   bool stickerFeatureEnabled = true;
@@ -166,9 +166,9 @@ class ImagePickerConfigs {
   /// * off: Do not use the flash when taking a picture.
   /// * auto: Device decide whether to flash the camera when taking a picture.
   /// * always: Always use the flash when taking a picture.
-  /// * torch: In this app treated as using always.
+  /// * torch: In this app treated the same as using always.
   ///
-  /// Default to FlashMode.auto;
+  /// Defaults to [FlashMode.auto].
   FlashMode flashMode = FlashMode.auto;
 
   /// Show the flash mode icon button.
@@ -188,8 +188,6 @@ class ImagePickerConfigs {
   Color backgroundColor = Colors.black;
 
   /// Background color of the bottom section of the camera.
-  ///
-  /// Defaults to black.
   ///
   /// Defaults to [Colors.black].
   Color bottomPanelColor = Colors.black;
@@ -218,7 +216,7 @@ class ImagePickerConfigs {
   /// This results in [appBarBackgroundColor] being used.
   Color? appBarDoneButtonColor;
 
-  /// Allow add custom image editors from external call
+  /// Allow add custom image editors from external call.
   ///
   /// Sample usage:
   ///

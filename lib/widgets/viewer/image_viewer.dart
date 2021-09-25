@@ -18,9 +18,9 @@ import '../editors/image_edit.dart';
 import '../editors/image_filter.dart';
 import '../editors/image_sticker.dart';
 
-/// Image viewer for selected images
+/// Image viewer for selected images.
 class ImageViewer extends StatefulWidget {
-  /// Image viewer for selected images
+  /// Default constructor for image viewer for selected images.
   ImageViewer(
       {final Key? key,
       this.initialIndex = 0,
@@ -31,22 +31,22 @@ class ImageViewer extends StatefulWidget {
       : pageController = PageController(initialPage: initialIndex),
         super(key: key);
 
-  /// Initial index in image list
+  /// Initial index in image list.
   final int initialIndex;
 
-  /// Page controller
+  /// Page controller.
   final PageController pageController;
 
-  /// Title
+  /// Title shown in the image viewers AppBar.
   final String? title;
 
-  /// Selected images
+  /// List of selected images.
   final List<ImageObject>? images;
 
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  /// Changed event
+  /// Callbac called when viewed images are changed.
   final Function(dynamic)? onChanged;
 
   @override
@@ -55,20 +55,20 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer>
     with PortraitStatefulModeMixin<ImageViewer> {
-  /// Current index of image in list
+  /// Current index of image in list.
   int? _currentIndex;
 
-  /// Selected images
+  /// Selected images.
   List<ImageObject> _images = [];
 
-  /// Configuration
+  /// Configuration.
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
 
-    // Add images
+    // Add images.
     _images = [...widget.images!];
     if (widget.configs != null) _configs = widget.configs!;
 
@@ -209,7 +209,7 @@ class _ImageViewerState extends State<ImageViewer>
         .toList();
   }
 
-  /// Pre-processing function
+  /// Pre-processing function.
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled) {
       return ImageUtils.compressResizeImage(path!,
@@ -263,7 +263,7 @@ class _ImageViewerState extends State<ImageViewer>
                         await showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
-                            // return object of type Dialog
+                            // return object of type Dialog.
                             return AlertDialog(
                               title: Text(_configs.textConfirm),
                               content: Text(_configs.textConfirmDelete),
@@ -323,7 +323,7 @@ class _ImageViewerState extends State<ImageViewer>
         ));
   }
 
-  /// Image viewer as gallery for selected image
+  /// Image viewer as gallery for selected image.
   Widget _buildPhotoViewGallery(BuildContext context) {
     return Expanded(
       child: Stack(
@@ -351,7 +351,7 @@ class _ImageViewerState extends State<ImageViewer>
     );
   }
 
-  /// Build an image viewer
+  /// Build an image viewer.
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final item = _images[index];
     return PhotoViewGalleryPageOptions(
@@ -361,7 +361,7 @@ class _ImageViewerState extends State<ImageViewer>
         maxScale: PhotoViewComputedScale.covered * 1.1);
   }
 
-  /// Reorder selected image list
+  /// Reorder selected image list.
   bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex < 0 || newIndex < 0) return false;
     int _newIndex = newIndex;
@@ -376,7 +376,7 @@ class _ImageViewerState extends State<ImageViewer>
     });
   }
 
-  /// Build reorderable selected image list
+  /// Build reorderable selected image list.
   Widget _buildReorderableSelectedImageList(BuildContext context) {
     Widget makeThumbnail(String? path) {
       return ClipRRect(
@@ -431,7 +431,7 @@ class _ImageViewerState extends State<ImageViewer>
         ));
   }
 
-  /// Image viewer for current image
+  /// Image viewer for current image.
   Widget _buildCurrentImageInfoView(BuildContext context) {
     final image = _images[_currentIndex!];
 
@@ -465,7 +465,7 @@ class _ImageViewerState extends State<ImageViewer>
         });
   }
 
-  /// Build editor controls
+  /// Build editor controls.
   Widget _buildEditorControls(
       BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     return Container(
@@ -478,6 +478,7 @@ class _ImageViewerState extends State<ImageViewer>
     );
   }
 
+  /// Build reset button for image editor.
   Widget _buildEditorResetButton(BuildContext context) {
     final imageChanged = _images[_currentIndex!].modifiedPath !=
         _images[_currentIndex!].originalPath;
