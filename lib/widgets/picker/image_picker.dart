@@ -1240,7 +1240,7 @@ class _ImagePickerState extends State<ImagePicker>
                         color: !isMaxCount ? Colors.white : Colors.grey),
                   ),
                   GestureDetector(
-                    onTap: canSwitchCamera
+                    onTap: canSwitchCamera && _configs.showLensDirection
                         ? () async {
                             final lensDirection =
                                 _controller!.description.lensDirection;
@@ -1259,7 +1259,9 @@ class _ImagePickerState extends State<ImagePicker>
                         : null,
                     child: Icon(Icons.switch_camera,
                         size: 32,
-                        color: canSwitchCamera ? Colors.white : Colors.grey),
+                        color: _configs.showLensDirection
+                            ? (canSwitchCamera ? Colors.white : Colors.grey)
+                            : Colors.transparent),
                   )
                 ]),
           )

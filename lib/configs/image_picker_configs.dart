@@ -160,6 +160,18 @@ class ImagePickerConfigs {
   /// * 1: only use back camera
   int? cameraLensDirection;
 
+  /// Show the lens direction toggle icon button.
+  ///
+  /// If you want to show only one camera, you may also want to hide the
+  /// button than enables users switch camera, then set [showLensDirection]
+  /// to false.
+  ///
+  /// If you show just one [cameraLensDirection] and [showLensDirection] is
+  /// true, the the lens direction button is still shown, but disabled.
+  ///
+  /// Defaults to true.
+  bool showLensDirection = true;
+
   /// Set the default flash mode.
   ///
   /// Options:
