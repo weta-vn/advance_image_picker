@@ -36,7 +36,6 @@
     remove photos and images from the list of images to be used, they are 
     just removed immediately. Defaults to true, showing the alert dialog, 
     which is same behavior as in previous version.
-  
    
 * Update all dependencies to their latest versions, most notably image_editor to 
   version 1.0.1 that now uses Android embedding V2.
