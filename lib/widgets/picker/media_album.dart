@@ -10,8 +10,9 @@ import '../../models/image_object.dart';
 import '../../utils/image_utils.dart';
 import '../../utils/log_utils.dart';
 
-/// Photo album widget
+/// MediaAlbum or photo album widget.
 class MediaAlbum extends StatefulWidget {
+  /// Default constructor for photo album widget.
   const MediaAlbum(
       {Key? key,
       this.gridCount = 4,
@@ -26,54 +27,55 @@ class MediaAlbum extends StatefulWidget {
       this.onImageSelected})
       : super(key: key);
 
-  /// Grid count
+  /// Grid count.
   final int gridCount;
 
-  /// Max selecting count
+  /// Max selecting count.
   final int? maxCount;
 
-  /// Max image width
+  /// Max image width.
   final int maxWidth;
 
-  /// Max image height
+  /// Max image height.
   final int maxHeight;
 
-  /// Album thumbnail width
+  /// Album thumbnail width.
   final int albumThumbWidth;
 
-  /// Album thumbnail height
+  /// Album thumbnail height.
   final int albumThumbHeight;
 
-  /// Album object
+  /// Album object.
   final AssetPathEntity album;
 
-  /// Selected image objects
+  /// Selected image objects.
   final List<ImageObject>? selectedImages;
 
-  /// Pre-processing function for image object
+  /// Pre-processing function for image object.
   final Future<File> Function(String)? preProcessing;
 
-  /// Image selected event
+  /// Image selected event.
   final Function(ImageObject)? onImageSelected;
 
   @override
   MediaAlbumState createState() => MediaAlbumState();
 }
 
+/// State holding class of the MediaAlbum.
 class MediaAlbumState extends State<MediaAlbum> {
   /// Current selected images
   List<ImageObject> _selectedImages = [];
 
-  /// Asset lists for this album
+  /// Asset lists for this album.
   List<AssetEntity> _assets = [];
 
-  /// Thumbnail cache
+  /// Thumbnail cache.
   final Map<String, Uint8List?> _thumbnailCache = {};
 
-  /// Loading asset
+  /// Loading asset.
   String _loadingAsset = "";
 
-  /// Album object
+  /// Album object.
   late AssetPathEntity _album;
 
   @override
@@ -91,7 +93,7 @@ class MediaAlbumState extends State<MediaAlbum> {
     super.dispose();
   }
 
-  /// Update private state by function call from external function
+  /// Update private state by function call from external function.
   void updateStateFromExternal(
       {AssetPathEntity? album, List<ImageObject>? selectedImages}) {
     if (selectedImages != null) {
@@ -105,7 +107,7 @@ class MediaAlbumState extends State<MediaAlbum> {
     }
   }
 
-  /// Get thumbnail bytes for an asset
+  /// Get thumbnail bytes for an asset.
   Future<Uint8List?> _getAssetThumbnail(AssetEntity asset) async {
     if (_thumbnailCache.containsKey(asset.id)) {
       return _thumbnailCache[asset.id];
@@ -118,7 +120,7 @@ class MediaAlbumState extends State<MediaAlbum> {
     }
   }
 
-  /// Fetch media/assets for [currentAlbum]
+  /// Fetch media/assets for [currentAlbum].
   Future<void> _fetchMedia(AssetPathEntity currentAlbum) async {
     LogUtils.log("[_fetchMedia] start");
 
@@ -195,7 +197,7 @@ class MediaAlbumState extends State<MediaAlbum> {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
                               return Image.memory(
-                                snapshot.data as Uint8List,
+                                snapshot.data! as Uint8List,
                                 fit: BoxFit.cover,
                               );
                             }

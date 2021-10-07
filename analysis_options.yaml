@@ -310,7 +310,7 @@ linter:
     #   RELEASE:     enabled  : By commenting it out. (My default)
     #   DEVELOPMENT: disabled : With false value, if the warnings bother you during dev or making a console app.
     #
-    avoid_print: false
+    # avoid_print: false
 
     # AVOID redundant argument values.
     #

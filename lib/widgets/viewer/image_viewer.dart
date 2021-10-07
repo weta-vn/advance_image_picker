@@ -18,9 +18,9 @@ import '../editors/image_edit.dart';
 import '../editors/image_filter.dart';
 import '../editors/image_sticker.dart';
 
-/// Image viewer for selected images
+/// Image viewer for selected images.
 class ImageViewer extends StatefulWidget {
-  /// Image viewer for selected images
+  /// Default constructor for image viewer for selected images.
   ImageViewer(
       {final Key? key,
       this.initialIndex = 0,
@@ -31,22 +31,22 @@ class ImageViewer extends StatefulWidget {
       : pageController = PageController(initialPage: initialIndex),
         super(key: key);
 
-  /// Initial index in image list
+  /// Initial index in image list.
   final int initialIndex;
 
-  /// Page controller
+  /// Page controller.
   final PageController pageController;
 
-  /// Title
+  /// Title shown in the image viewers AppBar.
   final String? title;
 
-  /// Selected images
+  /// List of selected images.
   final List<ImageObject>? images;
 
   /// Configuration
   final ImagePickerConfigs? configs;
 
-  /// Changed event
+  /// Callbac called when viewed images are changed.
   final Function(dynamic)? onChanged;
 
   @override
@@ -55,20 +55,20 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer>
     with PortraitStatefulModeMixin<ImageViewer> {
-  /// Current index of image in list
+  /// Current index of image in list.
   int? _currentIndex;
 
-  /// Selected images
+  /// Selected images.
   List<ImageObject> _images = [];
 
-  /// Configuration
+  /// Configuration.
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
   @override
   void initState() {
     super.initState();
 
-    // Add images
+    // Add images.
     _images = [...widget.images!];
     if (widget.configs != null) _configs = widget.configs!;
 
@@ -95,7 +95,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await ImageCropper.cropImage(
+              ImageCropper.cropImage(
                   sourcePath: file.path,
                   compressQuality: compressQuality,
                   maxWidth: maxWidth,
@@ -129,7 +129,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageEdit(
                       file: file,
@@ -150,7 +150,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageFilter(
                       file: file,
@@ -171,7 +171,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              await Navigator.of(context).push(MaterialPageRoute<File>(
+              Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageSticker(
                       file: file,
@@ -209,10 +209,10 @@ class _ImageViewerState extends State<ImageViewer>
         .toList();
   }
 
-  /// Pre-processing function
+  /// Pre-processing function.
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled) {
-      return await ImageUtils.compressResizeImage(path!,
+      return ImageUtils.compressResizeImage(path!,
           maxWidth: _configs.maxWidth,
           maxHeight: _configs.maxHeight,
           quality: _configs.compressQuality);
@@ -263,7 +263,7 @@ class _ImageViewerState extends State<ImageViewer>
                         await showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
-                            // return object of type Dialog
+                            // return object of type Dialog.
                             return AlertDialog(
                               title: Text(_configs.textConfirm),
                               content: Text(_configs.textConfirmDelete),
@@ -323,7 +323,7 @@ class _ImageViewerState extends State<ImageViewer>
         ));
   }
 
-  /// Image viewer as gallery for selected image
+  /// Image viewer as gallery for selected image.
   Widget _buildPhotoViewGallery(BuildContext context) {
     return Expanded(
       child: Stack(
@@ -351,7 +351,7 @@ class _ImageViewerState extends State<ImageViewer>
     );
   }
 
-  /// Build an image viewer
+  /// Build an image viewer.
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
     final item = _images[index];
     return PhotoViewGalleryPageOptions(
@@ -361,31 +361,31 @@ class _ImageViewerState extends State<ImageViewer>
         maxScale: PhotoViewComputedScale.covered * 1.1);
   }
 
-  /// Reorder selected image list
+  /// Reorder selected image list.
   bool? _reorderSelectedImageList(int oldIndex, int newIndex) {
     if (oldIndex < 0 || newIndex < 0) return false;
-
+    int _newIndex = newIndex;
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+      if (_newIndex > oldIndex) {
+        _newIndex -= 1;
       }
       final items = _images.removeAt(oldIndex);
-      _images.insert(newIndex, items);
+      _images.insert(_newIndex, items);
       widget.onChanged?.call(_images);
       return;
     });
   }
 
-  /// Build reorderable selected image list
+  /// Build reorderable selected image list.
   Widget _buildReorderableSelectedImageList(BuildContext context) {
-    final makeThumbnail = (String? path) {
+    Widget makeThumbnail(String? path) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
               fit: BoxFit.cover,
               width: _configs.thumbWidth.toDouble(),
               height: _configs.thumbHeight.toDouble()));
-    };
+    }
 
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -431,7 +431,7 @@ class _ImageViewerState extends State<ImageViewer>
         ));
   }
 
-  /// Image viewer for current image
+  /// Image viewer for current image.
   Widget _buildCurrentImageInfoView(BuildContext context) {
     final image = _images[_currentIndex!];
 
@@ -465,7 +465,7 @@ class _ImageViewerState extends State<ImageViewer>
         });
   }
 
-  /// Build editor controls
+  /// Build editor controls.
   Widget _buildEditorControls(
       BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     return Container(
@@ -478,6 +478,7 @@ class _ImageViewerState extends State<ImageViewer>
     );
   }
 
+  /// Build reset button for image editor.
   Widget _buildEditorResetButton(BuildContext context) {
     final imageChanged = _images[_currentIndex!].modifiedPath !=
         _images[_currentIndex!].originalPath;

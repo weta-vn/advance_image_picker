@@ -14,9 +14,10 @@ import '../../utils/time_utils.dart';
 import '../common/custom_track_shape.dart';
 import '../common/portrait_mode_mixin.dart';
 
-/// Image sticker width allow adding sticker icon into image
+/// Used to add image based sticker icons on library images and photos.
 class ImageSticker extends StatefulWidget {
-  /// Image sticker width allow adding sticker icon into image
+  /// Default constructor for ImageSticker, used to add image based sticker
+  /// icons on library images and photos.
   const ImageSticker(
       {final Key? key,
       required this.file,
@@ -26,19 +27,19 @@ class ImageSticker extends StatefulWidget {
       this.maxHeight = 1920})
       : super(key: key);
 
-  /// Input file object
+  /// Input file object.
   final File file;
 
-  /// Title for image edit widget
+  /// Title for image edit widget.
   final String title;
 
-  /// Max width
+  /// Max width.
   final int maxWidth;
 
-  /// Max height
+  /// Max height.
   final int maxHeight;
 
-  /// Configuration
+  /// Configuration of the image picker.
   final ImagePickerConfigs? configs;
 
   @override
@@ -81,10 +82,9 @@ class _ImageStickerState extends State<ImageSticker>
     super.dispose();
   }
 
-  /// Read image bytes from file
+  /// Read image bytes from file.
   Future<Uint8List?>? _readImage() async {
-    _imageBytes ??= await widget.file.readAsBytes();
-    return _imageBytes;
+    return _imageBytes ??= await widget.file.readAsBytes();
   }
 
   @override
@@ -158,7 +158,7 @@ class _ImageStickerState extends State<ImageSticker>
     );
   }
 
-  /// Done process button
+  /// Done process button.
   Widget _buildDoneButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.done),
@@ -178,6 +178,7 @@ class _ImageStickerState extends State<ImageSticker>
                 // Compress & resize result image
                 file = await ImageUtils.compressResizeImage(targetPath,
                     maxWidth: widget.maxWidth, maxHeight: widget.maxHeight);
+                if (!mounted) return;
                 Navigator.of(context).pop(file);
               }
             }
@@ -185,7 +186,7 @@ class _ImageStickerState extends State<ImageSticker>
     );
   }
 
-  /// Build sticker list panel
+  /// Build sticker list panel.
   Widget _buildStickerList(BuildContext context) {
     return Container(
         color: Colors.black,
@@ -215,7 +216,7 @@ class _ImageStickerState extends State<ImageSticker>
         ));
   }
 
-  /// Build image & stickers stack panel
+  /// Build image & stickers stack panel.
   Widget _buildImageStack(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -262,7 +263,7 @@ class _ImageStickerState extends State<ImageSticker>
     );
   }
 
-  /// Build control to scale selected sticker icon
+  /// Build control to scale selected sticker icon.
   Widget _buildScalingControl(BuildContext context) {
     if (_selectedStickerView == null) return const SizedBox();
 
@@ -290,23 +291,24 @@ class _ImageStickerState extends State<ImageSticker>
     );
   }
 
-  /// Determine which sticker is selecting
+  /// Determine which sticker is selecting.
   StickerView? _getSelectedSticker(PointerEvent event) {
     final result = BoxHitTestResult();
 
     for (final StickerView s in _attachedList) {
-      final RenderBox box =
-          (s.key! as GlobalKey).currentContext?.findRenderObject() as RenderBox;
+      final RenderBox? box = (s.key! as GlobalKey)
+          .currentContext
+          ?.findRenderObject() as RenderBox?;
+      if (box == null) return null;
       final Offset localBox = box.globalToLocal(event.position);
       if (box.hitTest(result, position: localBox)) {
         return s;
       }
     }
-
     return null;
   }
 
-  /// Add new sticker to stack
+  /// Add new sticker to stack.
   void _attachSticker(Image image) {
     setState(() {
       _attachedList.add(StickerView(
@@ -329,10 +331,10 @@ class _ImageStickerState extends State<ImageSticker>
     });
   }
 
-  /// Export image & sticker stack to image bytes
+  /// Export image & sticker stack to image bytes.
   Future<Uint8List?>? _exportWidgetToImage(GlobalKey key) async {
     final RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3);
     final byteData = await image.toByteData(format: ImageByteFormat.png);
     final pngBytes = byteData?.buffer.asUint8List();
@@ -340,9 +342,13 @@ class _ImageStickerState extends State<ImageSticker>
   }
 }
 
-/// Sticker view
+/// Sticker view.
+// TODO(Rydmike): This Widget is not following Flutter recommendations.
+//   That is the reason why we must ignore the lint rule. We should consider
+//   reviewing the mutable usage here, and make an another implementation.
 // ignore: must_be_immutable
 class StickerView extends StatefulWidget {
+  /// Default constructor for the StickerView.
   StickerView(this.image,
       {Key? key,
       required this.width,
@@ -354,16 +360,29 @@ class StickerView extends StatefulWidget {
       this.onTapRemove})
       : super(key: key);
 
+  /// The sticker image.
   final Image image;
+
+  /// Sticker width.
   final double width;
+
+  /// Sticker height.
   final double height;
 
+  /// Sticker top location.
   double top;
+
+  /// Sticker left location.
   double left;
+
+  /// Sticker scale.
   double currentScale;
+
+  /// Sticker has focus.
   bool isFocus;
 
-  final Function? onTapRemove;
+  /// Callback called when the sticker is removed.
+  final Function(StickerView sticker)? onTapRemove;
 
   @override
   _StickerViewState createState() => _StickerViewState();
@@ -375,9 +394,7 @@ class _StickerViewState extends State<StickerView> {
     return GestureDetector(
       onDoubleTap: () {
         setState(() {
-          if (widget.onTapRemove != null) {
-            widget.onTapRemove!(widget);
-          }
+          widget.onTapRemove?.call(widget);
         });
       },
       child: Container(

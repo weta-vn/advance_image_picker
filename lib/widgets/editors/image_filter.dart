@@ -11,11 +11,13 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../../configs/image_picker_configs.dart';
 import '../../utils/image_utils.dart';
+import '../../utils/log_utils.dart';
 import '../../utils/time_utils.dart';
 import '../common/portrait_mode_mixin.dart';
 
-/// Image filter widget
+/// Image filter widget.
 class ImageFilter extends StatefulWidget {
+  /// Default constructor for the image filter widget.
   const ImageFilter(
       {Key? key,
       required this.title,
@@ -25,19 +27,19 @@ class ImageFilter extends StatefulWidget {
       this.maxHeight = 720})
       : super(key: key);
 
-  /// Input file object
+  /// Input file object.
   final File file;
 
-  /// Title for image edit widget
+  /// Title for image edit widget.
   final String title;
 
-  /// Max width
+  /// Max width.
   final int maxWidth;
 
-  /// Max height
+  /// Max height.
   final int maxHeight;
 
-  /// Configuration
+  /// Configuration.
   final ImagePickerConfigs? configs;
 
   @override
@@ -52,9 +54,9 @@ class _ImageFilterState extends State<ImageFilter>
       ListQueue<MapEntry<String, Future<List<int>?> Function()>>();
   int _runningCount = 0;
   late Filter _filter;
-  late List<Filter> _filters;
-  Uint8List? _imageBytes;
-  Uint8List? _thumbnailImageBytes;
+  // late List<Filter> _filters;
+  late Uint8List? _imageBytes;
+  late Uint8List? _thumbnailImageBytes;
   late bool _loading;
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
@@ -64,8 +66,7 @@ class _ImageFilterState extends State<ImageFilter>
     if (widget.configs != null) _configs = widget.configs!;
 
     _loading = true;
-    _filters = _getPresetFilters();
-    _filter = _filters[0];
+    _filter = _presetFilters[0];
 
     Future.delayed(const Duration(milliseconds: 500), () async {
       await _loadImageData();
@@ -74,7 +75,6 @@ class _ImageFilterState extends State<ImageFilter>
 
   @override
   void dispose() {
-    _filters.clear();
     _cachedFilters.clear();
     _queuedApplyFilterFuncList.clear();
     super.dispose();
@@ -97,7 +97,7 @@ class _ImageFilterState extends State<ImageFilter>
     if (_cachedFilters.containsKey(key)) {
       return _cachedFilters[key];
     } else {
-      return await Future.delayed(
+      return Future.delayed(
           const Duration(milliseconds: 500), () => _getFilteredData(key));
     }
   }
@@ -110,7 +110,7 @@ class _ImageFilterState extends State<ImageFilter>
         await Future<void>.delayed(const Duration(milliseconds: 100));
         continue;
       }
-      print("_runningCount: ${_runningCount.toString()}");
+      LogUtils.log("_runningCount: ${_runningCount.toString()}");
 
       final func = _queuedApplyFilterFuncList.removeFirst();
       _runningCount++;
@@ -157,6 +157,7 @@ class _ImageFilterState extends State<ImageFilter>
                   _loading = true;
                 });
                 final imageFile = await saveFilteredImage();
+                if (!mounted) return;
                 Navigator.pop(context, imageFile);
               },
             )
@@ -182,7 +183,7 @@ class _ImageFilterState extends State<ImageFilter>
                     padding: const EdgeInsets.all(12),
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _filters.length,
+                      itemCount: _presetFilters.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           child: Container(
@@ -193,12 +194,13 @@ class _ImageFilterState extends State<ImageFilter>
                                   width: 90,
                                   height: 75,
                                   child: _buildFilteredWidget(
-                                      _filters[index], _thumbnailImageBytes!,
+                                      _presetFilters[index],
+                                      _thumbnailImageBytes!,
                                       isThumbnail: true),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4),
-                                  child: Text(_filters[index].name,
+                                  child: Text(_presetFilters[index].name,
                                       style:
                                           const TextStyle(color: Colors.white)),
                                 )
@@ -206,7 +208,7 @@ class _ImageFilterState extends State<ImageFilter>
                             ),
                           ),
                           onTap: () => setState(() {
-                            _filter = _filters[index];
+                            _filter = _presetFilters[index];
                           }),
                         );
                       },
@@ -236,7 +238,7 @@ class _ImageFilterState extends State<ImageFilter>
     final data = _cachedFilters.containsKey(key) ? _cachedFilters[key] : null;
     final isSelected = filter.name == _filter.name;
 
-    final createWidget = (Uint8List? bytes) {
+    Widget createWidget(Uint8List? bytes) {
       if (isThumbnail) {
         return Container(
           decoration: BoxDecoration(
@@ -255,14 +257,15 @@ class _ImageFilterState extends State<ImageFilter>
           gaplessPlayback: true,
         );
       }
-    };
+    }
 
     if (data == null) {
-      final calcFunc = () async {
-        return await filter.apply(imgBytes);
-      };
+      Future<Uint8List?> calcFunc() async {
+        return filter.apply(imgBytes);
+      }
+
       _queuedApplyFilterFuncList
-          .add(MapEntry<String, Future<List<int>?> Function()>(key, calcFunc));
+          .add(MapEntry<String, Future<Uint8List?> Function()>(key, calcFunc));
       _runApplyFilterProcess();
 
       return FutureBuilder<List<int>?>(
@@ -284,441 +287,446 @@ class _ImageFilterState extends State<ImageFilter>
     }
   }
 
-  List<Filter> _getPresetFilters() {
-    return <Filter>[
-      Filter(name: "no filter"),
-      Filter(name: "lighten", matrix: <double>[
-        1.5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1.5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1.5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "darken", matrix: <double>[
-        .5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        .5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        .5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "gray on light", matrix: <double>[
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "old times", matrix: <double>[
-        1,
-        0,
-        0,
-        0,
-        0,
-        -0.4,
-        1.3,
-        -0.4,
-        .2,
-        -0.1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "sepia", matrix: <double>[
-        0.393,
-        0.769,
-        0.189,
-        0,
-        0,
-        0.349,
-        0.686,
-        0.168,
-        0,
-        0,
-        0.272,
-        0.534,
-        0.131,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "greyscale", matrix: <double>[
-        0.2126,
-        0.7152,
-        0.0722,
-        0,
-        0,
-        0.2126,
-        0.7152,
-        0.0722,
-        0,
-        0,
-        0.2126,
-        0.7152,
-        0.0722,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "vintage", matrix: <double>[
-        0.9,
-        0.5,
-        0.1,
-        0,
-        0,
-        0.3,
-        0.8,
-        0.1,
-        0,
-        0,
-        0.2,
-        0.3,
-        0.5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "filter 1", matrix: <double>[
-        0.4,
-        0.4,
-        -0.3,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1.2,
-        0,
-        0,
-        -1.2,
-        0.6,
-        0.7,
-        1,
-        0
-      ]),
-      Filter(name: "filter 2", matrix: <double>[
-        1,
-        0,
-        0.2,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "filter 3", matrix: <double>[
-        0.8,
-        0.5,
-        0,
-        0,
-        0,
-        0,
-        1.1,
-        0,
-        0,
-        0,
-        0,
-        0.2,
-        1.1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "filter 4", matrix: <double>[
-        1.1,
-        0,
-        0,
-        0,
-        0,
-        0.2,
-        1,
-        -0.4,
-        0,
-        0,
-        -0.1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "filter 5", matrix: <double>[
-        1.2,
-        0.1,
-        0.5,
-        0,
-        0,
-        0.1,
-        1,
-        0.05,
-        0,
-        0,
-        0,
-        0.1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "elim blue", matrix: <double>[
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        -2,
-        1,
-        0
-      ]),
-      Filter(name: "no g red", matrix: <double>[
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "no g magenta", matrix: <double>[
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "lime", matrix: <double>[
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        .5,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "purple", matrix: <double>[
-        1,
-        -0.2,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        -0.1,
-        0,
-        0,
-        1.2,
-        1,
-        .1,
-        0,
-        0,
-        0,
-        1.7,
-        1,
-        0
-      ]),
-      Filter(name: "yellow", matrix: <double>[
-        1,
-        0,
-        0,
-        0,
-        0,
-        -0.2,
-        1,
-        .3,
-        .1,
-        0,
-        -0.1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ]),
-      Filter(name: "cyan", matrix: <double>[
-        1,
-        0,
-        0,
-        1.9,
-        -2.2,
-        0,
-        1,
-        0,
-        0,
-        .3,
-        0,
-        0,
-        1,
-        0,
-        .5,
-        0,
-        0,
-        0,
-        1,
-        .2
-      ]),
-      // Filter(name: "invert", matrix: <double>[-1, 0, 0, 0, 255, 0, -1, 0, 0, 255, 0, 0, -1, 0, 255, 0, 0, 0, 1, 0]),
-    ];
-  }
+  static const List<Filter> _presetFilters = <Filter>[
+    Filter(name: "no filter"),
+    Filter(name: "lighten", matrix: <double>[
+      1.5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "darken", matrix: <double>[
+      .5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      .5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      .5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "gray on light", matrix: <double>[
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "old times", matrix: <double>[
+      1,
+      0,
+      0,
+      0,
+      0,
+      -0.4,
+      1.3,
+      -0.4,
+      .2,
+      -0.1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "sepia", matrix: <double>[
+      0.393,
+      0.769,
+      0.189,
+      0,
+      0,
+      0.349,
+      0.686,
+      0.168,
+      0,
+      0,
+      0.272,
+      0.534,
+      0.131,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "greyscale", matrix: <double>[
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "vintage", matrix: <double>[
+      0.9,
+      0.5,
+      0.1,
+      0,
+      0,
+      0.3,
+      0.8,
+      0.1,
+      0,
+      0,
+      0.2,
+      0.3,
+      0.5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "filter 1", matrix: <double>[
+      0.4,
+      0.4,
+      -0.3,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1.2,
+      0,
+      0,
+      -1.2,
+      0.6,
+      0.7,
+      1,
+      0
+    ]),
+    Filter(name: "filter 2", matrix: <double>[
+      1,
+      0,
+      0.2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "filter 3", matrix: <double>[
+      0.8,
+      0.5,
+      0,
+      0,
+      0,
+      0,
+      1.1,
+      0,
+      0,
+      0,
+      0,
+      0.2,
+      1.1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "filter 4", matrix: <double>[
+      1.1,
+      0,
+      0,
+      0,
+      0,
+      0.2,
+      1,
+      -0.4,
+      0,
+      0,
+      -0.1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "filter 5", matrix: <double>[
+      1.2,
+      0.1,
+      0.5,
+      0,
+      0,
+      0.1,
+      1,
+      0.05,
+      0,
+      0,
+      0,
+      0.1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "elim blue", matrix: <double>[
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      -2,
+      1,
+      0
+    ]),
+    Filter(name: "no g red", matrix: <double>[
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "no g magenta", matrix: <double>[
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "lime", matrix: <double>[
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      .5,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "purple", matrix: <double>[
+      1,
+      -0.2,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      -0.1,
+      0,
+      0,
+      1.2,
+      1,
+      .1,
+      0,
+      0,
+      0,
+      1.7,
+      1,
+      0
+    ]),
+    Filter(name: "yellow", matrix: <double>[
+      1,
+      0,
+      0,
+      0,
+      0,
+      -0.2,
+      1,
+      .3,
+      .1,
+      0,
+      -0.1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ]),
+    Filter(name: "cyan", matrix: <double>[
+      1,
+      0,
+      0,
+      1.9,
+      -2.2,
+      0,
+      1,
+      0,
+      0,
+      .3,
+      0,
+      0,
+      1,
+      0,
+      .5,
+      0,
+      0,
+      0,
+      1,
+      .2
+    ]),
+    // Filter(name: "invert", matrix: <double>[-1, 0, 0, 0,
+    // 255, 0, -1, 0, 0, 255, 0, 0, -1, 0, 255, 0, 0, 0, 1, 0]),
+  ];
 }
 
+/// Hold the name of an image filter and its Filter Matrix values.
 class Filter extends Object {
-  Filter({required this.name, this.matrix = defaultColorMatrix});
+  /// Default constructor for Filter.
+  const Filter({required this.name, this.matrix = defaultColorMatrix});
+
+  /// Name of the filter.
   final String name;
+
+  /// Image filter matrix values.
   final List<double> matrix;
 
+  /// Apply this filter to the image.
   Future<Uint8List?> apply(Uint8List pixels) async {
     final ImageEditorOption option = ImageEditorOption();
     option.addOption(ColorOption(matrix: matrix));
-    return await ImageEditor.editImage(
-        image: pixels, imageEditorOption: option);
+    return ImageEditor.editImage(image: pixels, imageEditorOption: option);
   }
 }

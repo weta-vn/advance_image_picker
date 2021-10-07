@@ -8,18 +8,18 @@ class ImageObject {
       this.modifiedWidth,
       this.modifiedHeight});
 
-  /// Original image path (input image path)
+  /// Original image path (input image path).
   String originalPath;
 
-  /// Modified image path (output image path)
+  /// Modified image path (output image path).
   String modifiedPath;
 
-  /// Output image width
+  /// Output image width.
   int? modifiedWidth;
 
-  /// Output image height
+  /// Output image height.
   int? modifiedHeight;
 
-  /// Asset id
+  /// Asset id.
   String? assetId;
 }

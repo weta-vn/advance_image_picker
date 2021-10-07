@@ -13,9 +13,9 @@ import '../../utils/time_utils.dart';
 import '../common/custom_track_shape.dart';
 import '../common/portrait_mode_mixin.dart';
 
-/// Image editing widget, such as cropping, rotating, scaling, ...
+/// Image editing widget, such as cropping, rotating and scaling.
 class ImageEdit extends StatefulWidget {
-  /// Image editing widget, such as cropping, rotating, scaling, ...
+  /// Default constructor for the image editing widget.
   const ImageEdit(
       {final Key? key,
       required this.file,
@@ -28,19 +28,19 @@ class ImageEdit extends StatefulWidget {
   @override
   _ImageEditState createState() => _ImageEditState();
 
-  /// Input file object
+  /// Input file object.
   final File file;
 
-  /// Title for image edit widget
+  /// Title for image edit widget.
   final String title;
 
-  /// Max width
+  /// Max width.
   final int maxWidth;
 
-  /// Max height
+  /// Max height.
   final int maxHeight;
 
-  /// Configuration
+  /// Configuration.
   final ImagePickerConfigs? configs;
 }
 
@@ -74,8 +74,7 @@ class _ImageEditState extends State<ImageEdit>
 
   Future<Uint8List?>? _readImage() async {
     _orgImageBytes ??= await widget.file.readAsBytes();
-    _imageBytes ??= Uint8List.fromList(_orgImageBytes!);
-    return _imageBytes;
+    return _imageBytes ??= Uint8List.fromList(_orgImageBytes!);
   }
 
   @override
@@ -178,27 +177,29 @@ class _ImageEditState extends State<ImageEdit>
             "${TimeUtils.getTimeString(DateTime.now())}.jpg";
         final File file = File(targetPath);
         await file.writeAsBytes(_imageBytes!);
+        if (!mounted) return;
         Navigator.of(context).pop(file);
       },
     );
   }
 
   Widget _buildImageViewer(BuildContext context) {
-    final view = () => Container(
-        padding: const EdgeInsets.all(12),
-        color: Colors.black,
-        child: Image.memory(
-          _imageBytes!,
-          fit: BoxFit.contain,
-          gaplessPlayback: true,
-        ));
+    Widget imageView() => Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.black,
+          child: Image.memory(
+            _imageBytes!,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+          ),
+        );
 
     if (_imageBytes == null) {
       return FutureBuilder(
           future: _readImage(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return view();
+              return imageView();
             } else {
               return const Center(
                 child: CupertinoActivityIndicator(),
@@ -206,7 +207,7 @@ class _ImageEditState extends State<ImageEdit>
             }
           });
     } else {
-      return view();
+      return imageView();
     }
   }
 
@@ -254,7 +255,7 @@ class _ImageEditState extends State<ImageEdit>
     option.addOption(ColorOption.brightness(_calColorOptionValue(brightness)));
     option.addOption(ColorOption.contrast(_calColorOptionValue(contrast)));
     option.addOption(ColorOption.saturation(_calColorOptionValue(saturation)));
-    return await ImageEditor.editImage(
+    return ImageEditor.editImage(
         image: _orgImageBytes!, imageEditorOption: option);
   }
 

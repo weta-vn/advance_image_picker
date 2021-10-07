@@ -5,6 +5,27 @@ import 'package:flutter/material.dart';
 
 import '../widgets/editors/editor_params.dart';
 
+export 'package:camera/camera.dart' show FlashMode;
+
+/// Enum used to define the type of used done button by the image picker.
+enum DoneButtonStyle {
+  /// Use an [OutlinedButton].
+  outlinedButton,
+
+  /// Use an [IconButton].
+  iconButton,
+}
+
+/// Enum used to define the type of of behavior the done button has when
+/// no images have been selected that will be returned.
+enum DoneButtonDisabledBehavior {
+  /// Done button is disabled
+  disabled,
+
+  /// Done button is hidden and not shown at all.
+  hidden,
+}
+
 /// Global configuration for flutter app using advance_image_picker plugin
 /// Call once inside application before using image picker functions
 ///
@@ -16,16 +37,29 @@ import '../widgets/editors/editor_params.dart';
 /// configs.translateFunc = (name, value) => Intl.message(value, name: name);
 /// ```
 class ImagePickerConfigs {
+  /// The default constructor is a factory that returns the configuration
+  /// singleton of the picker configuration.
+  ///
+  /// Global configuration for flutter app using advance_image_picker plugin
+  /// Call once inside application before using image picker functions
+  ///
+  /// Sample usage
+  /// Calling in build function of app widget at main.dart
+  /// ```dart
+  /// var configs = ImagePickerConfigs();
+  /// configs.appBarTextColor = Colors.black;
+  /// configs.translateFunc = (name, value) => Intl.message(value, name: name);
+  /// ```
   factory ImagePickerConfigs() {
     return _singleton;
   }
   ImagePickerConfigs._internal();
 
-  /// Singleton object of config
+  /// Singleton object for holding the image picker configuration settings.
   static final ImagePickerConfigs _singleton = ImagePickerConfigs._internal();
 
-  /// UI labels translated function with 2 parameters [name] and [defaultValue]
-  /// Declare [name] for what label needs to be translated in localization file,
+  /// UI labels translated function with 2 parameters `name` and `defaultValue`
+  /// Declare `name` for what label needs to be translated in localization file,
   /// such as image_picker_select_images_title. Confirm "UI label strings
   /// (for localization)" section below for understanding usage.
   ///
@@ -47,17 +81,17 @@ class ImagePickerConfigs {
   /// Defaults to 80.
   int thumbWidth = 80;
 
-  /// Thumbnail image height
+  /// Thumbnail image height.
   ///
   /// Defaults to 80.
   int thumbHeight = 80;
 
-  /// Thumbnail image width inside album grid view
+  /// Thumbnail image width inside album grid view.
   ///
   /// Defaults to 200.
   int albumThumbWidth = 200;
 
-  /// Thumbnail image height inside album grid view
+  /// Thumbnail image height inside album grid view.
   ///
   /// Defaults to 200.
   int albumThumbHeight = 200;
@@ -72,12 +106,12 @@ class ImagePickerConfigs {
   /// Defaults to 1920.
   int maxHeight = 1920;
 
-  /// Quality for output
+  /// Quality for output.
   ///
   /// Defaults to 90%.
   int compressQuality = 90;
 
-  /// Resolution setting for camera, such as high, max, medium, low
+  /// Resolution setting for camera, such as high, max, medium, low.
   ///
   /// Defaults to [ResolutionPreset.high].
   ResolutionPreset resolutionPreset = ResolutionPreset.high;
@@ -88,38 +122,43 @@ class ImagePickerConfigs {
   /// Defaults to true.
   bool imagePreProcessingEnabled = true;
 
-  /// Enable this option allow image pre-processing, such as cropping,
-  /// ... after editing
+  /// Enable this option to allow image pre-processing, such as cropping,
+  /// after editing.
   ///
   /// Defaults to true.
   bool imagePreProcessingBeforeEditingEnabled = true;
 
-  /// Show delete button on selected list
+  /// Show delete button on selected list.
   ///
   /// Defaults to true.
   bool showDeleteButtonOnSelectedList = true;
 
-  /// Show confirm alert if exiting with selected image
+  /// Show confirm alert if removing an already selected image.
+  ///
+  /// Defaults to true.
+  bool showRemoveImageAlert = true;
+
+  /// Show confirm alert if exiting with selected image.
   ///
   /// Defaults to true.
   bool showNonSelectedAlert = true;
 
-  /// Enable image crop/rotation/scale function
+  /// Enable image crop/rotation/scale function.
   ///
   /// Defaults to true.
   bool cropFeatureEnabled = true;
 
-  /// Enable image filter function
+  /// Enable image filter function.
   ///
   /// Defaults to true.
   bool filterFeatureEnabled = true;
 
-  /// Enable image adjusting function
+  /// Enable image adjusting function.
   ///
   /// Defaults to true.
   bool adjustFeatureEnabled = true;
 
-  /// Enable sticker adding function
+  /// Enable sticker adding function.
   ///
   /// Defaults to true.
   bool stickerFeatureEnabled = true;
@@ -145,6 +184,38 @@ class ImagePickerConfigs {
   /// * 1: only use back camera
   int? cameraLensDirection;
 
+  /// Show the lens direction toggle icon button.
+  ///
+  /// If you want to show only one camera, you may also want to hide the
+  /// button than enables users switch camera, then set [showLensDirection]
+  /// to false.
+  ///
+  /// If you show just one [cameraLensDirection] and [showLensDirection] is
+  /// true, then the lens direction button is still shown, but disabled.
+  ///
+  /// Defaults to true.
+  bool showLensDirection = true;
+
+  /// Set the default flash mode.
+  ///
+  /// Options:
+  /// * off: Do not use the flash when taking a picture.
+  /// * auto: Device decide whether to flash the camera when taking a picture.
+  /// * always: Always use the flash when taking a picture.
+  /// * torch: In this app treated the same as using always.
+  ///
+  /// Defaults to [FlashMode.auto].
+  FlashMode flashMode = FlashMode.auto;
+
+  /// Show the flash mode icon button.
+  ///
+  /// If you want to set the FlashMode to a certain mode, typically
+  /// [FlashMode.off], and also hide the button than enables users to
+  /// change it, then set [showFlashMode] to false.
+  ///
+  /// Defaults to true.
+  bool showFlashMode = true;
+
   // UI style settings.
 
   /// Background color of the camera and image picker.
@@ -153,8 +224,6 @@ class ImagePickerConfigs {
   Color backgroundColor = Colors.black;
 
   /// Background color of the bottom section of the camera.
-  ///
-  /// Defaults to black.
   ///
   /// Defaults to [Colors.black].
   Color bottomPanelColor = Colors.black;
@@ -177,13 +246,38 @@ class ImagePickerConfigs {
   /// This results in an AppBar text color that follows current theme.
   Color? appBarTextColor;
 
-  /// The background color of the images selection completed button.
+  /// The background color of the image selection completed button.
+  ///
+  /// This color only applies to the [doneButtonStyle] of style
+  /// [DoneButtonStyle.outlinedButton].
   ///
   /// Defaults to null.
   /// This results in [appBarBackgroundColor] being used.
   Color? appBarDoneButtonColor;
 
-  /// Allow add custom image editors from external call
+  /// The type of button used on the image picker to select images and close
+  /// the image picker.
+  ///
+  /// The default is [DoneButtonStyle.outlinedButton].
+  ///
+  /// The alternate style [DoneButtonStyle.iconButton] uses an [IconButton] that
+  /// is typically used in [AppBar] actions.
+  DoneButtonStyle doneButtonStyle = DoneButtonStyle.outlinedButton;
+
+  /// IconData used by the done button when [doneButtonStyle] is
+  /// [DoneButtonStyle.iconButton].
+  ///
+  /// Defaults to Icon.check.
+  IconData doneButtonIcon = Icons.check;
+
+  /// Used to define the type of of behavior the done button has when
+  /// no images have been selected that will be returned.
+  ///
+  /// Defaults to [DoneButtonDisabledBehavior.disabled].
+  DoneButtonDisabledBehavior doneButtonDisabledBehavior =
+      DoneButtonDisabledBehavior.disabled;
+
+  /// Allow add custom image editors from external call.
   ///
   /// Sample usage:
   ///
@@ -195,9 +289,11 @@ class ImagePickerConfigs {
   ///       required String title,
   ///       int maxWidth = 1080,
   ///       int maxHeight = 1920,
-  ///       ImagePickerConfigs? configs}) async => await Navigator.of(context).push(MaterialPageRoute<File>(
+  ///       ImagePickerConfigs? configs}) async => await
+  ///         Navigator.of(context).push(MaterialPageRoute<File>(
   ///       fullscreenDialog: true,
-  ///       builder: (context) => ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
+  ///       builder: (context) => ImageEdit(file: file, title: title,
+  ///         maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs)))
   Map<String, EditorParams> externalImageEditors = {};
 
   // UI label strings (for localization)
@@ -333,7 +429,8 @@ class ImagePickerConfigs {
   /// click to remove it from image".
   String get textImageStickerGuide => getTranslatedString(
       "image_picker_image_sticker_guide",
-      "You can click on sticker icons to scale it or double click to remove it from image");
+      "You can click on sticker icons to scale it or double click to "
+          "remove it from image");
 
   /// Get localized text for label "image_picker_exposure_title".
   ///

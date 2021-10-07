@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Used to define the custom shape for Sliders.
 class CustomTrackShape extends RoundedRectSliderTrackShape {
   @override
   Rect getPreferredRect({

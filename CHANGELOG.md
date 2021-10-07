@@ -1,6 +1,50 @@
+## [0.1.4]
+
+* **New `ImagePickerConfigs` features:**
+  * Camera flash mode `flashMode`, the starting flash mode for the camera
+    can be set to other values than `FlashMode.auto`. The default is 
+    `FlashMode.auto` as in previous version where it could not be modified. 
+  * Option to remove the flash mode toggle button. If you do not want to
+    allow users to change the flash mode, you can set `showFlashMode` to false.
+    It defaults to true. If `showFlashMode` is false, the flash mode will use
+    what is set by `flashMode`, since user cannot toggle it.
+  * Config option to show and hide the lens direction icon button.
+    If you want to show only one camera, you may also want to hide the
+    button than enables users switch camera. You can then set 
+    `showLensDirection` to false. If you show just one `cameraLensDirection` and 
+    `showLensDirection` is true, then the lens direction button is still 
+    shown, but disabled as in previous versions.
+  * Only add the text line for `textSelectedImagesGuide` if it is not empty.
+    If no drag reorder guidance label is specified in translation by returning
+    empty string '' for `textSelectedImagesGuide`, then the extra line that 
+    holds the text will also be removed, resulting in more camera view space.
+  * For label `textSelectedImagesTitle` only show it, the colon and space 
+    after it, if it is not empty. If you return a translated string that is 
+    empty '', you can get only the selected "image / max" count shown, with no
+    label and colon.
+  * Use an `IconButton` as done button, instead of the default `OutlinedButton`.
+    Set `doneButtonStyle` to `[DoneButtonStyle.iconButton]` for this option.
+    Defaults to `DoneButtonStyle.outlinedButton`, that is the same as only 
+    option in previous versions. You can also change the button icon by
+    defining custom IconData for the `doneButtonIcon`.
+  * Hide done action button when no images have been selected. This is optional
+    new behavior that can be used instead of default, that disables it.
+    Select the style with `doneButtonDisabledBehavior`.
+  * Optional alert when removing selected images. If you set 
+    `showRemoveImageAlert` to false, there is no alert dialog to confirm the 
+    remove/delete of an image, when user clicks on the delete icon to 
+    remove photos and images from the list of images to be used, they are 
+    just removed immediately. Defaults to true, showing the alert dialog, 
+    which is same behavior as in previous version.
+  
+   
+* Update all dependencies to their latest versions, most notably image_editor to 
+  version 1.0.1 that now uses Android embedding V2.
+* Clean up remaining lint warnings. 
+
 ## [0.1.3]
 
-* Improve code lintings
+* Improve code lintings.
 
 ## [0.1.2]
 
