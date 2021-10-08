@@ -48,12 +48,8 @@ class MyApp extends StatelessWidget {
                 ImagePickerConfigs? configs}) async =>
             Navigator.of(context).push(MaterialPageRoute<File>(
                 fullscreenDialog: true,
-                builder: (context) => ImageEdit(
-                    file: file,
-                    title: title,
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    configs: configs))));
+                builder: (context) =>
+                    ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs))));
     configs.externalImageEditors['external_image_editor_2'] = EditorParams(
         title: 'external_image_editor_2',
         icon: Icons.edit_attributes,
@@ -68,11 +64,21 @@ class MyApp extends StatelessWidget {
             Navigator.of(context).push(MaterialPageRoute<File>(
                 fullscreenDialog: true,
                 builder: (context) => ImageSticker(
-                    file: file,
-                    title: title,
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    configs: configs))));
+                    file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs))));
+    configs.labelDetectFunc = (String path, {double? threshold = 0.7, int? maxResultCount = 5}) async {
+      return <DetectObject>[
+        DetectObject(label: 'dummy1', confidence: 0.75),
+        DetectObject(label: 'dummy2', confidence: 0.75),
+        DetectObject(label: 'dummy3', confidence: 0.75)
+      ];
+    };
+    configs.ocrDetectFunc = (String path, {bool? isCloudService = false}) async {
+      if (isCloudService!) {
+        return 'Cloud dummy ocr text';
+      } else {
+        return 'Dummy ocr text';
+      }
+    };
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -127,8 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   final image = _imgObjs[index];
                   return Padding(
                     padding: const EdgeInsets.all(2),
-                    child: Image.file(File(image.modifiedPath),
-                        height: 80, fit: BoxFit.cover),
+                    child: Image.file(File(image.modifiedPath), height: 80, fit: BoxFit.cover),
                   );
                 })
           ],
@@ -137,8 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          final List<ImageObject>? objects = await Navigator.of(context)
-              .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
+          final List<ImageObject>? objects =
+              await Navigator.of(context).push(PageRouteBuilder(pageBuilder: (context, animation, __) {
             return const ImagePicker(maxCount: 5);
           }));
 

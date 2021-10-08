@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:advance_image_picker/models/image_object.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -175,6 +176,18 @@ class ImagePickerConfigs {
   /// Defaults to true.
   bool albumPickerModeEnabled = true;
 
+  /// Detect labels from image function
+  Future<List<DetectObject>> Function(String path, {double? threshold, int? maxResultCount})? labelDetectFunc;
+
+  /// Max count for label detection
+  int labelDetectMaxCount = 5;
+
+  /// Threshold for label detection
+  double labelDetectThreshold = 0.7;
+
+  /// Detect OCR from image function
+  Future<String> Function(String path, {bool? isCloudService})? ocrDetectFunc;
+
   /// Camera direction setting.
   ///
   /// Options:
@@ -274,8 +287,7 @@ class ImagePickerConfigs {
   /// no images have been selected that will be returned.
   ///
   /// Defaults to [DoneButtonDisabledBehavior.disabled].
-  DoneButtonDisabledBehavior doneButtonDisabledBehavior =
-      DoneButtonDisabledBehavior.disabled;
+  DoneButtonDisabledBehavior doneButtonDisabledBehavior = DoneButtonDisabledBehavior.disabled;
 
   /// Allow add custom image editors from external call.
   ///
@@ -301,59 +313,52 @@ class ImagePickerConfigs {
   /// Get localized text for label "image_picker_select_images_title".
   ///
   /// Defaults to "Selected images count".
-  String get textSelectedImagesTitle => getTranslatedString(
-      "image_picker_select_images_title", "Selected images count");
+  String get textSelectedImagesTitle =>
+      getTranslatedString("image_picker_select_images_title", "Selected images count");
 
   /// Get localized text for label "image_picker_select_images_guide".
   ///
   /// Defaults to "You can drag images for sorting list...".
-  String get textSelectedImagesGuide => getTranslatedString(
-      "image_picker_select_images_guide",
-      "You can drag images for sorting list...");
+  String get textSelectedImagesGuide =>
+      getTranslatedString("image_picker_select_images_guide", "You can drag images for sorting list...");
 
   /// Get localized text for label "image_picker_camera_title".
   ///
   /// Defaults to "Camera".
-  String get textCameraTitle =>
-      getTranslatedString("image_picker_camera_title", "Camera");
+  String get textCameraTitle => getTranslatedString("image_picker_camera_title", "Camera");
 
   /// Get localized text for label "image_picker_album_title".
   ///
   /// Defaults to "Album".
-  String get textAlbumTitle =>
-      getTranslatedString("image_picker_album_title", "Album");
+  String get textAlbumTitle => getTranslatedString("image_picker_album_title", "Album");
 
   /// Get localized text for label "image_picker_preview_title".
   ///
   /// Defaults to "Preview".
-  String get textPreviewTitle =>
-      getTranslatedString("image_picker_preview_title", "Preview");
+  String get textPreviewTitle => getTranslatedString("image_picker_preview_title", "Preview");
 
   /// Get localized text for label "image_picker_confirm".
   ///
   /// Defaults to "Confirm".
-  String get textConfirm =>
-      getTranslatedString("image_picker_confirm", "Confirm");
+  String get textConfirm => getTranslatedString("image_picker_confirm", "Confirm");
 
   /// Get localized text for label "image_picker_exit_without_selecting".
   ///
   /// Defaults to "Do you want to exit without selecting images?".
-  String get textConfirmExitWithoutSelectingImages => translateFunc(
-      "image_picker_exit_without_selecting",
-      "Do you want to exit without selecting images?");
+  String get textConfirmExitWithoutSelectingImages =>
+      translateFunc("image_picker_exit_without_selecting", "Do you want to exit without selecting images?");
 
   /// Get localized text for label "image_picker_confirm_delete".
   ///
   /// Defaults to "Do you want to delete this image?".
-  String get textConfirmDelete => getTranslatedString(
-      "image_picker_confirm_delete", "Do you want to delete this image?");
+  String get textConfirmDelete =>
+      getTranslatedString("image_picker_confirm_delete", "Do you want to delete this image?");
 
   /// Get localized text for label "image_picker_confirm_reset_changes".
   ///
   /// Defaults to "Do you want to clear all changes for this image?".
-  String get textConfirmResetChanges => getTranslatedString(
-      "image_picker_confirm_reset_changes",
-      "Do you want to clear all changes for this image?");
+  String get textConfirmResetChanges =>
+      getTranslatedString("image_picker_confirm_reset_changes", "Do you want to clear all changes for this image?");
 
   /// Get localized text for label "yes".
   ///
@@ -378,50 +383,42 @@ class ImagePickerConfigs {
   /// Get localized text for label "image_picker_edit_text".
   ///
   /// Defaults to "Edit text".
-  String get textEditText =>
-      getTranslatedString("image_picker_edit_text", "Edit text");
+  String get textEditText => getTranslatedString("image_picker_edit_text", "Edit text");
 
   /// Get localized text for label "image_picker_no_images".
   ///
   /// Defaults to "No images ...".
-  String get textNoImages =>
-      getTranslatedString("image_picker_no_images", "No images ...");
+  String get textNoImages => getTranslatedString("image_picker_no_images", "No images ...");
 
   /// Get localized text for label "image_picker_image_crop_title".
   ///
   /// Defaults to "Image crop".
-  String get textImageCropTitle =>
-      getTranslatedString("image_picker_image_crop_title", "Image crop");
+  String get textImageCropTitle => getTranslatedString("image_picker_image_crop_title", "Image crop");
 
   /// Get localized text for label "image_picker_image_filter_title".
   ///
   /// Defaults to "Image filter".
-  String get textImageFilterTitle =>
-      getTranslatedString("image_picker_image_filter_title", "Image filter");
+  String get textImageFilterTitle => getTranslatedString("image_picker_image_filter_title", "Image filter");
 
   /// Get localized text for label "image_picker_image_edit_title".
   ///
   /// Defaults to "Image edit".
-  String get textImageEditTitle =>
-      getTranslatedString("image_picker_image_edit_title", "Image edit");
+  String get textImageEditTitle => getTranslatedString("image_picker_image_edit_title", "Image edit");
 
   /// Get localized text for label "image_picker_image_sticker_title".
   ///
   /// Defaults to "Image sticker".
-  String get textImageStickerTitle =>
-      getTranslatedString("image_picker_image_sticker_title", "Image sticker");
+  String get textImageStickerTitle => getTranslatedString("image_picker_image_sticker_title", "Image sticker");
 
   /// Get localized text for label "image_picker_image_addtext_title".
   ///
   /// Defaults to "Image add text".
-  String get textImageAddTextTitle =>
-      getTranslatedString("image_picker_image_addtext_title", "Image add text");
+  String get textImageAddTextTitle => getTranslatedString("image_picker_image_addtext_title", "Image add text");
 
   /// Get localized text for label "image_picker_select_button_title".
   ///
   /// Defaults to "Select".
-  String get textSelectButtonTitle =>
-      getTranslatedString("image_picker_select_button_title", "Select");
+  String get textSelectButtonTitle => getTranslatedString("image_picker_select_button_title", "Select");
 
   /// Get localized text for label "image_picker_image_sticker_guide".
   ///
@@ -435,38 +432,32 @@ class ImagePickerConfigs {
   /// Get localized text for label "image_picker_exposure_title".
   ///
   /// Defaults to "Exposure".
-  String get textExposure =>
-      getTranslatedString("image_picker_exposure_title", "Exposure");
+  String get textExposure => getTranslatedString("image_picker_exposure_title", "Exposure");
 
   /// Get localized text for label "image_picker_exposure_locked_title".
   ///
   /// Defaults to "Locked".
-  String get textExposureLocked =>
-      getTranslatedString("image_picker_exposure_locked_title", "Locked");
+  String get textExposureLocked => getTranslatedString("image_picker_exposure_locked_title", "Locked");
 
   /// Get localized text for label "image_picker_exposure_auto_title".
   ///
   /// Defaults to "auto".
-  String get textExposureAuto =>
-      getTranslatedString("image_picker_exposure_auto_title", "auto");
+  String get textExposureAuto => getTranslatedString("image_picker_exposure_auto_title", "auto");
 
   /// Get localized text for label "image_picker_image_edit_contrast".
   ///
   /// Defaults to "contrast".
-  String get textContrast =>
-      getTranslatedString("image_picker_image_edit_contrast", "contrast");
+  String get textContrast => getTranslatedString("image_picker_image_edit_contrast", "contrast");
 
   /// Get localized text for label "image_picker_image_edit_brightness".
   ///
   /// Defaults to "brightness".
-  String get textBrightness =>
-      getTranslatedString("image_picker_image_edit_brightness", "brightness");
+  String get textBrightness => getTranslatedString("image_picker_image_edit_brightness", "brightness");
 
   /// Get localized text for label "image_picker_image_edit_saturation".
   ///
   /// Defaults to "saturation".
-  String get textSaturation =>
-      getTranslatedString("image_picker_image_edit_saturation", "saturation");
+  String get textSaturation => getTranslatedString("image_picker_image_edit_saturation", "saturation");
 
   /// Translate string by translateFunc.
   String getTranslatedString(String name, String defaultValue) {
