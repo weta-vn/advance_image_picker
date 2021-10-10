@@ -517,7 +517,19 @@ class _ImagePickerState extends State<ImagePicker>
     });
     // Compress selected images then return.
     for (final f in _selectedImages) {
+      // Run image post processing
       f.modifiedPath = (await _imagePostProcessing(f.modifiedPath)).path;
+
+      // Run label detector
+      if (_configs.labelDetectFunc != null && f.recognitions == null) {
+        f.recognitions = await _configs.labelDetectFunc!(f.modifiedPath);
+        if (f.recognitions?.isNotEmpty ?? false) {
+          f.label = f.recognitions!.first.label;
+        } else {
+          f.label = "";
+        }
+        LogUtils.log("f.recognitions: ${f.recognitions}");
+      }
     }
     _isImageSelectedDone = true;
     if (!mounted) return;

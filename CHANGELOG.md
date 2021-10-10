@@ -1,3 +1,8 @@
+## [0.1.5]
+
+* **New features:**
+  * Object detection & OCR extraction interface for image
+
 ## [0.1.4]
 
 * **New `ImagePickerConfigs` features:**

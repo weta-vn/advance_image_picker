@@ -74,6 +74,24 @@ class MyApp extends StatelessWidget {
                     maxHeight: maxHeight,
                     configs: configs))));
 
+    // Example about label detection & OCR extraction feature.
+    // You can use Google ML Kit or TensorflowLite for this purpose
+    configs.labelDetectFunc = (String path) async {
+      return <DetectObject>[
+        DetectObject(label: 'dummy1', confidence: 0.75),
+        DetectObject(label: 'dummy2', confidence: 0.75),
+        DetectObject(label: 'dummy3', confidence: 0.75)
+      ];
+    };
+    configs.ocrExtractFunc =
+        (String path, {bool? isCloudService = false}) async {
+      if (isCloudService!) {
+        return 'Cloud dummy ocr text';
+      } else {
+        return 'Dummy ocr text';
+      }
+    };
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
