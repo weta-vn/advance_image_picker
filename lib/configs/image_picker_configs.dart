@@ -1,9 +1,9 @@
 import 'dart:core';
 
-import 'package:advance_image_picker/models/image_object.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+import '../models/image_object.dart';
 import '../widgets/editors/editor_params.dart';
 
 export 'package:camera/camera.dart' show FlashMode;
@@ -177,7 +177,7 @@ class ImagePickerConfigs {
   bool albumPickerModeEnabled = true;
 
   /// Detect labels from image function
-  Future<List<DetectObject>> Function(String path, {double? threshold, int? maxResultCount})? labelDetectFunc;
+  Future<List<DetectObject>> Function(String path)? labelDetectFunc;
 
   /// Max count for label detection
   int labelDetectMaxCount = 5;
@@ -186,7 +186,7 @@ class ImagePickerConfigs {
   double labelDetectThreshold = 0.7;
 
   /// Detect OCR from image function
-  Future<String> Function(String path, {bool? isCloudService})? ocrDetectFunc;
+  Future<String> Function(String path, {bool? isCloudService})? ocrExtractFunc;
 
   /// Camera direction setting.
   ///
@@ -458,6 +458,11 @@ class ImagePickerConfigs {
   ///
   /// Defaults to "saturation".
   String get textSaturation => getTranslatedString("image_picker_image_edit_saturation", "saturation");
+
+  /// Get localized text for label "image_picker_ocr".
+  ///
+  /// Defaults to "OCR".
+  String get textOCR => getTranslatedString("image_picker_ocr", "OCR");
 
   /// Translate string by translateFunc.
   String getTranslatedString(String name, String defaultValue) {

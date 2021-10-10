@@ -486,8 +486,7 @@ class _ImagePickerState extends State<ImagePicker>
 
       // Run label detector
       if (_configs.labelDetectFunc != null && f.recognitions == null) {
-        f.recognitions = await _configs.labelDetectFunc!(f.modifiedPath,
-            maxResultCount: _configs.labelDetectMaxCount, threshold: _configs.labelDetectThreshold);
+        f.recognitions = await _configs.labelDetectFunc!(f.modifiedPath);
         if (f.recognitions?.isNotEmpty ?? false) {
           f.label = f.recognitions!.first.label;
         } else {

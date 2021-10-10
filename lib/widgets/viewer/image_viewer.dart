@@ -315,7 +315,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
             ),
           ),
           Positioned(top: 0, left: 0, right: 0, child: _buildCurrentImageInfoView(context)),
-          if (_configs.ocrDetectFunc != null)
+          if (_configs.ocrExtractFunc != null)
             Positioned(bottom: 0, left: 0, right: 0, child: _buildOCRTextView(context)),
         ],
       ),
@@ -407,8 +407,8 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
       }
 
       // Get OCR from image
-      if (_configs.ocrDetectFunc != null) {
-        final text = await _configs.ocrDetectFunc!.call(retImg.modifiedPath);
+      if (_configs.ocrExtractFunc != null) {
+        final text = await _configs.ocrExtractFunc!.call(retImg.modifiedPath);
         if (text.isNotEmpty) retImg.ocrText = text;
       }
       return retImg;
@@ -432,7 +432,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                     // Display detected labels
                     if (image.recognitions != null && image.recognitions!.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Wrap(
                             children: image.recognitions!.map((e) {
                           final isSelected = e.label == image.label;
@@ -448,10 +448,10 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: isSelected ? Colors.white : Colors.grey, width: 1.0),
+                                  border: Border.all(color: isSelected ? Colors.white : Colors.grey, width: 1),
                                   borderRadius: const BorderRadius.all(Radius.circular(10))),
-                              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
-                              margin: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+                              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                              margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                               child: Text("${e.label}:${e.confidence?.toStringAsFixed(2) ?? ""}",
                                   style: TextStyle(color: isSelected ? Colors.white : Colors.grey)),
                             ),
@@ -468,6 +468,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
         });
   }
 
+  /// Build widget for displaying OCR informations
   Widget _buildOCRTextView(BuildContext context) {
     final image = _images[_currentIndex ?? 0];
     return Stack(
@@ -481,15 +482,15 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                   context: context,
                   builder: (context) {
                     return Dialog(
-                      insetPadding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Stack(
                         fit: StackFit.passthrough,
                         children: [
                           Container(
                               height: MediaQuery.of(context).size.height * 2 / 3,
                               margin: const EdgeInsets.only(top: 40, bottom: 50),
-                              padding: const EdgeInsets.all(12.0),
+                              padding: const EdgeInsets.all(12),
                               child: TextField(
                                 maxLines: null,
                                 controller: _textFieldController,
@@ -499,7 +500,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                               left: 0,
                               right: 0,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                                 child: Row(children: [
                                   Text(_configs.textEditText,
                                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -518,17 +519,17 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                               left: 0,
                               right: 0,
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     TextButton(
                                       style: TextButton.styleFrom(
                                         primary: Colors.black87,
-                                        minimumSize: const Size(88, 36),
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        backgroundColor: Colors.grey.shade200,
+                                        padding: EdgeInsets.zero,
                                         shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                                          borderRadius: BorderRadius.all(Radius.circular(30)),
                                         ),
                                       ),
                                       child: Text(_configs.textClear, style: const TextStyle(color: Colors.red)),
@@ -541,10 +542,10 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                                     TextButton(
                                       style: TextButton.styleFrom(
                                         primary: Colors.blue,
-                                        minimumSize: const Size(88, 36),
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        backgroundColor: Colors.blue,
+                                        padding: EdgeInsets.zero,
                                         shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                                          borderRadius: BorderRadius.all(Radius.circular(30)),
                                         ),
                                       ),
                                       child: Text(_configs.textSave, style: const TextStyle(color: Colors.white)),
@@ -565,7 +566,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
             },
             child: Container(
                 color: Colors.black54,
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 constraints: const BoxConstraints(minHeight: 100),
                 child: Text(
                   image.ocrText ?? "",
@@ -582,19 +583,19 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
           child: TextButton(
             style: TextButton.styleFrom(
               primary: Colors.blue,
-              minimumSize: const Size(88, 36),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              backgroundColor: Colors.blue,
+              padding: EdgeInsets.zero,
               shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(2)),
+                borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Row(children: [
-                const Text("OCR", style: TextStyle(color: Colors.white)),
+                Text(_configs.textOCR, style: const TextStyle(color: Colors.white)),
                 if (_isProcessing)
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: CupertinoActivityIndicator(),
                   )
               ]),
@@ -605,7 +606,7 @@ class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixi
                   _isProcessing = true;
                 });
 
-                final text = await _configs.ocrDetectFunc!.call(image.modifiedPath);
+                final text = await _configs.ocrExtractFunc!.call(image.modifiedPath, isCloudService: true);
                 setState(() {
                   _isProcessing = false;
 

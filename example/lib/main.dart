@@ -65,14 +65,17 @@ class MyApp extends StatelessWidget {
                 fullscreenDialog: true,
                 builder: (context) => ImageSticker(
                     file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs))));
-    configs.labelDetectFunc = (String path, {double? threshold = 0.7, int? maxResultCount = 5}) async {
+
+    // Example about label detection & OCR extraction feature.
+    // You can use Google ML Kit or TensorflowLite for this purpose
+    configs.labelDetectFunc = (String path) async {
       return <DetectObject>[
         DetectObject(label: 'dummy1', confidence: 0.75),
         DetectObject(label: 'dummy2', confidence: 0.75),
         DetectObject(label: 'dummy3', confidence: 0.75)
       ];
     };
-    configs.ocrDetectFunc = (String path, {bool? isCloudService = false}) async {
+    configs.ocrExtractFunc = (String path, {bool? isCloudService = false}) async {
       if (isCloudService!) {
         return 'Cloud dummy ocr text';
       } else {
