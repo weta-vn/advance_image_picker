@@ -48,8 +48,12 @@ class MyApp extends StatelessWidget {
                 ImagePickerConfigs? configs}) async =>
             Navigator.of(context).push(MaterialPageRoute<File>(
                 fullscreenDialog: true,
-                builder: (context) =>
-                    ImageEdit(file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs))));
+                builder: (context) => ImageEdit(
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
     configs.externalImageEditors['external_image_editor_2'] = EditorParams(
         title: 'external_image_editor_2',
         icon: Icons.edit_attributes,
@@ -64,7 +68,11 @@ class MyApp extends StatelessWidget {
             Navigator.of(context).push(MaterialPageRoute<File>(
                 fullscreenDialog: true,
                 builder: (context) => ImageSticker(
-                    file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: configs))));
+                    file: file,
+                    title: title,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    configs: configs))));
 
     // Example about label detection & OCR extraction feature.
     // You can use Google ML Kit or TensorflowLite for this purpose
@@ -75,7 +83,8 @@ class MyApp extends StatelessWidget {
         DetectObject(label: 'dummy3', confidence: 0.75)
       ];
     };
-    configs.ocrExtractFunc = (String path, {bool? isCloudService = false}) async {
+    configs.ocrExtractFunc =
+        (String path, {bool? isCloudService = false}) async {
       if (isCloudService!) {
         return 'Cloud dummy ocr text';
       } else {
@@ -136,7 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   final image = _imgObjs[index];
                   return Padding(
                     padding: const EdgeInsets.all(2),
-                    child: Image.file(File(image.modifiedPath), height: 80, fit: BoxFit.cover),
+                    child: Image.file(File(image.modifiedPath),
+                        height: 80, fit: BoxFit.cover),
                   );
                 })
           ],
@@ -145,8 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get max 5 images
-          final List<ImageObject>? objects =
-              await Navigator.of(context).push(PageRouteBuilder(pageBuilder: (context, animation, __) {
+          final List<ImageObject>? objects = await Navigator.of(context)
+              .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
             return const ImagePicker(maxCount: 5);
           }));
 

@@ -61,5 +61,11 @@ class DetectObject {
   int h;
 
   /// Constructor
-  DetectObject({required this.label, this.confidence, this.x = 0, this.y = 0, this.w = 0, this.h = 0});
+  DetectObject(
+      {required this.label,
+      this.confidence,
+      this.x = 0,
+      this.y = 0,
+      this.w = 0,
+      this.h = 0});
 }
