@@ -188,6 +188,14 @@ class ImagePickerConfigs {
   /// Detect OCR from image function
   Future<String> Function(String path, {bool? isCloudService})? ocrExtractFunc;
 
+  /// Custom sticker only flag
+  ///
+  /// Defaults to false.
+  bool customStickerOnly = false;
+
+  /// Custom sticker paths
+  List<String> customStickers = [];
+
   /// Camera direction setting.
   ///
   /// Options:
