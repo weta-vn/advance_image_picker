@@ -1,9 +1,14 @@
+## [0.1.5+1]
+
+* **New features:**
+  * Add custom stickers (by @matthewmizzi suggestion)
+
 ## [0.1.5]
 
 * **New features:**
   * Object detection & OCR extraction interface for image
 
-## [0.1.4]
+## [0.1.4]d
 
 * **New `ImagePickerConfigs` features:**
   * Camera flash mode `flashMode`, the starting flash mode for the camera

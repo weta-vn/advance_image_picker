@@ -65,15 +65,20 @@ class _ImageStickerState extends State<ImageSticker>
   void initState() {
     super.initState();
 
+    if (widget.configs != null) _configs = widget.configs!;
+
     _attachedList = [];
     _stickerList = List<int>.generate(34, (index) => index + 1)
         .map((e) => Image.asset(
-              "assets/icon/$e.png",
+              'assets/icon/$e.png',
               package: 'advance_image_picker',
             ))
         .toList();
 
-    if (widget.configs != null) _configs = widget.configs!;
+    if (_configs.customStickers.isNotEmpty) {
+      if (_configs.customStickerOnly) _stickerList.clear();
+      _stickerList.addAll(_configs.customStickers.map((e) => Image.asset(e)));
+    }
   }
 
   @override

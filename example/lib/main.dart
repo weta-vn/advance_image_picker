@@ -92,6 +92,16 @@ class MyApp extends StatelessWidget {
       }
     };
 
+    // Example about custom stickers
+    configs.customStickerOnly = true;
+    configs.customStickers = [
+      'assets/icon/cus1.png',
+      'assets/icon/cus2.png',
+      'assets/icon/cus3.png',
+      'assets/icon/cus4.png',
+      'assets/icon/cus5.png'
+    ];
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
