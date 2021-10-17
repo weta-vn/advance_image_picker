@@ -494,6 +494,26 @@ class ImagePickerConfigs {
   /// Defaults to "OCR".
   String get textOCR => getTranslatedString("image_picker_ocr", "OCR");
 
+  /// Get localized text for label "image_picker_request_permission".
+  ///
+  /// Defaults to "Request Permission".
+  String get textRequestPermission => getTranslatedString(
+      "image_picker_request_permission", "Request Permission");
+
+  /// Get localized text for label "image_picker_request_camera_permission".
+  ///
+  /// Defaults to "You need allow camera permission.".
+  String get textRequestCameraPermission => getTranslatedString(
+      "image_picker_request_camera_permission",
+      "You need allow camera permission.");
+
+  /// Get localized text for label "image_picker_request_gallery_permission".
+  ///
+  /// Defaults to "You need allow photo gallery permission.".
+  String get textRequestGalleryPermission => getTranslatedString(
+      "image_picker_request_gallery_permission",
+      "You need allow photo gallery permission.");
+
   /// Translate string by translateFunc.
   String getTranslatedString(String name, String defaultValue) {
     return translateFunc.call(name, defaultValue);
