@@ -108,6 +108,12 @@ class _ImagePickerState extends State<ImagePicker>
   /// Flag indicating state of image selecting.
   bool _isImageSelectedDone = false;
 
+  /// Flag indicating status of permission to access cameras
+  bool _isCameraPermissionOK = false;
+
+  /// Flag indicating status of permission to access photo libray
+  bool _isGalleryPermissionOK = false;
+
   /// Image configuration.
   ImagePickerConfigs _configs = ImagePickerConfigs();
 
@@ -228,16 +234,20 @@ class _ImagePickerState extends State<ImagePicker>
   Future<void> _initPhotoCapture() async {
     LogUtils.log("[_initPhotoCapture] start");
 
-    // List all cameras in current device.
-    _cameras = await availableCameras();
+    try {
+      // List all cameras in current device.
+      _cameras = await availableCameras();
 
-    // Select new camera for capturing.
-    if (_cameras.isNotEmpty) {
-      final CameraDescription? newDescription = _getCamera(
-          _cameras, _getCameraDirection(_configs.cameraLensDirection));
-      if (newDescription != null) {
-        await _onNewCameraSelected(newDescription);
+      // Select new camera for capturing.
+      if (_cameras.isNotEmpty) {
+        final CameraDescription? newDescription = _getCamera(
+            _cameras, _getCameraDirection(_configs.cameraLensDirection));
+        if (newDescription != null) {
+          await _onNewCameraSelected(newDescription);
+        }
       }
+    } on CameraException catch (e) {
+      LogUtils.log('Camera error ${e.code}, ${e.description}');
     }
   }
 
@@ -265,6 +275,43 @@ class _ImagePickerState extends State<ImagePicker>
     }
   }
 
+  /// Initialize current selected camera
+  void _initCameraController() {
+    // Create future object for initializing new camera controller.
+    final cameraController = _controller!;
+    _initializeControllerFuture =
+        cameraController.initialize().then((value) async {
+      LogUtils.log("[_onNewCameraSelected] cameraController initialized.");
+
+      _isCameraPermissionOK = true;
+
+      // After initialized, setting zoom & exposure values
+      await Future.wait([
+        cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
+        cameraController.setFlashMode(_configs.flashMode),
+        cameraController
+            .getMinExposureOffset()
+            .then((value) => _minAvailableExposureOffset = value),
+        cameraController
+            .getMaxExposureOffset()
+            .then((value) => _maxAvailableExposureOffset = value),
+        cameraController
+            .getMaxZoomLevel()
+            .then((value) => _maxAvailableZoom = value),
+        cameraController
+            .getMinZoomLevel()
+            .then((value) => _minAvailableZoom = value),
+      ]);
+
+      // Refresh screen for applying new updated
+      if (mounted) {
+        setState(() {});
+      }
+    }).catchError((e) {
+      LogUtils.log('Camera error ${e.toString()}');
+    });
+  }
+
   /// Select new camera for capturing
   Future<void> _onNewCameraSelected(CameraDescription cameraDescription) async {
     LogUtils.log("[_onNewCameraSelected] start");
@@ -281,64 +328,44 @@ class _ImagePickerState extends State<ImagePicker>
     );
     _controller = cameraController;
 
+    // Init selected camera
+    _initCameraController();
+
     // If the controller is updated then update the UI.
-    cameraController.addListener(() {
+    _controller!.addListener(() {
       if (mounted) setState(() {});
       if (cameraController.value.hasError) {
         LogUtils.log('Camera error ${cameraController.value.errorDescription}');
       }
     });
-
-    // Create future object for initializing new camera controller.
-    try {
-      _initializeControllerFuture =
-          cameraController.initialize().then((value) async {
-        LogUtils.log("[_onNewCameraSelected] cameraController initialized.");
-
-        // After initialized, setting zoom & exposure values
-        await Future.wait([
-          cameraController.lockCaptureOrientation(DeviceOrientation.portraitUp),
-          cameraController.setFlashMode(_configs.flashMode),
-          cameraController
-              .getMinExposureOffset()
-              .then((value) => _minAvailableExposureOffset = value),
-          cameraController
-              .getMaxExposureOffset()
-              .then((value) => _maxAvailableExposureOffset = value),
-          cameraController
-              .getMaxZoomLevel()
-              .then((value) => _maxAvailableZoom = value),
-          cameraController
-              .getMinZoomLevel()
-              .then((value) => _minAvailableZoom = value),
-        ]);
-
-        // Refresh screen for applying new updated
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    } on CameraException catch (e) {
-      LogUtils.log('Camera error ${e.code}, ${e.description}');
-    }
   }
 
   /// Init photo gallery for image selecting
   Future<void> _initPhotoGallery() async {
     LogUtils.log("[_initPhotoGallery] start");
 
-    // Request permission for image selecting
-    final result = await PhotoManager.requestPermission();
-    if (result) {
-      // Get albums then set first album as current album
-      _albums = await PhotoManager.getAssetPathList(type: RequestType.image);
-      if (_albums.isNotEmpty) {
-        final isAllAlbum = _albums.firstWhere((element) => element.isAll,
-            orElse: () => _albums.first);
-        setState(() {
-          _currentAlbum = isAllAlbum;
-        });
+    try {
+      // Request permission for image selecting
+      final result = await PhotoManager.requestPermissionExtend();
+      if (result.isAuth) {
+        LogUtils.log('PhotoGallery permission allowed');
+
+        _isGalleryPermissionOK = true;
+
+        // Get albums then set first album as current album
+        _albums = await PhotoManager.getAssetPathList(type: RequestType.image);
+        if (_albums.isNotEmpty) {
+          final isAllAlbum = _albums.firstWhere((element) => element.isAll,
+              orElse: () => _albums.first);
+          setState(() {
+            _currentAlbum = isAllAlbum;
+          });
+        }
+      } else {
+        LogUtils.log('PhotoGallery permission not allowed');
       }
+    } catch (e) {
+      LogUtils.log('PhotoGallery error ${e.toString()}');
     }
   }
 
@@ -607,9 +634,13 @@ class _ImagePickerState extends State<ImagePicker>
     return Stack(children: [
       SizedBox(height: size.height, width: size.width),
       if (_mode == PickerMode.Camera)
-        Center(child: _buildCameraPreview(context))
+        _isCameraPermissionOK
+            ? Center(child: _buildCameraPreview(context))
+            : _buildCameraRequestPermissionView(context)
       else
-        _buildAlbumPreview(context),
+        _isGalleryPermissionOK
+            ? _buildAlbumPreview(context)
+            : _builGalleryRequestPermissionView(context),
       if (_mode == PickerMode.Camera) ...[
         Positioned(
             bottom: bottomHeight.toDouble(),
@@ -778,6 +809,37 @@ class _ImagePickerState extends State<ImagePicker>
         : container;
   }
 
+  /// Build camera request permission view
+  Widget _buildCameraRequestPermissionView(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bottomHeight = (widget.maxCount == 1)
+        ? (kBottomControlPanelHeight - 40)
+        : kBottomControlPanelHeight;
+    return SizedBox(
+      width: size.width,
+      height: size.height - bottomHeight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.grey.shade400,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+            ),
+            onPressed: _initCameraController,
+            child: Text(_configs.textRequestPermission,
+                style: const TextStyle(color: Colors.black)),
+          ),
+          Text(_configs.textRequestCameraPermission,
+              style: const TextStyle(color: Colors.grey))
+        ],
+      ),
+    );
+  }
+
   /// Build camera preview widget.
   Widget _buildCameraPreview(BuildContext context) {
     LogUtils.log("[_buildCameraPreview] start");
@@ -857,6 +919,33 @@ class _ImagePickerState extends State<ImagePicker>
     setState(() {
       _currentScale = scale;
     });
+  }
+
+  /// Build camera request permission view
+  Widget _builGalleryRequestPermissionView(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bottomHeight = (widget.maxCount == 1)
+        ? (kBottomControlPanelHeight - 40)
+        : kBottomControlPanelHeight;
+    return SizedBox(
+        width: size.width,
+        height: size.height - bottomHeight,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.grey.shade400,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+            ),
+            onPressed: _initPhotoGallery,
+            child: Text(_configs.textRequestPermission,
+                style: const TextStyle(color: Colors.black)),
+          ),
+          Text(_configs.textRequestGalleryPermission,
+              style: const TextStyle(color: Colors.grey))
+        ]));
   }
 
   /// Build album preview widget.
@@ -1344,9 +1433,11 @@ class _ImagePickerState extends State<ImagePicker>
           groupValue: _mode,
           onValueChanged: (dynamic val) async {
             if (_mode != val) {
-              if (val == PickerMode.Camera && _cameras.isEmpty) {
+              if (val == PickerMode.Camera &&
+                  (_cameras.isEmpty || !_isCameraPermissionOK)) {
                 await _initPhotoCapture();
-              } else if (val == PickerMode.Album && _albums.isEmpty) {
+              } else if (val == PickerMode.Album &&
+                  (_albums.isEmpty || !_isGalleryPermissionOK)) {
                 await _initPhotoGallery();
               }
 

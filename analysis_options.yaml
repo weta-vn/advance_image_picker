@@ -17,14 +17,14 @@ analyzer:
     # Don't cast implicitly.
     implicit-casts: false
     # Don't fall back to 'dynamic' implicitly.
-    implicit-dynamic: false
+    # implicit-dynamic: false
   errors:
     # Without ignore here, we cause import of all_lint_rules to warn, because some rules conflict.
     # We explicitly enabled even conflicting rules and are fixing the conflicts in this file.
     included_file_warning: ignore
 
     # Treat missing required parameters as an error, not as a hint or a warning.
-    missing_required_param: error
+    # missing_required_param: error
 
     # Treat missing returns as an error, not as a hint or a warning.
     missing_return: error

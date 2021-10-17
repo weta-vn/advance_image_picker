@@ -1,3 +1,9 @@
+## [0.1.5+5]
+
+* **Fixbugs:**
+  * Check permission for camera & photo gallery
+  * Fixbug about OCR text editting
+
 ## [0.1.5+1]
 
 * **New features:**

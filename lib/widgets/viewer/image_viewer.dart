@@ -452,13 +452,15 @@ class _ImageViewerState extends State<ImageViewer>
       final retImg = await ImageUtils.getImageInfo(image);
 
       // Get detected objects
-      if (_configs.labelDetectFunc != null) {
+      if (_configs.labelDetectFunc != null &&
+          (retImg.recognitions?.isEmpty ?? true)) {
         final objs = await _configs.labelDetectFunc!.call(retImg.modifiedPath);
         if (objs.isNotEmpty) retImg.recognitions = objs;
       }
 
       // Get OCR from image
-      if (_configs.ocrExtractFunc != null) {
+      if (_configs.ocrExtractFunc != null &&
+          (retImg.ocrText?.isEmpty ?? true)) {
         final text = await _configs.ocrExtractFunc!.call(retImg.modifiedPath);
         if (text.isNotEmpty) retImg.ocrText = text;
       }

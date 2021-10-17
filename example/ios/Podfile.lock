@@ -46,15 +46,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/photo_manager/ios"
 
 SPEC CHECKSUMS:
-  camera: 3164201dc344383e62282964016528c4f5a9ad50
-  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  camera: b9eb73c055259c6f808a9da4a0d43780f6645281
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
   image_editor: c1d038630eedea60d2dee9c14f36aa66c7f9cfab
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
   photo_manager: 84fa94fbeb82e607333ea9a13c43b58e0903a463
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.0
