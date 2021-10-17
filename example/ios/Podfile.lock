@@ -46,7 +46,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/photo_manager/ios"
 
 SPEC CHECKSUMS:
-  camera: b9eb73c055259c6f808a9da4a0d43780f6645281
+  camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
