@@ -1,3 +1,10 @@
+## [0.1.5+6]
+
+* **Fixbugs:**
+  * Downgrade camera plugin to 0.9.4+3
+  * Allow customize icons such as camera, switch camera, flash, ...
+  * Upgrade plugins
+
 ## [0.1.5+5]
 
 * **Fixbugs:**
@@ -14,7 +21,7 @@
 * **New features:**
   * Object detection & OCR extraction interface for image
 
-## [0.1.4]d
+## [0.1.4]
 
 * **New `ImagePickerConfigs` features:**
   * Camera flash mode `flashMode`, the starting flash mode for the camera

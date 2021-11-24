@@ -612,7 +612,7 @@ class _ImagePickerState extends State<ImagePicker>
         return IconButton(
           icon: _isOutputCreating
               ? const CupertinoActivityIndicator()
-              : Icon(_configs.doneButtonIcon),
+              : Icon(_configs.iconDone),
           onPressed: (_selectedImages.isNotEmpty)
               ? () async {
                   await _doneButtonPressed();
@@ -695,7 +695,7 @@ class _ImagePickerState extends State<ImagePicker>
         shape: const CircleBorder(),
       ),
       onPressed: _controller != null ? _onExposureModeButtonPressed : null,
-      child: const Icon(Icons.exposure, color: Colors.white, size: 40),
+      child: Icon(_configs.iconExposure, color: Colors.white, size: 40),
     );
   }
 
@@ -724,8 +724,8 @@ class _ImagePickerState extends State<ImagePicker>
       },
       child: Icon(
           _isFullscreenImage
-              ? Icons.fullscreen_exit_rounded
-              : Icons.fullscreen_rounded,
+              ? _configs.iconFullScreenExit
+              : _configs.iconFullScreen,
           color: Colors.white,
           size: 48),
     );
@@ -1111,8 +1111,8 @@ class _ImagePickerState extends State<ImagePicker>
                 alignment: Alignment.center,
                 height: 24,
                 width: 24,
-                child: const Icon(
-                  Icons.close,
+                child: Icon(
+                  _configs.iconClose,
                   size: 16,
                   color: Colors.white,
                 ),
@@ -1229,12 +1229,12 @@ class _ImagePickerState extends State<ImagePicker>
   IconData _flashModeIcon(final FlashMode flashMode) {
     switch (flashMode) {
       case FlashMode.auto:
-        return Icons.flash_auto;
+        return _configs.iconFlashAuto;
       case FlashMode.off:
-        return Icons.flash_off;
+        return _configs.iconFlashOff;
       case FlashMode.torch:
       case FlashMode.always:
-        return Icons.flash_on;
+        return _configs.iconFlashOn;
     }
   }
 
@@ -1375,7 +1375,7 @@ class _ImagePickerState extends State<ImagePicker>
                             }
                           }
                         : null,
-                    child: Icon(Icons.camera,
+                    child: Icon(_configs.iconCamera,
                         size: (64 + (_isCapturing ? (-10) : 0)).toDouble(),
                         color: !isMaxCount ? Colors.white : Colors.grey),
                   ),
@@ -1397,7 +1397,7 @@ class _ImagePickerState extends State<ImagePicker>
                             }
                           }
                         : null,
-                    child: Icon(Icons.switch_camera,
+                    child: Icon(_configs.iconSwitchCamera,
                         size: 32,
                         color: _configs.showLensDirection
                             ? (canSwitchCamera ? Colors.white : Colors.grey)

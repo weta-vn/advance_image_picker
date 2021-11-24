@@ -289,7 +289,52 @@ class ImagePickerConfigs {
   /// [DoneButtonStyle.iconButton].
   ///
   /// Defaults to Icon.check.
-  IconData doneButtonIcon = Icons.check;
+  IconData iconDone = Icons.check;
+
+  /// IconData used by the flash auto mode
+  ///
+  /// Defaults to Icon.flash_auto.
+  IconData iconFlashAuto = Icons.flash_auto;
+
+  /// IconData used by the flash off mode
+  ///
+  /// Defaults to Icon.flash_off.
+  IconData iconFlashOff = Icons.flash_off;
+
+  /// IconData used by the flash on mode
+  ///
+  /// Defaults to Icon.flash_on.
+  IconData iconFlashOn = Icons.flash_on;
+
+  /// IconData used by the camera
+  ///
+  /// Defaults to Icon.camera.
+  IconData iconCamera = Icons.camera;
+
+  /// IconData used by the switch camera
+  ///
+  /// Defaults to Icon.switch_camera.
+  IconData iconSwitchCamera = Icons.switch_camera;
+
+  /// IconData used by the exposure
+  ///
+  /// Defaults to Icon.exposure.
+  IconData iconExposure = Icons.exposure;
+
+  /// IconData used by the fullscreen
+  ///
+  /// Defaults to Icon.fullscreen_rounded.
+  IconData iconFullScreen = Icons.fullscreen_rounded;
+
+  /// IconData used by the fullscreen exit
+  ///
+  /// Defaults to Icon.fullscreen_exit_rounded.
+  IconData iconFullScreenExit = Icons.fullscreen_exit_rounded;
+
+  /// IconData used by close
+  ///
+  /// Defaults to Icon.close.
+  IconData iconClose = Icons.close;
 
   /// Used to define the type of of behavior the done button has when
   /// no images have been selected that will be returned.

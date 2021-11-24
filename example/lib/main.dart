@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
     // AppBar text color
     configs.appBarTextColor = Colors.white;
     configs.appBarBackgroundColor = Colors.orange;
+    configs.iconClose = Icons.close_outlined;
     // Disable select images from album
     // configs.albumPickerModeEnabled = false;
     // Only use front camera for capturing
