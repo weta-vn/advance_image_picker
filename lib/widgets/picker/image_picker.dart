@@ -1017,26 +1017,29 @@ class _ImagePickerState extends State<ImagePicker>
       future: _buildAlbumThumbnails(),
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return ListView.builder(
-              itemCount: _albums.length,
-              itemBuilder: (context, i) {
-                final album = _albums[i];
-                final thumbnail = _albumThumbnails[i]!;
-                return InkWell(
-                  child: ListTile(
-                      leading: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Image.memory(thumbnail, fit: BoxFit.cover)),
-                      title: Text(album.name,
-                          style: const TextStyle(color: Colors.white)),
-                      subtitle: Text(album.assetCount.toString(),
-                          style: const TextStyle(color: Colors.grey)),
-                      onTap: () async {
-                        callback.call(album);
-                      }),
-                );
-              });
+          return Container(
+            color: _configs.backgroundColor,
+            child: ListView.builder(
+                itemCount: _albums.length,
+                itemBuilder: (context, i) {
+                  final album = _albums[i];
+                  final thumbnail = _albumThumbnails[i]!;
+                  return InkWell(
+                    child: ListTile(
+                        leading: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Image.memory(thumbnail, fit: BoxFit.cover)),
+                        title: Text(album.name,
+                            style: TextStyle(color: _configs.appBarTextColor)),
+                        subtitle: Text(album.assetCount.toString(),
+                            style: TextStyle(color: _configs.appBarTextColor)),
+                        onTap: () async {
+                          callback.call(album);
+                        }),
+                  );
+                }),
+          );
         } else {
           return const Center(
             child: CupertinoActivityIndicator(),
@@ -1213,7 +1216,7 @@ class _ImagePickerState extends State<ImagePicker>
                           color: Colors.grey,
                           border: Border.all(
                               color: (i == _selectedImages.length)
-                                  ? Colors.blue
+                                  ? _configs.primaryColor
                                   : Colors.white,
                               width: 3),
                           borderRadius:
@@ -1276,7 +1279,7 @@ class _ImagePickerState extends State<ImagePicker>
                   if (_configs.showFlashMode)
                     GestureDetector(
                       child: Icon(_flashModeIcon(_flashMode),
-                          size: 32, color: Colors.white),
+                          size: 32, color: _isFullscreenImage ? _configs.bottomPanelIconColorInFullscreen : _configs.bottomPanelIconColor),
                       onTap: () async {
                         // Ensure that the camera is initialized.
                         await _initializeControllerFuture;
@@ -1377,7 +1380,7 @@ class _ImagePickerState extends State<ImagePicker>
                         : null,
                     child: Icon(_configs.iconCamera,
                         size: (64 + (_isCapturing ? (-10) : 0)).toDouble(),
-                        color: !isMaxCount ? Colors.white : Colors.grey),
+                        color: !isMaxCount ? _isFullscreenImage ? _configs.bottomPanelIconColorInFullscreen : _configs.bottomPanelIconColor : Colors.grey),
                   ),
                   GestureDetector(
                     onTap: canSwitchCamera && _configs.showLensDirection
@@ -1400,7 +1403,7 @@ class _ImagePickerState extends State<ImagePicker>
                     child: Icon(_configs.iconSwitchCamera,
                         size: 32,
                         color: _configs.showLensDirection
-                            ? (canSwitchCamera ? Colors.white : Colors.grey)
+                            ? (canSwitchCamera ? _isFullscreenImage ? _configs.bottomPanelIconColorInFullscreen : _configs.bottomPanelIconColor : Colors.grey)
                             : Colors.transparent),
                   )
                 ]),
@@ -1412,8 +1415,8 @@ class _ImagePickerState extends State<ImagePicker>
   Widget _buildPickerModeList(BuildContext context) {
     if (_configs.albumPickerModeEnabled && _configs.cameraPickerModeEnabled) {
       return CupertinoSlidingSegmentedControl(
-          backgroundColor: Colors.transparent,
-          thumbColor: Colors.transparent,
+          backgroundColor: _configs.albumCameraSwitchBackgroundColor,
+          thumbColor: _configs.albumCameraSwitchThumbColor,
           children: {
             0: Text(_configs.textCameraTitle,
                 style: TextStyle(

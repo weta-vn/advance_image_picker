@@ -176,6 +176,16 @@ class ImagePickerConfigs {
   /// Defaults to true.
   bool albumPickerModeEnabled = true;
 
+  /// Allow user to customize switch color.
+  ///
+  /// Defaults to transparent.
+  Color albumCameraSwitchBackgroundColor = Colors.transparent;
+
+  /// Allow user to customize switch thumb color.
+  ///
+  /// Defaults to transparent.
+  Color albumCameraSwitchThumbColor = Colors.transparent;
+
   /// Detect labels from image function
   Future<List<DetectObject>> Function(String path)? labelDetectFunc;
 
@@ -267,6 +277,11 @@ class ImagePickerConfigs {
   /// This results in an AppBar text color that follows current theme.
   Color? appBarTextColor;
 
+  /// Primary color.
+  ///
+  /// Defaults to Blue.
+  Color primaryColor = Colors.blue;
+
   /// The background color of the image selection completed button.
   ///
   /// This color only applies to the [doneButtonStyle] of style
@@ -310,6 +325,16 @@ class ImagePickerConfigs {
   ///
   /// Defaults to Icon.camera.
   IconData iconCamera = Icons.camera;
+
+  /// icon colors used by the camera
+  ///
+  /// Defaults to Colors.white.
+  Color bottomPanelIconColor = Colors.black;
+
+  /// camera icon used by the camera
+  ///
+  /// Defaults to Colors.white.
+  Color bottomPanelIconColorInFullscreen = Colors.white;
 
   /// IconData used by the switch camera
   ///

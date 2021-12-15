@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:advance_image_picker/advance_image_picker.dart';
+import 'package:example/UiColors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -19,15 +20,26 @@ void main() {
 class MyApp extends StatelessWidget {
   /// Example app constructor.
   const MyApp({final Key? key}) : super(key: key);
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
+
+  setupImagePicker(){
     // Setup image picker configs
     final configs = ImagePickerConfigs();
     // AppBar text color
-    configs.appBarTextColor = Colors.white;
-    configs.appBarBackgroundColor = Colors.orange;
+    configs.primaryColor = UiColors.primaryColor;
+    configs.appBarTextColor = UiColors.black;
+    configs.appBarBackgroundColor = UiColors.white;
+    configs.backgroundColor = UiColors.white;
+    configs.bottomPanelColor = UiColors.white;
+    configs.appBarDoneButtonColor = UiColors.primaryColor;
+    configs.filterFeatureEnabled = true;
+    configs.showFlashMode = false;
     configs.iconClose = Icons.close_outlined;
+    configs.iconCamera = Icons.camera_outlined;
+    configs.bottomPanelIconColor = UiColors.black;
+    configs.bottomPanelIconColorInFullscreen = UiColors.white;
+    configs.albumCameraSwitchBackgroundColor = UiColors.white;
+    configs.albumCameraSwitchThumbColor = UiColors.primaryColor;
+
     // Disable select images from album
     // configs.albumPickerModeEnabled = false;
     // Only use front camera for capturing
@@ -37,16 +49,16 @@ class MyApp extends StatelessWidget {
     // Disable edit function, then add other edit control instead
     configs.adjustFeatureEnabled = false;
     configs.externalImageEditors['external_image_editor_1'] = EditorParams(
-        title: 'external_image_editor_1',
+        title: 'Editor',
         icon: Icons.edit_rounded,
         onEditorEvent: (
-                {required BuildContext context,
-                required File file,
-                required String title,
-                int maxWidth = 1080,
-                int maxHeight = 1920,
-                int compressQuality = 90,
-                ImagePickerConfigs? configs}) async =>
+            {required BuildContext context,
+              required File file,
+              required String title,
+              int maxWidth = 1080,
+              int maxHeight = 1920,
+              int compressQuality = 90,
+              ImagePickerConfigs? configs}) async =>
             Navigator.of(context).push(MaterialPageRoute<File>(
                 fullscreenDialog: true,
                 builder: (context) => ImageEdit(
@@ -55,53 +67,14 @@ class MyApp extends StatelessWidget {
                     maxWidth: maxWidth,
                     maxHeight: maxHeight,
                     configs: configs))));
-    configs.externalImageEditors['external_image_editor_2'] = EditorParams(
-        title: 'external_image_editor_2',
-        icon: Icons.edit_attributes,
-        onEditorEvent: (
-                {required BuildContext context,
-                required File file,
-                required String title,
-                int maxWidth = 1080,
-                int maxHeight = 1920,
-                int compressQuality = 90,
-                ImagePickerConfigs? configs}) async =>
-            Navigator.of(context).push(MaterialPageRoute<File>(
-                fullscreenDialog: true,
-                builder: (context) => ImageSticker(
-                    file: file,
-                    title: title,
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    configs: configs))));
 
-    // Example about label detection & OCR extraction feature.
-    // You can use Google ML Kit or TensorflowLite for this purpose
-    configs.labelDetectFunc = (String path) async {
-      return <DetectObject>[
-        DetectObject(label: 'dummy1', confidence: 0.75),
-        DetectObject(label: 'dummy2', confidence: 0.75),
-        DetectObject(label: 'dummy3', confidence: 0.75)
-      ];
-    };
-    configs.ocrExtractFunc =
-        (String path, {bool? isCloudService = false}) async {
-      if (isCloudService!) {
-        return 'Cloud dummy ocr text';
-      } else {
-        return 'Dummy ocr text';
-      }
-    };
+  }
 
-    // Example about custom stickers
-    configs.customStickerOnly = true;
-    configs.customStickers = [
-      'assets/icon/cus1.png',
-      'assets/icon/cus2.png',
-      'assets/icon/cus3.png',
-      'assets/icon/cus4.png',
-      'assets/icon/cus5.png'
-    ];
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    // Setup image picker config
+    setupImagePicker();
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -168,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Get max 5 images
           final List<ImageObject>? objects = await Navigator.of(context)
               .push(PageRouteBuilder(pageBuilder: (context, animation, __) {
-            return const ImagePicker(maxCount: 5);
+            return const ImagePicker(maxCount: 1);
           }));
 
           if ((objects?.length ?? 0) > 0) {
