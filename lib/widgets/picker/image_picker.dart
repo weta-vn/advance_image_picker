@@ -636,7 +636,8 @@ class _ImagePickerState extends State<ImagePicker>
       if (_mode == PickerMode.Camera)
         _isCameraPermissionOK
             ? Center(child: _buildCameraPreview(context))
-            : _buildCameraRequestPermissionView(context)
+            // : _buildCameraRequestPermissionView(context)
+            : Center(child: CircularProgressIndicator(color: _configs.primaryColor, strokeWidth: 2,),)
       else
         _isGalleryPermissionOK
             ? _buildAlbumPreview(context)
@@ -849,7 +850,7 @@ class _ImagePickerState extends State<ImagePicker>
       return SizedBox(
           width: size.width,
           height: size.height,
-          child: const Center(child: CircularProgressIndicator()));
+          child: Center(child: CircularProgressIndicator(color: _configs.primaryColor, strokeWidth: 2,)));
     }
 
     return FutureBuilder<void>(
@@ -879,7 +880,7 @@ class _ImagePickerState extends State<ImagePicker>
                             })))))
                 : Container();
           }
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: _configs.primaryColor, strokeWidth: 2,));
         });
   }
 
