@@ -9,11 +9,11 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  camera: 0.9.4+3
+  camera: ^0.9.4+5
   flutter:
     sdk: flutter
   flutter_native_image: ^0.0.6+1
-  image: ^3.0.8
+  image: ^3.1.0
   image_cropper: ^1.4.1
   image_editor: ^1.0.2
   path_provider: ^2.0.8
