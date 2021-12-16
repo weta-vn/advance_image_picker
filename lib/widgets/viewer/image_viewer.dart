@@ -118,6 +118,7 @@ class _ImageViewerState extends State<ImageViewer>
                       toolbarColor: toolbarColor,
                       toolbarWidgetColor: toolbarWidgetColor,
                       initAspectRatio: CropAspectRatioPreset.original,
+                      activeControlsWidgetColor: _configs.primaryColor,
                       lockAspectRatio: false),
                   iosUiSettings: const IOSUiSettings(
                     minimumAspectRatio: 1,
