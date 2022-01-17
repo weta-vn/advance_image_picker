@@ -114,6 +114,34 @@ var configs = ImagePickerConfigs();
 configs.appBarTextColor = Colors.black;
 configs.stickerFeatureEnabled = false; // ON/OFF features
 configs.translateFunc = (name, value) => Intl.message(value, name: name); // Use intl function
+
+// Add plugin's string inside lib/l10n/intl_**.arb of your project to use translation
+// For example about english messages, declared inside intl_en.arb
+{
+  "app_title": "FreeMar - Share your things",
+  "image_picker_exit_without_selecting": "Do you want to exit without selecting images?",
+  "image_picker_select_images_title": "Selected images count",
+  "image_picker_select_images_guide": "You can drag images for sorting list...",
+  "image_picker_camera_title": "Camera",
+  "image_picker_album_title": "Album",
+  "image_picker_preview_title": "Preview",
+  "image_picker_confirm_delete": "Do you want to delete this image?",
+  "image_picker_confirm_reset_changes": "Do you want to clear all changes for this image?",
+  "image_picker_no_images": "No images...",
+  "image_picker_image_crop_title": "Image crop",
+  "image_picker_image_filter_title": "Image filter",
+  "image_picker_image_edit_title": "Image edit",
+  "image_picker_select_button_title": "Select",
+  "image_picker_image_sticker_title": "Image sticker",
+  "image_picker_image_addtext_title": "Image add text",
+  "image_picker_image_sticker_guide": "You can click on below icons to add into image, double click to remove it from image",
+  "image_picker_edit_text": "Edit text",
+  "suitcase": "Suitcase",
+  "handbag": "Handbag",
+  "bottle": "Bottle",
+  "tie": "Tie",
+  ...
+}
 ```
 
 Sample for adding external image editors.  
