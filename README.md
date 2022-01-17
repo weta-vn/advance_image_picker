@@ -142,6 +142,24 @@ configs.translateFunc = (name, value) => Intl.message(value, name: name); // Use
   "tie": "Tie",
   ...
 }
+
+// Or you can simply write your own translate function like this
+// configs.translateFunc = (name, value) => Intl.message(value, name: name);
+   configs.translateFunc = (name, value) {
+     switch (name) {
+       case 'image_picker_select_images_title':
+         return 'Le immagini selezionate contano';
+       case 'image_picker_select_images_guide':
+         return 'È possibile trascinare le immagini per lelenco di ordinamento...';
+       case 'image_picker_camera_title':
+         return 'Telecamera';
+       case 'image_picker_album_title':
+         return 'Album';
+       // ... Declare all your strings here
+       default:
+         return value;
+     }
+   }
 ```
 
 Sample for adding external image editors.  
