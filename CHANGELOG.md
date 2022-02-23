@@ -1,3 +1,8 @@
+## [0.1.6+1]
+
+* **Update:**
+  * Update readme
+
 ## [0.1.6]
 
 * **Update:**
