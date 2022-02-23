@@ -63,9 +63,10 @@ Add these settings to the ios/Runner/Info.plist
 
 ### Android
 
-Change the minimum Android sdk version to 21 (or higher) in your `android/app/build.gradle` file.
+Change the minimum Android sdk version to 21 (or higher), and compile sdk to 31 (or higher) in your `android/app/build.gradle` file (refer example project).
 
 ~~~~
+compileSdkVersion 31
 minSdkVersion 21
 ~~~~
 
