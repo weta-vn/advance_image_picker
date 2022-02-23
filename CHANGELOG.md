@@ -1,3 +1,8 @@
+## [0.1.6]
+
+* **Update:**
+  * Camera, photo manager packages
+
 ## [0.1.5+5]
 
 * **Fixbugs:**
