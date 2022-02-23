@@ -21,13 +21,7 @@ import '../editors/image_sticker.dart';
 /// Image viewer for selected images.
 class ImageViewer extends StatefulWidget {
   /// Default constructor for image viewer for selected images.
-  ImageViewer(
-      {final Key? key,
-      this.initialIndex = 0,
-      this.title,
-      this.images,
-      this.configs,
-      this.onChanged})
+  ImageViewer({final Key? key, this.initialIndex = 0, this.title, this.images, this.configs, this.onChanged})
       : pageController = PageController(initialPage: initialIndex),
         super(key: key);
 
@@ -53,8 +47,7 @@ class ImageViewer extends StatefulWidget {
   _ImageViewerState createState() => _ImageViewerState();
 }
 
-class _ImageViewerState extends State<ImageViewer>
-    with PortraitStatefulModeMixin<ImageViewer> {
+class _ImageViewerState extends State<ImageViewer> with PortraitStatefulModeMixin<ImageViewer> {
   /// Current index of image in list.
   int? _currentIndex;
 
@@ -84,8 +77,7 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Build image editor controls
-  List<Widget> _buildImageEditorControls(
-      BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
+  List<Widget> _buildImageEditorControls(BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     final Map<String, EditorParams> imageEditors = {};
 
     // Add preset image editors
@@ -101,7 +93,7 @@ class _ImageViewerState extends State<ImageViewer>
                   int maxHeight = 1920,
                   int compressQuality = 90,
                   ImagePickerConfigs? configs}) async =>
-              ImageCropper.cropImage(
+              ImageCropper().cropImage(
                   sourcePath: file.path,
                   compressQuality: compressQuality,
                   maxWidth: maxWidth,
@@ -138,11 +130,7 @@ class _ImageViewerState extends State<ImageViewer>
               Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageEdit(
-                      file: file,
-                      title: title,
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                      configs: _configs))));
+                      file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs))));
     }
     if (_configs.filterFeatureEnabled) {
       imageEditors[_configs.textImageFilterTitle] = EditorParams(
@@ -159,11 +147,7 @@ class _ImageViewerState extends State<ImageViewer>
               Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageFilter(
-                      file: file,
-                      title: title,
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                      configs: _configs))));
+                      file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs))));
     }
     if (_configs.stickerFeatureEnabled) {
       imageEditors[_configs.textImageStickerTitle] = EditorParams(
@@ -180,11 +164,7 @@ class _ImageViewerState extends State<ImageViewer>
               Navigator.of(context).push(MaterialPageRoute<File>(
                   fullscreenDialog: true,
                   builder: (context) => ImageSticker(
-                      file: file,
-                      title: title,
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                      configs: _configs))));
+                      file: file, title: title, maxWidth: maxWidth, maxHeight: maxHeight, configs: _configs))));
     }
 
     // Add custom image editors
@@ -195,8 +175,7 @@ class _ImageViewerState extends State<ImageViewer>
         .map((e) => GestureDetector(
               child: Icon(e.icon, size: 32, color: Colors.white),
               onTap: () async {
-                final image = await _imagePreProcessing(
-                    _images[_currentIndex!].modifiedPath);
+                final image = await _imagePreProcessing(_images[_currentIndex!].modifiedPath);
                 final File? outputFile = await e.onEditorEvent(
                     context: context,
                     file: image,
@@ -219,9 +198,7 @@ class _ImageViewerState extends State<ImageViewer>
   Future<File> _imagePreProcessing(String? path) async {
     if (_configs.imagePreProcessingBeforeEditingEnabled) {
       return ImageUtils.compressResizeImage(path!,
-          maxWidth: _configs.maxWidth,
-          maxHeight: _configs.maxHeight,
-          quality: _configs.compressQuality);
+          maxWidth: _configs.maxWidth, maxHeight: _configs.maxHeight, quality: _configs.compressQuality);
     }
     return File(path!);
   }
@@ -246,14 +223,10 @@ class _ImageViewerState extends State<ImageViewer>
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
     final Color _appBarBackgroundColor = _configs.appBarBackgroundColor ??
         appBarTheme.backgroundColor ??
-        (colorScheme.brightness == Brightness.dark
-            ? colorScheme.surface
-            : colorScheme.primary);
+        (colorScheme.brightness == Brightness.dark ? colorScheme.surface : colorScheme.primary);
     final Color _appBarTextColor = _configs.appBarTextColor ??
         appBarTheme.foregroundColor ??
-        (colorScheme.brightness == Brightness.dark
-            ? colorScheme.onSurface
-            : colorScheme.onPrimary);
+        (colorScheme.brightness == Brightness.dark ? colorScheme.onSurface : colorScheme.onPrimary);
 
     return Scaffold(
         backgroundColor: Colors.black,
@@ -287,8 +260,7 @@ class _ImageViewerState extends State<ImageViewer>
                                     setState(() {
                                       final deleteIndex = _currentIndex!;
                                       if (_images.length > 1) {
-                                        _currentIndex =
-                                            max(_currentIndex! - 1, 0);
+                                        _currentIndex = max(_currentIndex! - 1, 0);
                                       } else {
                                         _currentIndex = -1;
                                       }
@@ -305,10 +277,7 @@ class _ImageViewerState extends State<ImageViewer>
                     : null,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Icon(Icons.delete,
-                      size: 32,
-                      color:
-                          hasImages ? _configs.appBarTextColor : Colors.grey),
+                  child: Icon(Icons.delete, size: 32, color: hasImages ? _configs.appBarTextColor : Colors.grey),
                 ),
               ),
             ]),
@@ -323,9 +292,7 @@ class _ImageViewerState extends State<ImageViewer>
                     _appBarTextColor,
                   ),
                 ])
-              : Center(
-                  child: Text(_configs.textNoImages,
-                      style: const TextStyle(color: Colors.grey))),
+              : Center(child: Text(_configs.textNoImages, style: const TextStyle(color: Colors.grey))),
         ));
   }
 
@@ -347,17 +314,9 @@ class _ImageViewerState extends State<ImageViewer>
               onPageChanged: onPageChanged,
             ),
           ),
-          Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _buildCurrentImageInfoView(context)),
+          Positioned(top: 0, left: 0, right: 0, child: _buildCurrentImageInfoView(context)),
           if (_configs.ocrExtractFunc != null)
-            Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: _buildOCRTextView(context)),
+            Positioned(bottom: 0, left: 0, right: 0, child: _buildOCRTextView(context)),
         ],
       ),
     );
@@ -394,17 +353,14 @@ class _ImageViewerState extends State<ImageViewer>
       return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.file(File(path!),
-              fit: BoxFit.cover,
-              width: _configs.thumbWidth.toDouble(),
-              height: _configs.thumbHeight.toDouble()));
+              fit: BoxFit.cover, width: _configs.thumbWidth.toDouble(), height: _configs.thumbHeight.toDouble()));
     }
 
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         height: (_configs.thumbHeight + 8).toDouble(),
         child: Theme(
-          data: ThemeData(
-              canvasColor: Colors.transparent, shadowColor: Colors.red),
+          data: ThemeData(canvasColor: Colors.transparent, shadowColor: Colors.red),
           child: ReorderableListView(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -416,13 +372,8 @@ class _ImageViewerState extends State<ImageViewer>
                       margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.grey,
-                        border: Border.all(
-                            color: (i == _currentIndex)
-                                ? Colors.blue
-                                : Colors.white,
-                            width: 3),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
+                        border: Border.all(color: (i == _currentIndex) ? Colors.blue : Colors.white, width: 3),
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
                       ),
                       child: GestureDetector(
                         onTap: () async {
@@ -431,10 +382,8 @@ class _ImageViewerState extends State<ImageViewer>
                           });
 
                           if (widget.pageController.hasClients) {
-                            await widget.pageController.animateToPage(
-                                _currentIndex!,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeIn);
+                            await widget.pageController.animateToPage(_currentIndex!,
+                                duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
                           }
                         },
                         child: makeThumbnail(_images[i].modifiedPath),
@@ -452,15 +401,13 @@ class _ImageViewerState extends State<ImageViewer>
       final retImg = await ImageUtils.getImageInfo(image);
 
       // Get detected objects
-      if (_configs.labelDetectFunc != null &&
-          (retImg.recognitions?.isEmpty ?? true)) {
+      if (_configs.labelDetectFunc != null && (retImg.recognitions?.isEmpty ?? true)) {
         final objs = await _configs.labelDetectFunc!.call(retImg.modifiedPath);
         if (objs.isNotEmpty) retImg.recognitions = objs;
       }
 
       // Get OCR from image
-      if (_configs.ocrExtractFunc != null &&
-          (retImg.ocrText?.isEmpty ?? true)) {
+      if (_configs.ocrExtractFunc != null && (retImg.ocrText?.isEmpty ?? true)) {
         final text = await _configs.ocrExtractFunc!.call(retImg.modifiedPath);
         if (text.isNotEmpty) retImg.ocrText = text;
       }
@@ -478,56 +425,40 @@ class _ImageViewerState extends State<ImageViewer>
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.all(4),
                   color: Colors.black.withOpacity(0.5),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Display image resolution
-                        Text("${image.modifiedWidth}x${image.modifiedHeight}",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                        // Display detected labels
-                        if (image.recognitions != null &&
-                            image.recognitions!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Wrap(
-                                children: image.recognitions!.map((e) {
-                              final isSelected = e.label == image.label;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (image.label != e.label) {
-                                      image.label = e.label;
-                                    } else {
-                                      image.label = "";
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.grey,
-                                          width: 1),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10))),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 4),
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 4),
-                                  child: Text(
-                                      "${e.label}:${e.confidence?.toStringAsFixed(2) ?? ""}",
-                                      style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.grey)),
-                                ),
-                              );
-                            }).toList()),
-                          ),
-                      ]),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    // Display image resolution
+                    Text("${image.modifiedWidth}x${image.modifiedHeight}",
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    // Display detected labels
+                    if (image.recognitions != null && image.recognitions!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Wrap(
+                            children: image.recognitions!.map((e) {
+                          final isSelected = e.label == image.label;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (image.label != e.label) {
+                                  image.label = e.label;
+                                } else {
+                                  image.label = "";
+                                }
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: isSelected ? Colors.white : Colors.grey, width: 1),
+                                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+                              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                              margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                              child: Text("${e.label}:${e.confidence?.toStringAsFixed(2) ?? ""}",
+                                  style: TextStyle(color: isSelected ? Colors.white : Colors.grey)),
+                            ),
+                          );
+                        }).toList()),
+                      ),
+                  ]),
                 ),
               ],
             );
@@ -552,16 +483,13 @@ class _ImageViewerState extends State<ImageViewer>
                   builder: (context) {
                     return Dialog(
                       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: Stack(
                         fit: StackFit.passthrough,
                         children: [
                           Container(
-                              height:
-                                  MediaQuery.of(context).size.height * 2 / 3,
-                              margin:
-                                  const EdgeInsets.only(top: 40, bottom: 50),
+                              height: MediaQuery.of(context).size.height * 2 / 3,
+                              margin: const EdgeInsets.only(top: 40, bottom: 50),
                               padding: const EdgeInsets.all(12),
                               child: TextField(
                                 maxLines: null,
@@ -572,25 +500,18 @@ class _ImageViewerState extends State<ImageViewer>
                               left: 0,
                               right: 0,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 12),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                                 child: Row(children: [
                                   Text(_configs.textEditText,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                   const Spacer(),
                                   GestureDetector(
                                       onTap: () async {
                                         setState(() {
-                                          _textFieldController.text =
-                                              image.ocrOriginalText ?? "";
+                                          _textFieldController.text = image.ocrOriginalText ?? "";
                                         });
                                       },
-                                      child: const Icon(
-                                          Icons.wifi_protected_setup,
-                                          size: 32,
-                                          color: Colors.blue))
+                                      child: const Icon(Icons.wifi_protected_setup, size: 32, color: Colors.blue))
                                 ]),
                               )),
                           Positioned(
@@ -600,8 +521,7 @@ class _ImageViewerState extends State<ImageViewer>
                               child: Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     TextButton(
                                       style: TextButton.styleFrom(
@@ -609,13 +529,10 @@ class _ImageViewerState extends State<ImageViewer>
                                         backgroundColor: Colors.grey.shade200,
                                         padding: EdgeInsets.zero,
                                         shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30)),
+                                          borderRadius: BorderRadius.all(Radius.circular(30)),
                                         ),
                                       ),
-                                      child: Text(_configs.textClear,
-                                          style: const TextStyle(
-                                              color: Colors.red)),
+                                      child: Text(_configs.textClear, style: const TextStyle(color: Colors.red)),
                                       onPressed: () {
                                         setState(() {
                                           _textFieldController.text = "";
@@ -628,17 +545,13 @@ class _ImageViewerState extends State<ImageViewer>
                                         backgroundColor: Colors.blue,
                                         padding: EdgeInsets.zero,
                                         shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30)),
+                                          borderRadius: BorderRadius.all(Radius.circular(30)),
                                         ),
                                       ),
-                                      child: Text(_configs.textSave,
-                                          style: const TextStyle(
-                                              color: Colors.white)),
+                                      child: Text(_configs.textSave, style: const TextStyle(color: Colors.white)),
                                       onPressed: () {
                                         setState(() {
-                                          image.ocrText =
-                                              _textFieldController.text;
+                                          image.ocrText = _textFieldController.text;
                                           Navigator.pop(context);
                                         });
                                       },
@@ -679,8 +592,7 @@ class _ImageViewerState extends State<ImageViewer>
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Row(children: [
-                Text(_configs.textOCR,
-                    style: const TextStyle(color: Colors.white)),
+                Text(_configs.textOCR, style: const TextStyle(color: Colors.white)),
                 if (_isProcessing)
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
@@ -694,8 +606,7 @@ class _ImageViewerState extends State<ImageViewer>
                   _isProcessing = true;
                 });
 
-                final text = await _configs.ocrExtractFunc!
-                    .call(image.modifiedPath, isCloudService: true);
+                final text = await _configs.ocrExtractFunc!.call(image.modifiedPath, isCloudService: true);
                 setState(() {
                   _isProcessing = false;
 
@@ -717,8 +628,7 @@ class _ImageViewerState extends State<ImageViewer>
   }
 
   /// Build editor controls.
-  Widget _buildEditorControls(
-      BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
+  Widget _buildEditorControls(BuildContext context, Color toolbarColor, Color toolbarWidgetColor) {
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -731,8 +641,7 @@ class _ImageViewerState extends State<ImageViewer>
 
   /// Build reset button for image editor.
   Widget _buildEditorResetButton(BuildContext context) {
-    final imageChanged = _images[_currentIndex!].modifiedPath !=
-        _images[_currentIndex!].originalPath;
+    final imageChanged = _images[_currentIndex!].modifiedPath != _images[_currentIndex!].originalPath;
     return GestureDetector(
       onTap: imageChanged
           ? () async {
@@ -755,8 +664,7 @@ class _ImageViewerState extends State<ImageViewer>
                         onPressed: () {
                           Navigator.of(context).pop();
                           setState(() {
-                            _images[_currentIndex!].modifiedPath =
-                                _images[_currentIndex!].originalPath;
+                            _images[_currentIndex!].modifiedPath = _images[_currentIndex!].originalPath;
                             widget.onChanged?.call(_images);
                           });
                         },
@@ -767,8 +675,7 @@ class _ImageViewerState extends State<ImageViewer>
               );
             }
           : null,
-      child: Icon(Icons.replay,
-          size: 32, color: imageChanged ? Colors.white : Colors.grey),
+      child: Icon(Icons.replay, size: 32, color: imageChanged ? Colors.white : Colors.grey),
     );
   }
 }
