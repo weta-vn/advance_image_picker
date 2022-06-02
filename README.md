@@ -70,6 +70,11 @@ compileSdkVersion 31
 minSdkVersion 21
 ~~~~
 
+Change kotlin version to 1.5.21 or later in your `android/build.gradle` file (refer example project).
+~~~~
+ext.kotlin_version = '1.5.21'
+~~~~
+
 Add activity and uses-permissions to your `AndroidManifest.xml`, just like next.
 
 ```

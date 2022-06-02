@@ -167,7 +167,7 @@ class _ImagePickerState extends State<ImagePicker>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     // Setting preview screen mode from configuration
     if (widget.configs != null) _configs = widget.configs!;
@@ -188,7 +188,7 @@ class _ImagePickerState extends State<ImagePicker>
     );
 
     // Init camera or album
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_mode == PickerMode.Camera) {
         await _initPhotoCapture();
       } else {
@@ -199,7 +199,7 @@ class _ImagePickerState extends State<ImagePicker>
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _exposureModeControlRowAnimationController.dispose();
     _controller?.dispose();
     _controller = null;
@@ -998,8 +998,8 @@ class _ImagePickerState extends State<ImagePicker>
       for (final a in _albums) {
         final f = await (await a.getAssetListRange(start: 0, end: 1))
             .first
-            .thumbDataWithSize(
-                _configs.albumThumbWidth, _configs.albumThumbHeight);
+            .thumbnailDataWithSize(ThumbnailSize(
+                _configs.albumThumbWidth, _configs.albumThumbHeight));
         ret.add(f);
       }
       _albumThumbnails = ret;
