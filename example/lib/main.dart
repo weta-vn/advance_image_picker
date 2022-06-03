@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
                 int maxHeight = 1920,
                 int compressQuality = 90,
                 ImagePickerConfigs? configs}) async =>
-            Navigator.of(context).push(MaterialPageRoute<File>(
+            Navigator.of(context).push(MaterialPageRoute(
                 fullscreenDialog: true,
                 builder: (context) => ImageEdit(
                     file: file,
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
                 int maxHeight = 1920,
                 int compressQuality = 90,
                 ImagePickerConfigs? configs}) async =>
-            Navigator.of(context).push(MaterialPageRoute<File>(
+            Navigator.of(context).push(MaterialPageRoute(
                 fullscreenDialog: true,
                 builder: (context) => ImageSticker(
                     file: file,

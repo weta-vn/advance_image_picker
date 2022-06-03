@@ -1,3 +1,9 @@
+## [0.1.7]
+
+* **Update:**
+  * Upgrade packages
+  * Support for flutter 3.x
+
 ## [0.1.6+1]
 
 * **Update:**

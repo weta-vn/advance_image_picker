@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -94,34 +93,38 @@ class _ImageViewerState extends State<ImageViewer>
           title: _configs.textImageCropTitle,
           icon: Icons.crop_rotate,
           onEditorEvent: (
-                  {required BuildContext context,
-                  required File file,
-                  required String title,
-                  int maxWidth = 1080,
-                  int maxHeight = 1920,
-                  int compressQuality = 90,
-                  ImagePickerConfigs? configs}) async =>
-              ImageCropper().cropImage(
-                  sourcePath: file.path,
-                  compressQuality: compressQuality,
-                  maxWidth: maxWidth,
-                  maxHeight: maxHeight,
-                  aspectRatioPresets: [
-                    CropAspectRatioPreset.square,
-                    CropAspectRatioPreset.ratio3x2,
-                    CropAspectRatioPreset.original,
-                    CropAspectRatioPreset.ratio4x3,
-                    CropAspectRatioPreset.ratio16x9
-                  ],
-                  androidUiSettings: AndroidUiSettings(
+              {required BuildContext context,
+              required File file,
+              required String title,
+              int maxWidth = 1080,
+              int maxHeight = 1920,
+              int compressQuality = 90,
+              ImagePickerConfigs? configs}) async {
+            final CroppedFile? result = await ImageCropper().cropImage(
+                sourcePath: file.path,
+                compressQuality: compressQuality,
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                aspectRatioPresets: [
+                  CropAspectRatioPreset.square,
+                  CropAspectRatioPreset.ratio3x2,
+                  CropAspectRatioPreset.original,
+                  CropAspectRatioPreset.ratio4x3,
+                  CropAspectRatioPreset.ratio16x9
+                ],
+                uiSettings: [
+                  AndroidUiSettings(
                       toolbarTitle: title,
                       toolbarColor: toolbarColor,
                       toolbarWidgetColor: toolbarWidgetColor,
                       initAspectRatio: CropAspectRatioPreset.original,
                       lockAspectRatio: false),
-                  iosUiSettings: const IOSUiSettings(
+                  IOSUiSettings(
                     minimumAspectRatio: 1,
-                  )));
+                  )
+                ]);
+            return (result != null) ? File(result.path) : file;
+          });
     }
     if (_configs.adjustFeatureEnabled) {
       imageEditors[_configs.textImageEditTitle] = EditorParams(
