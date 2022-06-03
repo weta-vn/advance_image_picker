@@ -48,6 +48,9 @@ Flutter plugin for selecting **multiple images** from the Android and iOS image 
 
 ## Installation
 
+### Dart
+This plugin requires dart version 2.16.1 or later
+
 ### iOS
 
 Add these settings to the ios/Runner/Info.plist

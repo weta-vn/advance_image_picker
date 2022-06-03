@@ -1,3 +1,8 @@
+## [0.1.7+1]
+
+* **Update:**
+  * Fix required dart version
+
 ## [0.1.7]
 
 * **Update:**
