@@ -102,6 +102,8 @@ class MyApp extends StatelessWidget {
       'assets/icon/cus5.png'
     ];
 
+    configs.fillAllImages = false;
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

@@ -571,6 +571,9 @@ class _ImagePickerState extends State<ImagePicker>
 
   /// Build done button.
   Widget _buildDoneButton(BuildContext context, Color buttonColor) {
+    final bool enableButton = _configs.fillAllImages
+        ? _selectedImages.length == widget.maxCount
+        : _selectedImages.isNotEmpty;
     if (_selectedImages.isEmpty &&
         _configs.doneButtonDisabledBehavior ==
             DoneButtonDisabledBehavior.hidden) {
@@ -581,7 +584,7 @@ class _ImagePickerState extends State<ImagePicker>
         return Padding(
             padding: const EdgeInsets.all(8),
             child: OutlinedButton(
-              onPressed: (_selectedImages.isNotEmpty)
+              onPressed: enableButton
                   ? () async {
                       await _doneButtonPressed();
                     }
@@ -589,14 +592,14 @@ class _ImagePickerState extends State<ImagePicker>
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all(5),
                 backgroundColor: MaterialStateProperty.all(
-                    _selectedImages.isNotEmpty ? buttonColor : Colors.grey),
+                    enableButton ? buttonColor : Colors.grey),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
               ),
               child: Row(children: [
                 Text(_configs.textSelectButtonTitle,
                     style: TextStyle(
-                        color: _selectedImages.isNotEmpty
+                        color: enableButton
                             ? ((buttonColor == Colors.white)
                                 ? Colors.black
                                 : Colors.white)
@@ -613,7 +616,7 @@ class _ImagePickerState extends State<ImagePicker>
           icon: _isOutputCreating
               ? const CupertinoActivityIndicator()
               : Icon(_configs.doneButtonIcon),
-          onPressed: (_selectedImages.isNotEmpty)
+          onPressed: enableButton
               ? () async {
                   await _doneButtonPressed();
                 }

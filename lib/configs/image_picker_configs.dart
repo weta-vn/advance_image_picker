@@ -182,6 +182,11 @@ class ImagePickerConfigs {
   /// Max count for label detection
   int labelDetectMaxCount = 5;
 
+  /// If it is mandatory to fill all the images
+  /// default false
+  /// if true all available images defined in maxCount should be filled
+  bool fillAllImages = false;
+
   /// Threshold for label detection
   double labelDetectThreshold = 0.7;
 
