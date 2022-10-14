@@ -665,15 +665,15 @@ class _ImagePickerState extends State<ImagePicker>
             child: _buildImageFullOption(context))
       ],
       Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: _buildBottomPanel(
-            context,
-            appBarBackgroundColor:
-                _configs.appBarBackgroundColor ?? Colors.black,
-            appBarTextColor: _configs.appBarTextColor ?? Colors.white,
-          ))
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: _buildBottomPanel(
+          context,
+          appBarBackgroundColor: _configs.appBarBackgroundColor ?? Colors.black,
+          appBarTextColor: _configs.appBarTextColor ?? Colors.white,
+        ),
+      )
     ]);
   }
 
