@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
     configs.appBarTextColor = Colors.white;
     configs.appBarBackgroundColor = Colors.orange;
     // Disable select images from album
+    configs.cameraPickerModeEnabled = false;
     // configs.albumPickerModeEnabled = false;
     // Only use front camera for capturing
     // configs.cameraLensDirection = 0;
@@ -102,7 +103,7 @@ class MyApp extends StatelessWidget {
       'assets/icon/cus5.png'
     ];
 
-    configs.fillAllImages = false;
+    configs.fillAllImages = true;
 
     return MaterialApp(
       title: 'Flutter Demo',

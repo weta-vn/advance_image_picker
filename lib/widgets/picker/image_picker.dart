@@ -503,38 +503,39 @@ class _ImagePickerState extends State<ImagePicker>
     Color appBarTextColor,
   ) {
     return GestureDetector(
-        onTap: (_mode == PickerMode.Album)
-            ? () {
-                Navigator.of(context, rootNavigator: true)
-                    .push<void>(PageRouteBuilder(
-                        pageBuilder: (context, animation, __) {
-                          return Scaffold(
-                              appBar: AppBar(
-                                  title: _buildAlbumSelectButton(context,
-                                      isPop: true),
-                                  backgroundColor: appBarBackgroundColor,
-                                  foregroundColor: appBarTextColor,
-                                  centerTitle: false),
-                              body: Material(
-                                  color: Colors.black,
-                                  child: SafeArea(
-                                    child: _buildAlbumList(_albums, context,
-                                        (val) {
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        _currentAlbum = val;
-                                      });
-                                      _currentAlbumKey.currentState
-                                          ?.updateStateFromExternal(
-                                              album: _currentAlbum);
-                                    }),
-                                  )));
-                        },
-                        fullscreenDialog: true));
-              }
-            : null,
-        child: _buildAlbumSelectButton(context,
-            isCameraMode: _mode == PickerMode.Camera));
+      onTap: (_mode == PickerMode.Album)
+          ? () {
+              Navigator.of(context, rootNavigator: true)
+                  .push<void>(PageRouteBuilder(
+                      pageBuilder: (context, animation, __) {
+                        return Scaffold(
+                            appBar: AppBar(
+                                title: _buildAlbumSelectButton(context,
+                                    isPop: true),
+                                backgroundColor: appBarBackgroundColor,
+                                foregroundColor: appBarTextColor,
+                                centerTitle: false),
+                            body: Material(
+                                color: Colors.black,
+                                child: SafeArea(
+                                  child:
+                                      _buildAlbumList(_albums, context, (val) {
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      _currentAlbum = val;
+                                    });
+                                    _currentAlbumKey.currentState
+                                        ?.updateStateFromExternal(
+                                            album: _currentAlbum);
+                                  }),
+                                )));
+                      },
+                      fullscreenDialog: true));
+            }
+          : null,
+      child: _buildAlbumSelectButton(context,
+          isCameraMode: _mode == PickerMode.Camera),
+    );
   }
 
   /// Function used to select the images and close the image picker.
@@ -664,7 +665,15 @@ class _ImagePickerState extends State<ImagePicker>
             child: _buildImageFullOption(context))
       ],
       Positioned(
-          bottom: 0, left: 0, right: 0, child: _buildBottomPanel(context))
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: _buildBottomPanel(
+            context,
+            appBarBackgroundColor:
+                _configs.appBarBackgroundColor ?? Colors.black,
+            appBarTextColor: _configs.appBarTextColor ?? Colors.white,
+          ))
     ]);
   }
 
@@ -735,7 +744,11 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Build bottom panel.
-  Widget _buildBottomPanel(BuildContext context) {
+  Widget _buildBottomPanel(
+    BuildContext context, {
+    required Color appBarBackgroundColor,
+    required Color appBarTextColor,
+  }) {
     // Add leading text and colon+blank, only if 'textSelectedImagesTitle' is
     // not blank in a none breaking way to previous version.
     final String _textSelectedImagesTitle =
@@ -760,6 +773,52 @@ class _ImagePickerState extends State<ImagePicker>
         ],
         _buildReorderableSelectedImageList(context),
         _buildCameraControls(context),
+        GestureDetector(
+          onTap: (_mode == PickerMode.Album)
+              ? () {
+                  Navigator.of(context, rootNavigator: true)
+                      .push<void>(PageRouteBuilder(
+                          pageBuilder: (context, animation, __) {
+                            return Scaffold(
+                                appBar: AppBar(
+                                    title: _buildAlbumSelectButton(context,
+                                        isPop: true),
+                                    backgroundColor: appBarBackgroundColor,
+                                    foregroundColor: appBarTextColor,
+                                    centerTitle: false),
+                                body: Material(
+                                    color: Colors.black,
+                                    child: SafeArea(
+                                      child: _buildAlbumList(_albums, context,
+                                          (val) {
+                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          _currentAlbum = val;
+                                        });
+                                        _currentAlbumKey.currentState
+                                            ?.updateStateFromExternal(
+                                                album: _currentAlbum);
+                                      }),
+                                    )));
+                          },
+                          fullscreenDialog: true));
+                }
+              : null,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey.withOpacity(0.3)),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: Text(
+              "Change Album",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: (_mode == PickerMode.Album) ? Colors.white : Colors.grey,
+              ),
+            ),
+          ),
+        ),
         Padding(
             padding: const EdgeInsets.all(8),
             child: _buildPickerModeList(context))
@@ -768,6 +827,7 @@ class _ImagePickerState extends State<ImagePicker>
   }
 
   /// Build album select button.
+  // TODO: BUTTON ALBUM
   Widget _buildAlbumSelectButton(BuildContext context,
       {bool isPop = false, bool isCameraMode = false}) {
     if (isCameraMode) {
